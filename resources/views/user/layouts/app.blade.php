@@ -123,11 +123,11 @@
                         <i class='bx bxs-calendar'></i>
                         My Booking
                     </a>
-                    <!-- <div class="dropdown-divider"></div>
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item bookmark-link" href="{{ route('user.bookmarks') }}">
                         <i class='bx bx-bookmark'></i>
                         My Bookmarks
-                    </a> -->
+                    </a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('logout') }}" class="dropdown-item logout-link">
                         <i class='bx bxs-door-open'></i>

@@ -5,29 +5,27 @@
     <div class="container mt-5">
         <h2 class="text-center mb-4">Pilih Ruang Meeting yang tersedia</h2>
 
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+        {{-- Pesan sukses dan error --}}
+        <div id="alert-container">
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-        @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+        </div>
 
-        <!-- Search Bar -->
+
         <form action="{{ route('user.booking.search') }}" method="GET" class="mb-4">
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Pilih Ruang Meeting yang tersedia" name="search">
                 <div class="input-group-append">
                     <label class="input-group-text" for="sort_by">Sort by:</label>
-                    <!-- <select name="sort_by" id="sort_by" class="custom-select">
-                        <option value="price_lowest" {{ $sortBy === 'price_lowest' ? 'selected' : '' }}>Lowest Price</option>
-                        <option value="price_highest" {{ $sortBy === 'price_highest' ? 'selected' : '' }}>Highest Price</option>
-                    </select> -->
-
                     <button class="search-btn" type="submit"><i class='bx bx-search'></i></button>
                 </div>
             </div>
@@ -52,7 +50,6 @@
                         <div class="card-body">
                             <h5 class="card-title mb-3">{{ $facility->name }}</h5>
                             <p>Location: {{ $facility->location }}</p>
-                            <!-- <p class="card-text text-muted"> Rs. {{ number_format($facility->price_per_hour) }}</p> -->
 
                             <div class="mt-3 d-flex align-items-center justify-content-between">
                                 <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}" class="book-btn">
@@ -60,12 +57,16 @@
                                 </a>
 
                                 @auth
-                                    <form action="{{ route('user.facility.bookmark', ['facility' => $facility->id]) }}" method="post" class="ml-2">
-                                        @csrf
-                                        <button type="submit" class="btn btn-bookmark" style="transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;" onmouseover="this.style.color='#FF5733'" onmouseout="this.style.color=''; this.style.transform='';">
-                                            <i class='bx bx-bookmark'></i>
-                                        </button>
-                                    </form>
+                                    {{-- Mengubah form menjadi button dengan data-attributes untuk AJAX --}}
+                                    <button type="button"
+                                            class="btn btn-bookmark bookmark-btn" {{-- Tambah kelas 'bookmark-btn' untuk JS --}}
+                                            data-facility-id="{{ $facility->id }}"
+                                            data-bookmarked="{{ auth()->user()->bookmarkedFacilities->contains($facility->id) ? 'true' : 'false' }}"
+                                            style="transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;"
+                                            onmouseover="this.style.color='#FF5733'"
+                                            onmouseout="this.style.color=''; this.style.transform='';">
+                                        <i class='bx {{ auth()->user()->bookmarkedFacilities->contains($facility->id) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
+                                    </button>
                                 @endauth
                             </div>
                         </div>
@@ -84,68 +85,92 @@
             @endforelse
         </div>
     </div>
-{{--    <x-footer />--}}
+@endsection
+
+@section('scripts')
+    {{-- Tambahkan jQuery jika belum ada di layouts/app.blade.php --}}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> {{-- Pastikan jQuery dimuat --}}
+
+    <script>
+        $(document).ready(function() {
+            // Fungsi untuk menampilkan pesan alert
+            function showAlert(type, message) {
+                let alertHtml = `<div class="alert alert-${type}">${message}</div>`;
+                $('#alert-container').html(alertHtml);
+                // Sembunyikan alert setelah beberapa detik
+                setTimeout(function() {
+                    $('#alert-container').empty();
+                }, 5000); // 5 detik
+            }
+
+            // Tangani klik pada tombol bookmark
+            $('.bookmark-btn').on('click', function() {
+                const button = $(this);
+                const facilityId = button.data('facility-id');
+                let isBookmarked = button.data('bookmarked');
+                const csrfToken = $('meta[name="csrf-token"]').attr('content'); // Ambil CSRF token
+
+                let url = '';
+                let method = '';
+
+                if (isBookmarked) {
+                    // Jika sudah di-bookmark, berarti akan melakukan unbookmark
+                    url = `/user/unbookmark/${facilityId}`;
+                    method = 'DELETE'; // Metode HTTP DELETE
+                } else {
+                    // Jika belum di-bookmark, berarti akan melakukan bookmark
+                    url = `/facility/bookmark/${facilityId}`;
+                    method = 'POST'; // Metode HTTP POST
+                }
+
+                $.ajax({
+                    url: url,
+                    type: 'POST', // Kirim sebagai POST meskipun method DELETE, Laravel akan menangani _method
+                    data: {
+                        _token: csrfToken,
+                        _method: isBookmarked ? 'DELETE' : 'POST' // Laravel method spoofing
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            // Toggle ikon dan data-bookmarked
+                            if (isBookmarked) {
+                                button.find('i').removeClass('bxs-bookmark').addClass('bx-bookmark');
+                                button.data('bookmarked', false);
+                                showAlert('success', response.message);
+                            } else {
+                                button.find('i').removeClass('bx-bookmark').addClass('bxs-bookmark');
+                                button.data('bookmarked', true);
+                                showAlert('success', response.message);
+                            }
+                        } else if (response.status === 'warning') {
+                            showAlert('warning', response.message);
+                        } else {
+                            showAlert('danger', response.message || 'Terjadi kesalahan.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Terjadi kesalahan pada server.';
+                        showAlert('danger', errorMessage);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
 
 @section('styles')
     <style>
-        .card {
-            transition: transform 0.3s;
-        }
+        /* ... (CSS yang sudah ada) ... */
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .book-btn {
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
-        }
-
-        .book-btn:hover {
-            background-color: #1593e7;
-            color: #FF5733;
-            text-decoration: none;
-            transform: scale(1.05);
-        }
-
-        .search-btn {
-            background-color: #ffffff;
-            border: 1px solid black;
-            border-radius: 7px;
-            color: black;
-            transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
-            text-decoration: none;
-            padding: .375rem .75rem;
-            display: inline-block;
-        }
-
-        .search-btn:hover {
-            background-color: #FF8C00;
-            border-color: #FF8C00;
-            color: white;
-            text-decoration: none;
-            animation: pulse 0.5s ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
+        /* Tambahan styling untuk pesan alert AJAX */
+        #alert-container {
+            position: fixed;
+            top: 70px; /* Di bawah navbar */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 500px;
+            z-index: 1050; /* Pastikan di atas elemen lain */
         }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core/main.css">
