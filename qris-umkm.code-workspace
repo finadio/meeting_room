@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "../qris-umkm"
+		},
+		{
+			"path": "../simonto"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../MSA_JPZIS"
+		},
+		{
+			"path": "../bprmsa"
+		}
+	],
+	"settings": {}
+}
