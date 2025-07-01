@@ -62,8 +62,12 @@
                                 @auth
                                     <form action="{{ route('user.facility.bookmark', ['facility' => $facility->id]) }}" method="post" class="ml-2">
                                         @csrf
-                                        <button type="submit" class="btn btn-bookmark" style="transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;" onmouseover="this.style.color='#FF5733'" onmouseout="this.style.color=''; this.style.transform='';">
-                                            <i class='bx bx-bookmark'></i>
+                                        <button type="submit" class="btn btn-bookmark" style="transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;">
+                                            @if(in_array($facility->id, $bookmarkedIds))
+                                                <i class='bx bxs-bookmark' style="color: #FF8C00;"></i>
+                                            @else
+                                                <i class='bx bx-bookmark'></i>
+                                            @endif
                                         </button>
                                     </form>
                                 @endauth
