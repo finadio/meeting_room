@@ -32,7 +32,7 @@
 <main>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12 col-sm-6 login-section-wrapper mx-auto">
+            <div class="col-12 col-sm-6 login-section-wrapper mx-auto" style="min-height:100vh;overflow-y:auto;">
                 <div class="brand-wrapper">
                     <img src="{{ asset('img/logo3.png') }}" alt="logo" class="logo" />
                 </div>
@@ -168,8 +168,8 @@
                     </p>
                 </div>
             </div>
-            <div class="col-sm-6 px-0 d-none d-sm-block" style="background-color: #ffffff">
-                <img src="{{ asset('img/shaka_utama.png') }}" alt="login image" class="login-img" />
+            <div class="col-sm-6 px-0 d-none d-sm-block" style="background-color: #ffffff;display:flex;align-items:center;justify-content:center;">
+                <img src="{{ asset('img/shaka_utama.png') }}" alt="login image" class="login-img" style="max-height:100vh;object-fit:contain;width:100%;" />
             </div>
         </div>
     </div>
