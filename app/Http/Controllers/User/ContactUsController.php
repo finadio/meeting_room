@@ -37,7 +37,7 @@ class ContactUsController extends Controller
 
             // Save the form data to the database
             $submission = new ContactFormSubmission();
-            $submission->user_id = $request->user()->id;
+            $submission->user_id = $request->user() ? $request->user()->id : null;
             $submission->name = $request->input('name');
             $submission->email = $request->input('email');
             $submission->subject = $request->input('subject');

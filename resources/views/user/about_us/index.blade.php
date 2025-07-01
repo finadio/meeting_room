@@ -20,13 +20,13 @@
 
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <img src="{{ asset('img/img-1.jpg') }}" alt="pic1" class="img-fluid mb-2">
+                        <img src="{{ asset('img/global.jpg') }}" alt="pic1" class="img-fluid mb-2">
                     </div>
                     <div class="col-md-6">
-                        <img src="{{ asset('img/img-2.jpg') }}" alt="pic2" class="img-fluid mb-2">
+                        <img src="{{ asset('img/Meeting_lt2.jpeg') }}" alt="pic2" class="img-fluid mb-2">
                     </div>
                     <div class="col-md-14">
-                        <img src="{{ asset('img/img-3.jpg') }}" alt="pic3" class="img-fluid mb-2">
+                        <img src="{{ asset('img/Futsal3.jpeg') }}" alt="pic3" class="img-fluid mb-2">
                     </div>
                 </div>
 
