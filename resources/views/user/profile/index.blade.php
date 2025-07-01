@@ -44,7 +44,7 @@
                 <div class="col-md-9">
                     <div class="tab-content">
                         <div class="tab-pane fade active show" id="account-general">
-                            <form action="{{ route('admin.profile.update.details') }}" method="post" enctype="multipart/form-data">
+                            <form action="{{ route('profile.update.details') }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-body media align-items-center">
                                     @if ($user->profile_picture && Storage::exists('public/profile_pictures/' . $user->profile_picture))
@@ -153,7 +153,7 @@
                         </div>
 
                         <div class="tab-pane fade" id="account-change-password">
-                            <form action="{{ route('admin.profile.update.password') }}" method="post">
+                            <form action="{{ route('profile.update.password') }}" method="post">
                                 @csrf
                                 <div class="card-body pb-2">
                                     <div class="form-group">
