@@ -101,44 +101,57 @@
                                             </form>
                                         @endif
 
-                                        {{-- Form permintaan extend waktu hanya tampil jika tidak ada error dan waktu sudah kurang dari 10 menit --}}
+                                        {{-- Form permintaan extend waktu --}}
                                         @php
-                                            // Pastikan $booking->booking_end adalah objek Carbon
                                             $endTime = \Carbon\Carbon::parse($booking->booking_end);
                                             $currentTime = \Carbon\Carbon::now();
+                                            $timeDifference = $endTime->diffInMinutes($currentTime, false); // Use false to get signed difference
 
-                                            // Hitung selisih waktu antara booking_end dengan waktu sekarang
-                                            $timeDifference = $endTime->diffInMinutes($currentTime);
-                                            \Log::info('Booking end: ' . $booking->booking_end . ' - Time difference: ' . $timeDifference);
-
-                                            // Cari booking berikutnya dalam ruangan yang sama dan hari yang sama
                                             $nextBooking = \App\Models\Booking::where('facility_id', $booking->facility_id)
                                                 ->where('booking_date', $booking->booking_date)
                                                 ->where('booking_time', '>', $booking->booking_end)
                                                 ->orderBy('booking_time', 'asc')
                                                 ->first();
 
-                                            // Jika ada booking berikutnya
-                                            if ($nextBooking) {
-                                                $nextBookingTime = \Carbon\Carbon::parse($nextBooking->booking_time);
-                                                $timeUntilNextBooking = $endTime->diffInMinutes($nextBookingTime);  // Perhitungan waktu hingga booking berikutnya
-                                                \Log::info('Next booking time: ' . $nextBooking->booking_time . ' - Time until next booking: ' . $timeUntilNextBooking);
-                                            } else {
-                                                $timeUntilNextBooking = null;
-                                            }
-
-                                            // Periksa apakah waktu kurang dari 10 menit dan belum check-out
-                                            $isTimeToExtend = $timeDifference <= 10 && !$booking->check_out ;
-
-                                            \Log::info('Is time to extend: ' . ($isTimeToExtend ? 'Yes' : 'No'));
+                                            $canExtend = ($timeDifference >= -10 && $timeDifference < 0) && !$booking->check_out && !$nextBooking;
                                         @endphp
 
-                                        {{-- Tombol extend hanya tampil jika tidak ada error, tidak ada booking berikutnya dan waktu sudah kurang dari 10 menit --}}
-                                        @if (!session('error') && $isTimeToExtend)
+                                        @if ($canExtend)
                                             <form action="{{ route('user.requestExtend', $booking->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 <button type="submit" class="btn btn-warning">Request Extend</button>
                                             </form>
+                                        @endif
+
+                                        {{-- Ratings and Reviews Form --}}
+                                        @if ($booking->status == 'Selesai' && !$booking->hasReviews())
+                                            <form action="{{ route('user.bookings.storeReview', $booking->id) }}" method="POST" class="mt-2">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="rating_{{ $booking->id }}">Rating:</label>
+                                                    <select name="rating" id="rating_{{ $booking->id }}" class="form-control" required>
+                                                        <option value="">Select Rating</option>
+                                                        <option value="1">1 Star</option>
+                                                        <option value="2">2 Stars</option>
+                                                        <option value="3">3 Stars</option>
+                                                        <option value="4">4 Stars</option>
+                                                        <option value="5">5 Stars</option>
+                                                    </select>
+                                                    @error('rating')
+                                                        <div class="alert alert-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="review_{{ $booking->id }}">Review:</label>
+                                                    <textarea name="review" id="review_{{ $booking->id }}" class="form-control"></textarea>
+                                                    @error('review')
+                                                        <div class="alert alert-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                                            </form>
+                                        @elseif ($booking->status == 'Selesai' && $booking->hasReviews())
+                                            <span class="badge bg-success text-white">Reviewed</span>
                                         @endif
                                     </td>
                                 </tr>
