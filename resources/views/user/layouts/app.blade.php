@@ -135,11 +135,7 @@
                     </a>
                 </div>
             </li>
-            <li class="nav-item">
-                <!-- <a href="{{ route('user.facility_submissions.create') }}" class="btn btn-list-facility"> -->
-                    <i class='bx bx-plus'></i> 
-                <!-- </a> -->
-            </li>
+           
         </ul>
     </div>
 </nav>
