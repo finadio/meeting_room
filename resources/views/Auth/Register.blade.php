@@ -30,9 +30,9 @@
 </head>
 <body>
 <main>
-    <div class="container-fluid d-flex align-items-center justify-content-center" style="min-height:100vh;">
-        <div class="row w-100 justify-content-center align-items-center">
-            <div class="col-12 col-sm-6 login-section-wrapper mx-auto">
+    <div class="auth-main-wrapper">
+        <div class="auth-card">
+            <div class="auth-form-side">
                 <div class="brand-wrapper">
                     <img src="{{ asset('img/logo3.png') }}" alt="logo" class="logo" />
                 </div>
@@ -168,8 +168,8 @@
                     </p>
                 </div>
             </div>
-            <div class="col-sm-6 px-0 d-none d-sm-block" style="background-color: #ffffff;display:flex;align-items:center;justify-content:center;">
-                <img src="{{ asset('img/shaka_utama.png') }}" alt="login image" class="login-img" style="max-height:100vh;object-fit:contain;width:100%;filter:blur(0.5px);opacity:0.96;" />
+            <div class="auth-img-side d-none d-md-flex">
+                <img src="{{ asset('img/shaka_utama.png') }}" alt="login image" />
             </div>
         </div>
     </div>
