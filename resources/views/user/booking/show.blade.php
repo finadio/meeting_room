@@ -64,7 +64,7 @@
                         @csrf
                         <div class="mb-3">
                             <label for="date">Pilih tanggal:</label>
-                            <input type="date" id="date" name="date" class="form-control" required>
+                            <input type="date" id="date" name="date" class="form-control" required min="{{ date('Y-m-d') }}">
                         </div>
 
                         <div class="mb-3">
