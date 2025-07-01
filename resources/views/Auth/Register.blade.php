@@ -30,13 +30,13 @@
 </head>
 <body>
 <main>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12 col-sm-6 login-section-wrapper mx-auto" style="min-height:100vh;overflow-y:auto;">
+    <div class="container-fluid d-flex align-items-center justify-content-center" style="min-height:100vh;">
+        <div class="row w-100 justify-content-center align-items-center">
+            <div class="col-12 col-sm-6 login-section-wrapper mx-auto">
                 <div class="brand-wrapper">
                     <img src="{{ asset('img/logo3.png') }}" alt="logo" class="logo" />
                 </div>
-                <div class="login-wrapper my-auto">
+                <div class="login-wrapper my-auto animate-fadein">
                     <h1 class="login-title">Register Your Account</h1>
                     @if(session('success'))
                         <div class="alert alert-success">
@@ -169,11 +169,20 @@
                 </div>
             </div>
             <div class="col-sm-6 px-0 d-none d-sm-block" style="background-color: #ffffff;display:flex;align-items:center;justify-content:center;">
-                <img src="{{ asset('img/shaka_utama.png') }}" alt="login image" class="login-img" style="max-height:100vh;object-fit:contain;width:100%;" />
+                <img src="{{ asset('img/shaka_utama.png') }}" alt="login image" class="login-img" style="max-height:100vh;object-fit:contain;width:100%;filter:blur(0.5px);opacity:0.96;" />
             </div>
         </div>
     </div>
 </main>
+<style>
+.animate-fadein {
+    animation: fadein 1s;
+}
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
 <script src="{{ asset('js/admin_dashboard.js') }}"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>

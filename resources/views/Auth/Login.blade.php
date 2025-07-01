@@ -34,13 +34,13 @@
 </head>
 <body>
 <main>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12 col-sm-6 login-section-wrapper mx-auto" style="min-height:100vh;overflow-y:auto;">
+    <div class="container-fluid d-flex align-items-center justify-content-center" style="min-height:100vh;">
+        <div class="row w-100 justify-content-center align-items-center">
+            <div class="col-12 col-sm-6 login-section-wrapper mx-auto">
                 <div class="brand-wrapper">
                     <img src="{{ asset('img/logo3.png') }}" alt="logo" class="logo" />
                 </div>
-                <div class="login-wrapper my-auto">
+                <div class="login-wrapper my-auto animate-fadein">
                     <h1 class="login-title">Log in Your Account</h1>
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
@@ -114,18 +114,23 @@
                         Don't have an account?
                         <a href="{{ route('register') }}" style="color: #121257; text-decoration: none;"><i class="mdi mdi-account-plus"></i> Register here</a>
                     </p>
-                    <!-- <div class="separator"></div>
-                    <button onclick="window.location='{{ route('login.google') }}'" class="btn google btn-danger btn-lg btn-block mt-3">
-                        <i class="mdi mdi-google mr-2"></i> Log In with Google
-                    </button> -->
                 </div>
             </div>
             <div class="col-sm-6 px-0 d-none d-sm-block" style="background-color: #ffffff;display:flex;align-items:center;justify-content:center;">
-                <img src="{{ asset('img/shaka_utama.png') }}" alt="login image" class="login-img" style="max-height:100vh;object-fit:contain;width:100%;" />
+                <img src="{{ asset('img/shaka_utama.png') }}" alt="login image" class="login-img" style="max-height:100vh;object-fit:contain;width:100%;filter:blur(0.5px);opacity:0.96;" />
             </div>
         </div>
     </div>
 </main>
+<style>
+.animate-fadein {
+    animation: fadein 1s;
+}
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
 <script src="{{ asset('js/admin_dashboard.js') }}"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
