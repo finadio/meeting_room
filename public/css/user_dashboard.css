@@ -1,5 +1,5 @@
 /* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 /* Reset and Base Styles */
 * {
@@ -9,7 +9,7 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #F8FAFC;
     line-height: 1.6;
     color: #1E293B;
@@ -34,82 +34,135 @@ body {
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* Navbar Styles */
+/* Override Bootstrap navbar classes */
+.navbar.navbar-light.bg-light {
+    background-color: #23395d !important; /* biru navy soft */
+    box-shadow: 0 2px 10px rgba(35, 57, 93, 0.08) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 0.5rem 1rem !important; /* kurangi padding */
+    min-height: 60px !important; /* set tinggi minimum */
+}
+
+.navbar.navbar-light .navbar-brand {
+    color: #ffffff !important; /* putih untuk kontras dengan background biru */
+    font-weight: 700 !important;
+    font-size: 1.1rem !important; /* kurangi ukuran font */
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    padding: 0.25rem 0 !important; /* kurangi padding */
+}
+
+.navbar.navbar-light .navbar-brand:hover {
+    color: #F59E0B !important; /* orange saat hover */
+}
+
+.navbar.navbar-light .navbar-nav .nav-link {
+    color: #ffffff !important; /* putih untuk kontras dengan background biru */
+    font-weight: 500 !important;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    padding: 0.5rem 0.75rem !important; /* kurangi padding */
+    font-size: 0.9rem !important; /* kurangi ukuran font */
+}
+
+.navbar.navbar-light .navbar-nav .nav-link:hover {
+    color: #F59E0B !important; /* orange saat hover */
+}
+
+.navbar.navbar-light .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    padding: 0.25rem 0.5rem !important; /* kurangi padding */
+}
+
+.navbar.navbar-light .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Navbar Styles - dengan selector yang lebih spesifik */
 .navbar {
-    background-color: var(--background-white);
-    box-shadow: var(--shadow-sm);
-    border-bottom: 1px solid var(--border-color);
-    padding: 1rem 0;
+    background-color: #23395d !important; /* biru navy soft */
+    box-shadow: 0 2px 10px rgba(35, 57, 93, 0.08) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 0.5rem 1rem !important; /* kurangi padding */
+    min-height: 60px !important; /* set tinggi minimum */
 }
 
 .navbar-brand {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: var(--primary-color);
-    font-weight: 700;
-    font-size: 1.25rem;
-    transition: all 0.3s ease;
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+    color: #ffffff !important; /* putih untuk kontras dengan background biru */
+    font-weight: 700 !important;
+    font-size: 1.1rem !important; /* kurangi ukuran font */
+    transition: all 0.3s ease !important;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    padding: 0.25rem 0 !important; /* kurangi padding */
 }
 
 .navbar-brand img {
-    width: 32px;
-    height: auto;
-    margin-right: 12px;
-    border-radius: 6px;
+    width: 28px !important; /* kurangi ukuran logo */
+    height: auto !important;
+    margin-right: 8px !important; /* kurangi margin */
+    border-radius: 6px !important;
 }
 
 .navbar-brand:hover {
-    color: var(--primary-dark);
-    transform: translateY(-1px);
+    color: #F59E0B !important; /* orange saat hover */
+    transform: translateY(-1px) !important;
 }
 
-.nav-link {
-    color: var(--text-primary);
-    font-weight: 500;
-    transition: all 0.3s ease;
-    position: relative;
-    padding: 0.5rem 1rem;
+.navbar-nav .nav-link {
+    color: #ffffff !important; /* putih untuk kontras dengan background biru */
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    padding: 0.5rem 0.75rem !important; /* kurangi padding */
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 0.9rem !important; /* kurangi ukuran font */
 }
 
-.nav-link:hover {
-    color: var(--primary-color);
+.navbar-nav .nav-link:hover {
+    color: #F59E0B !important; /* orange saat hover */
 }
 
-.nav-link::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    left: 50%;
-    background-color: var(--primary-color);
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
+.navbar-nav .nav-link::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 0 !important;
+    height: 2px !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    background-color: #F59E0B !important; /* orange untuk underline */
+    transition: all 0.3s ease !important;
+    transform: translateX(-50%) !important;
 }
 
-.nav-link:hover::after {
-    width: 80%;
+.navbar-nav .nav-link:hover::after {
+    width: 80% !important;
+}
+
+/* Tambahkan margin top untuk main content agar tidak tertutup navbar */
+main {
+    margin-top: 70px !important; /* sesuaikan dengan tinggi navbar */
 }
 
 .dropdown-menu {
-    border: none;
-    box-shadow: var(--shadow-lg);
-    border-radius: 12px;
-    background: var(--background-white);
-    padding: 0.5rem 0;
+    background: #fff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 15px -3px rgba(35, 57, 93, 0.08) !important;
+    padding: 0.5rem 0 !important;
 }
 
 .dropdown-item {
-    color: var(--text-primary);
-    font-weight: 500;
-    padding: 0.75rem 1.5rem;
-    transition: all 0.3s ease;
+    color: #23395d !important; /* biru navy untuk text di dropdown */
+    font-weight: 500 !important;
+    padding: 0.5rem 1rem !important; /* kurangi padding */
+    transition: all 0.3s ease !important;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 0.85rem !important; /* kurangi ukuran font */
 }
 
 .dropdown-item:hover {
-    background-color: var(--background-light);
-    color: var(--primary-color);
+    background-color: #F8FAFC !important;
+    color: #F59E0B !important; /* orange saat hover */
 }
 
 /* Hero Section */
@@ -461,4 +514,9 @@ body {
     .facility-content {
         padding: 1.25rem;
     }
+}
+
+/* Pastikan semua heading dan button juga pakai Poppins */
+h1, h2, h3, h4, h5, h6, .btn, .hero-title, .section-title {
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

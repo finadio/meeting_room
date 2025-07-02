@@ -169,4 +169,9 @@
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/user_dashboard.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, .btn, .hero-title, .section-title {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
+    </style>
 @endsection
