@@ -1,6 +1,7 @@
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
+    line-height: 1.6;
 }
 
 .navbar {
@@ -68,47 +69,101 @@ body {
     border-top: 1px solid #dee2e6;
 }
 
+/* Hero Section */
+.container-fluid {
+    padding: 0;
+}
+
+.container-fluid .row {
+    margin: 0;
+}
+
+.container-fluid .col-md-12 {
+    padding: 0;
+}
+
+/* How it works section */
+.container {
+    padding: 2rem 1rem;
+}
+
+.container h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 3rem;
+}
+
 .main-card {
-    transition: background-color 0.3s, transform 0.3s;
+    transition: all 0.3s ease;
     border: 1px solid rgba(0,0,0,.125);
-    border-radius: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    background: #fff;
+    overflow: hidden;
 }
 
 .main-card:hover {
     background-color: #f8f9fa;
-    transform: scale(1.05);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.How-it-card {
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
 }
 
 .How-it-card:hover {
     background-color: #f8f9fa;
 }
 
+.How-it-card h5 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.How-it-card p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
 .icon {
-    transition: color 0.3s;
+    transition: all 0.3s ease;
+    color: #FF8C00;
+    margin-bottom: 1.5rem;
 }
 
 .icon:hover {
     color: #FFA500;
+    transform: scale(1.1);
 }
 
 .btn-custom {
     background-color: #ffffff;
-    border: 1px solid black;
-    color: black;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
-    padding: 10px 20px;
+    border: 2px solid #FF8C00;
+    color: #FF8C00;
+    transition: all 0.3s ease;
+    padding: 12px 24px;
     text-decoration: none;
     display: inline-block;
-    border-radius: 39px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 .btn-custom:hover {
     background-color: #FF8C00;
     border-color: #FF8C00;
     color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
     text-decoration: none;
-    animation: pulse 0.5s ease-in-out;
+    transform: translateY(-2px);
 }
 
 @keyframes pulse {
@@ -116,37 +171,121 @@ body {
         transform: scale(1);
     }
     50% {
-        transform: scale(1.1);
+        transform: scale(1.05);
     }
     100% {
         transform: scale(1);
     }
 }
 
+/* Featured Facilities */
 .card {
-    transition: transform 0.3s;
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    transition: all 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.card-body p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
 }
 
 .book-button {
     background-color: #3498db;
     color: #fff;
     border: none;
-    padding: 10px;
+    padding: 10px 16px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
 .book-button:hover {
-    background-color: #1593e7;
-    color: #FF5733;
+    background-color: #2980b9;
+    color: #fff;
     text-decoration: none;
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.btn-bookmark {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #666;
+    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 50%;
+}
+
+.btn-bookmark:hover {
+    background-color: #f8f9fa;
+    color: #FF8C00;
+    transform: scale(1.1);
+}
+
+/* Hero heading */
+.heading {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    display: inline-block;
+    position: relative;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-style: wavy;
+    padding-bottom: 8px;
+    border-radius: 25%;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container h1 {
+        font-size: 2rem;
+    }
+    
+    .heading {
+        font-size: 2rem;
+    }
+    
+    .How-it-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .btn-custom {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
 }

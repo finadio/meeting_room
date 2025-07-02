@@ -1,24 +1,50 @@
 <footer class="footer">
     <div class="container">
         <div class="row">
-            <div class="col-md-6 col-sm-12">
+            <!-- Kontak & Sosial Media -->
+            <div class="col-md-6 col-sm-12 mb-4">
                 <div class="footer-nav">
+                    <h5>Hubungi Kami</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{{ route('user.dashboard') }}"><i class='bx bxs-home'></i> Home</a></li>
-                        <li><a href="{{ route('about.show') }}"><i class='bx bxs-info-circle'></i> About</a></li>
-                        <li><a href="{{ route('contact.show') }}"><i class='bx bx-envelope'></i> Contact Us</a></li>
-                        <li><a href="{{ route('user.calendar') }}"><i class='bx bxs-calendar'></i> Calendar</a></li>
-                        <li><a href="{{ route('user.booking.index') }}"><i class='bx bxs-calendar'></i> Booking</a></li>
-                        <!-- <li><a href="{{ route('user.tournaments.index') }}"><i class='bx bx-trophy'></i> Tournaments</a></li> -->
-                        <li><a href="{{ route('user.profile') }}"><i class='bx bx-user'></i> My Profile</a></li>
-                        <!-- <li><a href="{{ route('user.facility_submissions.create') }}"><i class='bx bx-plus'></i> List Your Facility</a></li> -->
-                        <li><a href="{{ route('logout') }}"><i class='bx bx-log-out'></i> Logout</a></li>
+                        <li><i class='bx bxs-phone'></i> 0274-549400</li>
+                        <li><i class='bx bx-envelope'></i> bprmadani@gmail.com</li>
+                        <li><i class='bx bx-globe'></i> www.bprmsa.co.id</li>
+                    </ul>
+                    <h5>Ikuti Kami</h5>
+                    <ul class="list-unstyled d-flex">
+                        <li>
+                            <a href="https://www.instagram.com/bprmsa.official/" target="_blank">
+                                <i class='bx bxl-instagram'></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://web.facebook.com/bprmsa.official?_rdc=1&_rdr" target="_blank">
+                                <i class='bx bxl-facebook'></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.tiktok.com/@bprmsa" target="_blank">
+                                <i class='bx bxl-tiktok'></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
+
+            <!-- Alamat & Google Maps -->
             <div class="col-md-6 col-sm-12">
                 <div class="footer-bottom text-md-right text-sm-center">
-                    <p>&copy; {{ date('Y') }} Booking Meeting Room. All rights reserved.</p>
+                    <h5>Alamat Kantor</h5>
+                    <p>Jalan C. Simanjuntak No. 26<br>Kota Yogyakarta 55223</p>
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3952.802405099179!2d110.3919133!3d-7.8117617!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a5795c524ba5b%3A0xa22172ae761fdf30!2sPT%20BPR%20MSA%20Yogyakarta!5e0!3m2!1sen!2sid!4v1719858441234!5m2!1sen!2sid" 
+                        width="100%" 
+                        height="150" 
+                        style="border:0; border-radius:8px;" 
+                        allowfullscreen 
+                        loading="lazy">
+                    </iframe>
+                    <p class="mt-3">&copy; {{ date('Y') }} PT BPR MSA Yogyakarta. All rights reserved.</p>
                 </div>
             </div>
         </div>
@@ -26,78 +52,91 @@
 </footer>
 
 <style>
-    .footer {
-        background-color: #222;
-        color: #fff;
-        padding: 40px 0;
-        margin-top: 70px;
+    html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+.footer {
+    background-color: #222;
+    color: #fff;
+    padding: 40px 0;
+}
+
+.footer-nav h5 {
+    font-size: 18px;
+    margin: 12px 0;
+    font-weight: bold;
+}
+
+.footer-nav li {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.footer-nav a {
+    color: #fff;
+    font-size: 18px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-nav a:hover {
+    color: #FF5733;
+}
+
+.footer-nav i {
+    margin-right: 8px;
+    font-size: 20px;
+}
+
+.footer-bottom p {
+    color: #ccc;
+    font-size: 15px;
+    margin-top: 10px;
+}
+
+.footer-nav .d-flex {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.footer-nav .d-flex a {
+    font-size: 24px;
+}
+
+.footer::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+@media (max-width: 768px) {
+    .footer-nav .d-flex {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
-    .footer-nav ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
-
-    .footer-nav li {
-        margin: 10px;
-    }
-
-    .footer-nav a {
-        color: #fff;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        transition: color 0.3s ease, background 0.3s ease;
-        font-size: 16px;
-        flex-direction: row;
-    }
-
-    .footer-nav a:hover {
-        color: #FF5733;
-        background: rgba(255, 253, 128, 0.1);
-    }
-
-    .footer-nav a i {
-        margin-right: 5px;
-    }
-
-    .footer-bottom p {
-        margin-bottom: 0;
-        color: #888;
-        font-size: 14px;
+    .footer-bottom {
         text-align: center;
     }
+}
 
-    .footer::after {
-        content: "";
-        display: block;
-        width: 100%;
-        height: 10px;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
-        position: absolute;
-        bottom: 0;
-    }
-
-    @media only screen and (max-width: 768px) {
-        .footer-nav li {
-            margin: 5px;
-        }
-        .footer-nav a {
-            font-size: 14px;
-        }
-    }
-
-    @media only screen and (max-width: 480px) {
-        .footer-nav {
-            flex-direction: column;
-        }
-        .footer-nav li {
-            margin-bottom: 10px;
-        }
-    }
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/boxicons/2.0.7/css/boxicons.min.css">

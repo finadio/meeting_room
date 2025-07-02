@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div style="position: relative; text-align: center;">
-                    <img src="{{ asset('img/background.png') }}" alt="Futsal Image" class="img-fluid mb-4" style="width: 100%; border-radius: 10px;">
+                    <img src="{{ asset('img/background.png') }}" alt="Futsal Image" class="img-fluid mb-4" style="width: 100%; border-radius: 15px;">
 
                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff;">
                         <h2 class="heading">Pilih Ruang Meeting yang tersedia</h2>
@@ -67,7 +67,7 @@
             @forelse($facilities as $facility)
                 @if($counter < 3)
                     <div class="col-md-4 mb-4">
-                        <div class="card border-5 shadow-sm">
+                        <div class="card border-0 shadow-sm">
                             <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
                                 <div class="position-relative">
                                     @if($facility->image_path)
@@ -93,7 +93,7 @@
                                     @auth
                                         <form action="{{ route('user.facility.bookmark', ['facility' => $facility->id]) }}" method="post" class="ml-2">
                                             @csrf
-                                            <button type="submit" class="btn btn-bookmark" style="transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;" onmouseover="this.style.color='#FF5733'" onmouseout="this.style.color=''; this.style.transform='';">
+                                            <button type="submit" class="btn btn-bookmark">
                                                 <i class='bx bx-bookmark'></i>
                                             </button>
                                         </form>
