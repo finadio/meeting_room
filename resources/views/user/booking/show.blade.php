@@ -330,26 +330,21 @@
             background: white;
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, #23395d, #1E40AF);
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem 2rem;
+        .booking-btn, .btn-primary {
+            background: #3B82F6 !important;
+            color: #fff !important;
+            border-radius: 10px;
             font-weight: 600;
-            transition: all 0.3s ease;
-            color: white;
-            box-shadow: 0 2px 4px rgba(35, 57, 93, 0.1);
+            border: none;
+            padding: 0.85rem 2.2rem;
+            font-size: 1.1rem;
+            transition: all 0.18s;
+            box-shadow: 0 2px 8px rgba(30,64,175,0.08);
         }
         
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(35, 57, 93, 0.3);
-            background: linear-gradient(135deg, #1E40AF, #1E3A8A);
-            color: white;
-        }
-        
-        .btn-primary:focus {
-            box-shadow: 0 0 0 3px rgba(35, 57, 93, 0.1);
+        .booking-btn:hover, .btn-primary:hover {
+            background: var(--primary-dark) !important;
+            color: #fff !important;
         }
         
         .bookmark-form-detail {

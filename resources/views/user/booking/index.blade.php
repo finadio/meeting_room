@@ -310,28 +310,19 @@
             margin-top: auto;
         }
         .booking-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: linear-gradient(135deg, #23395d, #1E40AF);
-            color: white;
-            padding: 0.7rem 1.2rem;
-            border-radius: 8px;
-            text-decoration: none;
+            background: var(--primary-color) !important;
+            color: #fff !important;
+            border-radius: 10px;
             font-weight: 600;
-            transition: all 0.3s;
-            width: 100%;
-            justify-content: center;
             border: none;
-            box-shadow: 0 2px 4px rgba(35, 57, 93, 0.08);
-            font-size: 1rem;
+            padding: 0.85rem 2.2rem;
+            font-size: 1.1rem;
+            transition: all 0.18s;
+            box-shadow: 0 2px 8px rgba(30,64,175,0.08);
         }
         .booking-btn:hover {
-            background: linear-gradient(135deg, #1E40AF, #1E3A8A);
-            color: white;
-            text-decoration: none;
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 4px 12px rgba(35, 57, 93, 0.13);
+            background: var(--primary-dark) !important;
+            color: #fff !important;
         }
         @media (max-width: 991.98px) {
             .facility-image {
