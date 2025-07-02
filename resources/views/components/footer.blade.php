@@ -109,8 +109,8 @@
 .footer {
     background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
     color: #F1F5F9;
-    padding: 3rem 0 1rem;
-    margin-top: 4rem;
+    padding: 1.5rem 0 0.5rem;
+    margin-top: 2rem;
 }
 
 .footer-content {
@@ -255,7 +255,7 @@
 /* Footer Bottom */
 .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1.5rem;
+    padding-top: 0.75rem;
 }
 
 .copyright {
@@ -285,7 +285,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .footer {
-        padding: 2rem 0 1rem;
+        padding: 1rem 0 0.5rem;
     }
     
     .footer-section {
