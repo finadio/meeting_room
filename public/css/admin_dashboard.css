@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 * {
     margin: 0;
     padding: 0;
@@ -35,6 +34,7 @@ html {
     overflow-x: hidden;
 }
 body {
+    font-family: 'Poppins', sans-serif; 
     background: var(--grey);
     overflow-x: hidden;
 }
@@ -304,83 +304,80 @@ body {
 }
 
 /* MAIN */
-#content main {
-    width: 100%;
-    padding: 36px 24px;
-    font-family: var(--poppins);
-    max-height: calc(100vh - 56px);
-    overflow-y: auto;
-}
-#content main .head-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    grid-gap: 16px;
-    flex-wrap: wrap;
-}
-#content main .head-title .left h1 {
-    font-size: 36px;
+/* Gaya sebelumnya untuk #content main sudah di pindah ke main.py-4 di Blade */
+/* Tambahan gaya baru untuk dashboard admin */
+
+.dashboard-welcome-title {
+    font-size: 2.2rem; /* Sedikit lebih kecil dari h2 default */
     font-weight: 600;
-    margin-bottom: 10px;
-    color: var(--dark);
-}
-#content main .head-title .left .breadcrumb {
-    display: flex;
-    align-items: center;
-    grid-gap: 16px;
-}
-#content main .head-title .left .breadcrumb li {
-    color: var(--dark);
-}
-#content main .head-title .left .breadcrumb li a {
-    color: var(--dark-grey);
-    pointer-events: none;
-}
-#content main .head-title .left .breadcrumb li a.active {
-    color: var(--blue);
-    pointer-events: unset;
+    color: #333;
 }
 
-#content main .box-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    grid-gap: 24px;
-    margin-top: 36px;
-}
-#content main .box-info li {
-    padding: 24px;
-    background: var(--light);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    grid-gap: 24px;
-}
-#content main .box-info li .bx {
-    width: 80px;
-    height: 80px;
-    border-radius: 10px;
-    font-size: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-#content main .box-info li:nth-child(1) .bx {
-    background: var(--light-blue);
-    color: var(--blue);
-}
-#content main .box-info li:nth-child(2) .bx {
-    background: var(--light-yellow);
-    color: var(--yellow);
-}
-#content main .box-info li:nth-child(3) .bx {
-    background: var(--light-orange);
-    color: var(--orange);
-}
-#content main .box-info li .text h3 {
-    font-size: 24px;
+.section-heading {
+    font-size: 1.6rem;
     font-weight: 600;
-    color: var(--dark);
+    color: #444;
+    border-bottom: 2px solid var(--blue);
+    display: inline-block; /* Agar garis bawah hanya sepanjang teks */
+    padding-bottom: 5px;
+    margin-bottom: 30px; /* Spasi di bawah heading */
 }
-#content main .box-info li .text p {
-    color: var(--dark);
+
+.dashboard-stat-card {
+    display: block; /* Agar link memenuhi kartu */
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.dashboard-stat-card .card {
+    height: 100%; /* Pastikan kartu memiliki tinggi yang sama dalam row */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.dashboard-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+}
+
+/* Gaya untuk grafik dan kalender */
+#userChart {
+    width: 100% !important;
+    max-height: 400px; /* Batasi tinggi grafik */
+}
+
+#calendar {
+    width: 100% !important;
+    max-height: 600px; /* Batasi tinggi kalender */
+}
+
+/* Penyesuaian responsif */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 0; /* Sembunyikan sidebar sepenuhnya di mobile */
+    }
+    #sidebar.hide {
+        width: 0;
+    }
+    #content {
+        width: 100%;
+        left: 0;
+    }
+    #content nav {
+        padding: 0 15px;
+    }
+    #content nav form {
+        max-width: 100%;
+    }
+    .dashboard-welcome-title {
+        font-size: 1.8rem;
+    }
+    .section-heading {
+        font-size: 1.4rem;
+    }
+    .dashboard-stat-card .card-body i {
+        font-size: 2.5rem;
+    }
 }
