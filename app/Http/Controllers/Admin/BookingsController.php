@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; // Pastikan ini ada
 use App\Models\Booking;
 use App\Http\Controllers\SendMessage;
 use Illuminate\Support\Facades\Log;
@@ -14,13 +14,29 @@ use Illuminate\Support\Facades\Auth;
 
 class BookingsController extends Controller
 {
-    public function index()
+    public function index(Request $request) // Tambahkan parameter Request $request
     {
-        // $bookings = Booking::with(['user', 'facility'])->latest()->paginate(5);
-        $bookings = Booking::with(['user', 'facility'])
+        $query = Booking::with(['user', 'facility'])
                         ->orderByDesc('booking_date') // Mengurutkan berdasarkan tanggal
-                        ->orderBy('booking_time') // Mengurutkan berdasarkan waktu
-                        ->paginate(5);
+                        ->orderBy('booking_time'); // Mengurutkan berdasarkan waktu
+
+        // Logika Pencarian
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('user_name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('email', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('contact_number', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('status', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('meeting_title', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('group_name', 'like', '%' . $searchTerm . '%')
+                  ->orWhereHas('facility', function($qF) use ($searchTerm) {
+                      $qF->where('name', 'like', '%' . $searchTerm . '%');
+                  });
+            });
+        }
+
+        $bookings = $query->paginate(10); // Ubah dari 5 ke 10 agar lebih banyak data per halaman
         $unreadNotificationCount = Notification::where('is_read', false)->count();
         return view('admin.bookings.index', compact('bookings', 'unreadNotificationCount'));
     }
