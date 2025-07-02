@@ -63,10 +63,11 @@ class BookingController extends Controller
 
         if (!$user->bookmarkedFacilities->contains($facility)) {
             $user->bookmarkedFacilities()->attach($facility);
-            return back()->with('success', 'Facility bookmarked successfully.');
+
+            return response()->json(['status' => 'success', 'message' => 'Fasilitas berhasil di-bookmark.']);
         }
 
-        return back()->with('warning', 'Facility already bookmarked.');
+        return response()->json(['status' => 'warning', 'message' => 'Fasilitas sudah di-bookmark.'], 200); 
     }
 
     public function bookmarks()
@@ -81,15 +82,17 @@ class BookingController extends Controller
 
         $facility = Facility::find($facilityId);
 
-        // Check if the facility and user exist
         if (!$facility || !$user) {
-            return redirect()->back()->with('error', 'Invalid request.');
+          
+            return response()->json(['status' => 'error', 'message' => 'Permintaan tidak valid.'], 400); 
         }
 
         $user->bookmarkedFacilities()->detach($facility);
 
-        return redirect()->back()->with('success', 'Facility Un-Bookmarked Successfully.');
+     
+        return response()->json(['status' => 'success', 'message' => 'Fasilitas berhasil di-unbookmark.']);
     }
+
 
     public function show($facilityId)
     {
