@@ -27,8 +27,11 @@ class BookingController extends Controller
     {
         $facilities = Facility::all();
         $sortBy = $request->input('sort_by', 'price_lowest');
-
-        return view('user.booking.index', compact('facilities', 'sortBy'));
+        $bookmarkedIds = [];
+        if (auth()->check()) {
+            $bookmarkedIds = auth()->user()->bookmarkedFacilities->pluck('id')->toArray();
+        }
+        return view('user.booking.index', compact('facilities', 'sortBy', 'bookmarkedIds'));
     }
 
     public function search(Request $request)
