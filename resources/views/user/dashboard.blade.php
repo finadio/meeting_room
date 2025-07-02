@@ -1,144 +1,172 @@
 @extends('user.layouts.app')
-@section('title', 'Home')
+@section('title', 'Premium Meeting Rooms - BPR MSA')
 @section('content')
     <!-- Hero Section -->
-    <div class="container-fluid">
+    <div class="container-fluid hero-section">
         <div class="row">
             <div class="col-md-12">
-                <div style="position: relative; text-align: center;">
-                    <img src="{{ asset('img/background.png') }}" alt="Futsal Image" class="img-fluid mb-4" style="width: 100%; border-radius: 15px;">
-
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff;">
-                        <h2 class="heading">Pilih Ruang Meeting yang tersedia</h2>
-                        <a href="{{ route('user.booking.index') }}" class="btn-custom"> <i class='bx bxs-calendar'></i> Booking Now <i class='bx bxs-right-arrow-alt'></i></a>
+                <div class="hero-container">
+                    <img src="{{ asset('img/background.png') }}" alt="Premium Meeting Rooms" class="hero-image">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Ruang Meeting Premium</h1>
+                        <p class="hero-subtitle">Solusi meeting profesional dengan fasilitas terbaik untuk bisnis Anda</p>
+                        <a href="{{ route('user.booking.index') }}" class="hero-cta">
+                            <i class='bx bxs-calendar'></i>
+                            <span>Reservasi Sekarang</span>
+                            <i class='bx bxs-right-arrow-alt'></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- How it works container -->
-    <div class="container mt-5">
-        <h1 class="text-center mb-5">Bagaimana Cara Booking</h1>
-        <div class="row">
-            <!-- Join Us card -->
-            <div class="col-md-4 mb-4">
-                <div class="main-card h-100 text-center">
-                    <div class="How-it-card">
-                        <i class='bx bx-user-plus bx-4x mb-3 icon' style="font-size: 4rem;"></i>
-                        <h5 class="card-title">Join Us</h5>
-                        <p class="card-text">Jika Anda belum bergabung dengan Sobat Mashaka, silahkan Mendaftar Dahulu.</p>
-                        <a href="{{ route('register') }}" class="btn-custom"><i class='bx bx-user-plus'></i> Daftar Sekarang <i class='bx bxs-right-arrow-alt'></i></a>
-                    </div>
-                </div>
+    <!-- How it works section -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Cara Reservasi</h2>
+                <p class="section-subtitle">Proses reservasi yang mudah dan cepat dalam 3 langkah sederhana</p>
             </div>
-
-            <!-- Select Facility card -->
-            <div class="col-md-4 mb-4">
-                <div class="main-card h-100 text-center">
-                    <div class="How-it-card">
-                        <i class='bx bx-map bx-4x mb-3 icon' style="font-size: 4rem;"></i>
-                        <h5 class="card-title">Pilih Ruang Meeting yang tersedia</h5>
-                        <p class="card-text">Pilih ruang meeting favorit Anda dan nikmati semua fssilitas yang tersedia.</p>
-                        <a href="{{ route('user.booking.index') }}" class="btn-custom"><i class='bx bxs-building'></i> Pilih Ruang <i class='bx bxs-right-arrow-alt'></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Booking Process card -->
-            <div class="col-md-4 mb-4">
-                <div class="main-card h-100 text-center">
-                    <div class="How-it-card">
-                        <i class='bx bx-calendar bx-4x mb-3 icon' style="font-size: 4rem;"></i>
-                        <h5 class="card-title">Lakukan Booking</h5>
-                        <p class="card-text">Cara booking yang mudah, Nikmati pengalaman meeting yang berbeda. Let's Booking</p>
-                        <a href="{{ route('user.booking.index') }}" class="btn-custom"><i class='bx bxs-calendar'></i> Booking Now <i class='bx bxs-right-arrow-alt'></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Featured Facilities container -->
-    <div class="container mt-5">
-        <h1 class="text-center mb-5">Ruang meeting yang tersedia</h1>
-        <div class="row">
-            @php $counter = 0 @endphp
-            @forelse($facilities as $facility)
-                @if($counter < 3)
-                    <div class="col-md-4 mb-4">
-                        <div class="card border-0 shadow-sm">
-                            <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
-                                <div class="position-relative">
-                                    @if($facility->image_path)
-                                        <img src="{{ asset('storage/facility_images/' . basename($facility->image_path)) }}" class="card-img-top rounded-4 img-fluid" alt="{{ $facility->name }}">
-                                    @else
-                                        <div class=" text-light text-center ">
-                                            <img src="{{ asset('img/img-1.jpg') }}" class="card-img-top rounded-4 img-fluid" alt="{{ $facility->name }}">
-                                        </div>
-                                    @endif
-                                </div>
+            
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="process-card">
+                        <div class="process-icon">
+                            <i class='bx bx-user-plus'></i>
+                        </div>
+                        <div class="process-content">
+                            <h3>Daftar Akun</h3>
+                            <p>Buat akun profesional Anda untuk akses ke semua fasilitas meeting room premium kami.</p>
+                            <a href="{{ route('register') }}" class="process-link">
+                                Daftar Sekarang
+                                <i class='bx bxs-right-arrow-alt'></i>
                             </a>
+                        </div>
+                    </div>
+                </div>
 
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">{{ $facility->name }}</h5>
-                                <p>Location: {{ $facility->location }}</p>
-                                <!-- <p class="card-text text-muted"> Rs. {{ number_format($facility->price_per_hour) }}</p> -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="process-card">
+                        <div class="process-icon">
+                            <i class='bx bx-building-house'></i>
+                        </div>
+                        <div class="process-content">
+                            <h3>Pilih Ruangan</h3>
+                            <p>Pilih ruang meeting yang sesuai dengan kebutuhan tim dan agenda bisnis Anda.</p>
+                            <a href="{{ route('user.booking.index') }}" class="process-link">
+                                Lihat Ruangan
+                                <i class='bx bxs-right-arrow-alt'></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-                                <div class="mt-3 d-flex align-items-center justify-content-between">
-                                    <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}" class="book-button">
-                                        <i class='bx bx-calendar'></i> Booking Sekarang
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="process-card">
+                        <div class="process-icon">
+                            <i class='bx bx-calendar-check'></i>
+                        </div>
+                        <div class="process-content">
+                            <h3>Konfirmasi Booking</h3>
+                            <p>Konfirmasi reservasi Anda dan nikmati pengalaman meeting yang produktif.</p>
+                            <a href="{{ route('user.booking.index') }}" class="process-link">
+                                Mulai Booking
+                                <i class='bx bxs-right-arrow-alt'></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Facilities section -->
+    <section class="featured-facilities">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Ruang Meeting Premium</h2>
+                <p class="section-subtitle">Fasilitas meeting room terbaik dengan teknologi modern dan kenyamanan maksimal</p>
+            </div>
+            
+            <div class="row">
+                @php $counter = 0 @endphp
+                @forelse($facilities as $facility)
+                    @if($counter < 3)
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="facility-card">
+                                <div class="facility-image">
+                                    <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
+                                        @if($facility->image_path)
+                                            <img src="{{ asset('storage/facility_images/' . basename($facility->image_path)) }}" 
+                                                 alt="{{ $facility->name }}" 
+                                                 loading="lazy">
+                                        @else
+                                            <img src="{{ asset('img/img-1.jpg') }}" 
+                                                 alt="{{ $facility->name }}" 
+                                                 loading="lazy">
+                                        @endif
                                     </a>
-
                                     @auth
-                                        <form action="{{ route('user.facility.bookmark', ['facility' => $facility->id]) }}" method="post" class="ml-2">
+                                        <form action="{{ route('user.facility.bookmark', ['facility' => $facility->id]) }}" 
+                                              method="post" 
+                                              class="bookmark-form">
                                             @csrf
-                                            <button type="submit" class="btn btn-bookmark">
+                                            <button type="submit" class="bookmark-btn" aria-label="Bookmark {{ $facility->name }}">
                                                 <i class='bx bx-bookmark'></i>
                                             </button>
                                         </form>
                                     @endauth
                                 </div>
+                                
+                                <div class="facility-content">
+                                    <h3 class="facility-title">
+                                        <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
+                                            {{ $facility->name }}
+                                        </a>
+                                    </h3>
+                                    <p class="facility-location">
+                                        <i class='bx bx-map-pin'></i>
+                                        {{ $facility->location }}
+                                    </p>
+                                    <div class="facility-actions">
+                                        <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}" 
+                                           class="booking-btn">
+                                            <i class='bx bx-calendar'></i>
+                                            Reservasi
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        @php $counter++ @endphp
+                    @else
+                        @break
+                    @endif
+                @empty
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <i class='bx bx-building-house'></i>
+                            <h3>Tidak ada ruang meeting tersedia</h3>
+                            <p>Mohon cek kembali nanti atau hubungi tim kami untuk informasi lebih lanjut.</p>
+                        </div>
                     </div>
-                    @php $counter++ @endphp
-                @else
-                    @break
-                @endif
-            @empty
-                <div class="col-md-12">
-                    <div class="alert alert-info text-center">
-                        Tidak ada Ruang ruang meeting yang tersedia saat ini.
-                    </div>
-                </div>
-            @endforelse
-        </div>
-        <!-- <div class="row mt-4">
-            <div class="col-md-12 text-center">
-                <a href="{{ route('user.booking.index') }}" class="btn-custom">Tampilkan semua ruang meeting <i class='bx bxs-right-arrow-alt'></i></a>
+                @endforelse
             </div>
-        </div> -->
-    </div>
+            
+            <div class="text-center mt-5">
+                <a href="{{ route('user.booking.index') }}" class="view-all-btn">
+                    Lihat Semua Ruangan
+                    <i class='bx bxs-right-arrow-alt'></i>
+                </a>
+            </div>
+        </div>
+    </section>
 
-
-     <x-footer />
+    <x-footer />
 @endsection
 
 @section('styles')
-    <style>
-        .heading{
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            display: inline-block;
-            position: relative;
-            text-decoration: underline;
-            text-decoration-color: transparent;
-            text-decoration-style: wavy;
-            padding-bottom: 8px;
-            border-radius: 25%;
-        }
-    </style>
     <link rel="stylesheet" href="{{ asset('css/user_dashboard.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
 @endsection
