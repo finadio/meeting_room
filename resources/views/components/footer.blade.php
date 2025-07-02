@@ -1,7 +1,7 @@
 <style>
     .footer {
-        background-color: #002147;
-        color: white;
+        background: var(--primary-color);
+        color: #fff;
         padding-top: 40px;
         font-family: 'Segoe UI', sans-serif;
     }
@@ -75,7 +75,7 @@
     }
 </style>
 
-<footer class="footer">
+<footer class="footer" style="background: var(--primary-color); color: #fff;">
     <div class="container">
         <div class="footer-content">
             <div class="row">
@@ -178,13 +178,12 @@
         </div>
     </div>
 </footer>
-<<<<<<< HEAD
 
 <style>
 /* Footer Styles */
 .footer {
-    background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
-    color: #F1F5F9;
+    background: var(--primary-color);
+    color: #fff;
     padding: 1.5rem 0 0.5rem;
     margin-top: 2rem;
 }
@@ -391,5 +390,3 @@
     }
 }
 </style>
-=======
->>>>>>> 71ac2fb (pdate fpdate footer)

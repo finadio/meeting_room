@@ -20,6 +20,7 @@ body {
 :root {
     --primary-color: #1E40AF;
     --primary-dark: #1E3A8A;
+    --primary-light: #3B82F6;
     --accent-color: #0F766E;
     --text-primary: #1E293B;
     --text-secondary: #64748B;
@@ -229,25 +230,23 @@ main {
 }
 
 .hero-cta {
+    background: #3B82F6 !important;
+    color: #fff !important;
+    border-radius: 10px;
+    font-weight: 600;
+    border: none;
+    padding: 0.85rem 2.2rem;
+    font-size: 1.1rem;
+    transition: all 0.18s;
+    box-shadow: 0 2px 8px rgba(30,64,175,0.08);
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow-lg);
 }
 
 .hero-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-xl);
-    color: white;
-    text-decoration: none;
+    background: var(--primary-dark) !important;
+    color: #fff !important;
 }
 
 /* Section Styles */
@@ -429,8 +428,8 @@ main {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: var(--primary-color);
-    color: white;
+    background: #3B82F6 !important;
+    color: #fff !important;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
     text-decoration: none;
@@ -441,8 +440,8 @@ main {
 }
 
 .booking-btn:hover {
-    background: var(--primary-dark);
-    color: white;
+    background: var(--primary-dark) !important;
+    color: #fff !important;
     text-decoration: none;
     transform: translateY(-1px);
 }
@@ -472,8 +471,8 @@ main {
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    background: var(--background-white);
-    color: var(--primary-color);
+    background: #3B82F6 !important;
+    color: #fff !important;
     border: 2px solid var(--primary-color);
     padding: 1rem 2rem;
     border-radius: 50px;
@@ -483,8 +482,8 @@ main {
 }
 
 .view-all-btn:hover {
-    background: var(--primary-color);
-    color: white;
+    background: var(--primary-dark) !important;
+    color: #fff !important;
     text-decoration: none;
     transform: translateY(-2px);
 }
@@ -712,4 +711,40 @@ p.lead {
 .lead.mission-list li {
     font-size: inherit; 
     font-weight: inherit; 
+}
+
+/* Navbar & Footer */
+.navbar, .navbar.navbar-light.bg-light {
+    background: #23395d !important;
+    color: #fff !important;
+    border: none !important;
+}
+footer {
+    background: #23395d !important;
+    color: #fff !important;
+}
+.btn, .booking-btn, .view-all-btn, .process-link, .facility-card .booking-btn {
+    background: #3B82F6 !important;
+    color: #fff !important;
+    border-radius: 10px;
+    font-weight: 600;
+    border: none;
+    padding: 0.85rem 2.2rem;
+    font-size: 1.1rem;
+    transition: all 0.18s;
+    box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+}
+.btn:hover, .booking-btn:hover, .view-all-btn:hover, .process-link:hover, .facility-card .booking-btn:hover {
+    background: var(--primary-dark) !important;
+    color: #fff !important;
+}
+.btn-secondary, .btn-outline, .btn-white {
+    background: #fff !important;
+    color: var(--primary-color) !important;
+    border: 2px solid var(--primary-color) !important;
+}
+.btn-secondary:hover, .btn-outline:hover, .btn-white:hover {
+    background: var(--primary-light) !important;
+    color: #fff !important;
+    border: 2px solid var(--primary-dark) !important;
 }

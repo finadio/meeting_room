@@ -166,20 +166,20 @@
 @section('styles')
 <style>
     .btn-msa {
-        background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 50px;
+        background: #3B82F6 !important;
+        color: #fff !important;
+        border-radius: 10px;
         font-weight: 600;
+        border: none;
+        padding: 0.85rem 2.2rem;
         font-size: 1.1rem;
-        transition: 0.3s;
+        transition: all 0.18s;
+        box-shadow: 0 2px 8px rgba(30,64,175,0.08);
     }
 
     .btn-msa:hover {
-        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-        color: white;
-        transform: translateY(-2px);
+        background: var(--primary-dark) !important;
+        color: #fff !important;
     }
 
     .contact-card {
