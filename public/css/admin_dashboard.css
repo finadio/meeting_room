@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -14,29 +15,37 @@ li {
 }
 
 :root {
-    --poppins: 'Poppins', sans-serif;
-    --lato: 'Lato', sans-serif;
+    /* Palet Warna Inspirasi TailAdmin */
+    --primary-blue: #4a6dfc; /* Biru utama yang lebih cerah */
+    --accent-blue: #63a4ff; /* Aksen biru untuk hover/highlight */
+    --text-primary: #343a40; /* Teks gelap */
+    --text-secondary: #6c757d; /* Teks abu-abu */
+    --bg-light: #f8fafd; /* Latar belakang halaman sangat terang */
+    --bg-card: #ffffff; /* Latar belakang kartu putih bersih */
+    --border-color: #e9ecef; /* Warna border tipis */
+    --shadow-soft: 0px 4px 15px rgba(0, 0, 0, 0.05); /* Bayangan sangat halus */
+    --shadow-medium: 0px 8px 25px rgba(0, 0, 0, 0.1); /* Bayangan sedang untuk hover */
+    --shadow-strong: 0px 12px 35px rgba(0, 0, 0, 0.15); /* Bayangan kuat */
+    --bg-panel: #FFFFFF; /* Latar belakang panel/kartu, termasuk sidebar */
+    --text-light: #ADB5BD;
 
-    --light: #F9F9F9;
-    --blue: #3C91E6;
-    --light-blue: #CFE8FF;
-    --grey: #eee;
-    --dark-grey: #AAAAAA;
-    --dark: #342E37;
-    --red: #DB504A;
-    --yellow: #FFCE26;
-    --light-yellow: #FFF2C6;
-    --orange: #FD7238;
-    --light-orange: #FFE0D3;
+    /* Warna untuk kartu statistik sesuai referensi (digunakan di CSS, bukan di HTML bg-class) */
+    --color-stat-users: #4a6dfc; /* Biru */
+    --color-stat-bookings: #28a745; /* Hijau */
+    --color-stat-facilities: #17a2b8; /* Teal */
+    --color-stat-warning: #ffc107; /* Kuning (jika ada) */
 }
 
 html {
-    overflow-x: hidden;
+    scroll-behavior: smooth;
 }
+
 body {
-    font-family: 'Poppins', sans-serif; 
-    background: var(--grey);
-    overflow-x: hidden;
+    background-color: var(--bg-light); /* Latar belakang keseluruhan halaman */
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-weight: 400;
 }
 
 /* SIDEBAR */
@@ -46,30 +55,40 @@ body {
     left: 0;
     width: 280px;
     height: 100%;
-    background: var(--light);
+    background: #282f4e; /* Latar belakang sidebar gelap */
     z-index: 2000;
-    font-family: var(--lato);
-    transition: .3s ease;
+    font-family: 'Poppins', sans-serif;
+    transition: width .3s ease, box-shadow 0.3s ease;
     overflow-x: hidden;
     scrollbar-width: none;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15); /* Bayangan di sisi sidebar */
+    
 }
 #sidebar.hide {
-    width: 60px;
+    width: 90px;
 }
 #sidebar .brand {
     font-size: 24px;
     font-weight: 700;
-    height: 56px;
+    height: 60px; /* Pertahankan tinggi atau sesuaikan jika perlu */
     display: flex;
     align-items: center;
-    color: var(--blue);
+    color: var(--bg-card);
+    background: #282f4e;
     position: sticky;
     top: 0;
     left: 0;
-    background: var(--light);
     z-index: 500;
-    padding-bottom: 20px;
-    box-sizing: content-box;
+    padding-top: 15px; 
+    padding-bottom: 0;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-left: 20px;
+}
+
+#sidebar .brand img {
+    width: 40px;
+    margin-right: 10px;
 }
 #sidebar .brand .bx {
     min-width: 60px;
@@ -78,72 +97,84 @@ body {
 }
 #sidebar .side-menu {
     width: 100%;
-    margin-top: 48px;
+    margin-top: 20px;
+    padding-left: 0;
 }
 #sidebar .side-menu li {
     height: 48px;
     background: transparent;
-    margin-left: 6px;
-    border-radius: 48px 0 0 48px;
-    padding: 4px;
+    margin-left: 0;
+    border-radius: 0;
+    padding: 0;
+    transition: background 0.2s ease-in-out;
 }
 #sidebar .side-menu li.active {
-    background: var(--grey);
+    background: var(--primary-blue);
     position: relative;
+    border-radius: 8px;
+    margin: 0 15px;
 }
-#sidebar .side-menu li.active::before {
-    content: '';
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    top: -40px;
-    right: 0;
-    box-shadow: 20px 20px 0 var(--grey);
-    z-index: -1;
-}
+#sidebar .side-menu li.active::before,
 #sidebar .side-menu li.active::after {
-    content: '';
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    bottom: -40px;
-    right: 0;
-    box-shadow: 20px -20px 0 var(--grey);
-    z-index: -1;
+    content: none;
 }
+
 #sidebar .side-menu li a {
     width: 100%;
     height: 100%;
-    background: var(--light);
+    background: transparent;
     display: flex;
     align-items: center;
-    border-radius: 48px;
-    font-size: 16px;
-    color: var(--dark);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #abb2bf;
     white-space: nowrap;
     overflow-x: hidden;
+    font-weight: 400;
+    padding: 0 15px;
+    gap: 15px;
+    transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+}
+#sidebar.hide .side-menu li.active {
+    border-radius: 8px;
 }
 #sidebar .side-menu.top li.active a {
-    color: var(--blue);
+    color: var(--bg-card);
 }
 #sidebar.hide .side-menu li a {
-    width: calc(48px - (4px * 2));
-    transition: width .3s ease;
+    width: 100%;
+    justify-content: center;
+    padding: 0;
 }
 #sidebar .side-menu li a.logout {
-    color: var(--red);
+    color: var(--danger-color);
 }
-#sidebar .side-menu.top li a:hover {
-    color: var(--blue);
+#sidebar .side-menu.top li a:hover:not(.active) {
+    color: var(--accent-blue);
+    background-color: rgba(255,255,255,0.05);
+    border-radius: 8px;
 }
 #sidebar .side-menu li a .bx {
-    min-width: calc(60px  - ((4px + 6px) * 2));
+    min-width: unset;
     display: flex;
     justify-content: center;
+    font-size: 1.4rem;
 }
-/* SIDEBAR */
+#sidebar.hide .side-menu li a .bx {
+    font-size: 1.8rem;
+}
+
+#sidebar .side-menu li a .text {
+    white-space: nowrap; /* Mencegah teks melipat baris */
+    transition: opacity 0.2s ease, width 0.2s ease; /* Sedikit percepat transisi */
+    opacity: 1;
+    width: auto;
+}
+#sidebar.hide .side-menu li a .text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
 
 /* CONTENT */
 #content {
@@ -153,47 +184,43 @@ body {
     transition: .3s ease;
 }
 #sidebar.hide ~ #content {
-    width: calc(100% - 60px);
-    left: 60px;
+    width: calc(100% - 80px);
+    left: 80px;
 }
 
 /* NAVBAR */
 #content nav {
-    height: 56px;
-    background: var(--light);
+    height: 60px;
+    background: var(--bg-card);
     padding: 0 24px;
     display: flex;
     align-items: center;
-    grid-gap: 24px;
-    font-family: var(--lato);
+    gap: 24px;
+    font-family: 'Poppins', sans-serif;
     position: sticky;
     top: 0;
     left: 0;
     z-index: 1000;
+    box-shadow: var(--shadow-soft);
+    border-bottom: 1px solid var(--border-color);
 }
 #content nav::before {
-    content: '';
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    bottom: -40px;
-    left: 0;
-    border-radius: 50%;
-    box-shadow: -20px -20px 0 var(--light);
+    content: none;
 }
 #content nav a {
-    color: var(--dark);
+    color: var(--text-primary);
 }
 #content nav .bx.bx-menu {
     cursor: pointer;
-    color: var(--dark);
+    color: var(--text-secondary);
+    font-size: 1.5rem;
 }
 #content nav .nav-link {
-    font-size: 16px;
-    transition: .3s ease;
+    font-size: 1rem;
+    font-weight: 500;
 }
 #content nav .nav-link:hover {
-    color: var(--blue);
+    color: var(--primary-blue);
 }
 #content nav form {
     max-width: 400px;
@@ -203,58 +230,65 @@ body {
 #content nav form .form-input {
     display: flex;
     align-items: center;
-    height: 36px;
+    height: 40px;
 }
 #content nav form .form-input input {
     flex-grow: 1;
     padding: 0 16px;
     height: 100%;
-    border: none;
-    background: var(--grey);
-    border-radius: 36px 0 0 36px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-light);
+    border-radius: 8px 0 0 8px;
     outline: none;
     width: 100%;
-    color: var(--dark);
+    color: var(--text-primary);
 }
 #content nav form .form-input button {
-    width: 36px;
+    width: 40px;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--blue);
-    color: var(--light);
-    font-size: 18px;
+    background: var(--primary-blue);
+    color: var(--bg-card);
+    font-size: 1.2rem;
     border: none;
     outline: none;
-    border-radius: 0 36px 36px 0;
+    border-radius: 0 8px 8px 0;
     cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
 }
+#content nav form .form-input button:hover {
+    background-color: var(--accent-blue);
+}
+
 #content nav .notification {
-    font-size: 20px;
+    font-size: 1.5rem;
     position: relative;
+    color: var(--text-secondary);
 }
 #content nav .notification .num {
     position: absolute;
-    top: -6px;
-    right: -6px;
-    width: 20px;
-    height: 20px;
+    top: -5px;
+    right: -5px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    border: 2px solid var(--light);
-    background: var(--red);
-    color: var(--light);
+    border: 2px solid var(--bg-panel);
+    background: var(--danger-color);
+    color: var(--bg-card);
     font-weight: 700;
-    font-size: 12px;
+    font-size: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 #content nav .profile img {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     object-fit: cover;
     border-radius: 50%;
+    border: 2px solid var(--primary-blue);
 }
 .dropdown {
     position: relative;
@@ -269,94 +303,280 @@ body {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-medium);
+    border-radius: 8px;
     overflow: hidden;
     z-index: 1;
-    width: 160px;
+    width: 180px;
     right: 0;
     text-decoration: none;
 }
 .dropdown-content a {
-    color: #333;
-    padding: 12px;
-    display: block;
+    color: var(--text-dark);
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-weight: 500;
 }
 .dropdown-content a:hover {
-    background-color: #f0f0f0;
+    background-color: var(--bg-light);
+    color: var(--primary-blue);
 }
-.dropdown:hover .dropdown-content,
-.dropdown:focus-within .dropdown-content {
-    display: block;
-}
-.dropdown-content::before {
-    content: "";
-    position: absolute;
-    top: -8px;
-    right: 50%;
-    margin-right: -8px;
-    border-width: 8px;
-    border-style: solid;
-    border-color: transparent transparent #fff transparent;
+.dropdown-content a .bx {
+    font-size: 1.1rem;
 }
 
-/* MAIN */
-/* Gaya sebelumnya untuk #content main sudah di pindah ke main.py-4 di Blade */
-/* Tambahan gaya baru untuk dashboard admin */
+/* --- Gaya untuk Dashboard Admin yang Elegan --- */
+
+.dashboard-content {
+    padding: 30px 100px;
+    background-color: var(--bg-light);
+    min-height: calc(100vh - 60px);
+}
 
 .dashboard-welcome-title {
-    font-size: 2.2rem; /* Sedikit lebih kecil dari h2 default */
+    font-size: 2.2rem;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
+    margin-bottom: 30px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .section-heading {
-    font-size: 1.6rem;
+    font-size: 1.4rem; /* Ukuran lebih kecil dari sebelumnya */
     font-weight: 600;
-    color: #444;
-    border-bottom: 2px solid var(--blue);
-    display: inline-block; /* Agar garis bawah hanya sepanjang teks */
-    padding-bottom: 5px;
-    margin-bottom: 30px; /* Spasi di bawah heading */
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color); /* Garis bawah lebih tipis dan sesuai border color */
+    display: inline-block;
+    padding-bottom: 8px;
+    margin-bottom: 40px;
+    animation: fadeInRight 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.section-heading-in-column {
+    font-size: 1.2rem; /* Ukuran lebih kecil untuk heading di dalam kolom */
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 25px; /* Spasi bawah yang sesuai */
+    border-bottom: 2px solid var(--border-color); /* Garis bawah tipis */
+    display: inline-block;
+    padding-bottom: 5px; /* Padding di bawah teks heading */
+    width: 100%; /* Agar garis bawah memenuhi lebar kolom */
+    text-align: left; /* Teks heading rata kiri */
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.alert-info, .alert-success {
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    border: none;
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.alert-info { background-color: #E6F0FF; }
+.alert-success { background-color: #E8F5E9; }
+
+
+.dashboard-stats-row .col-lg-3 {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.dashboard-stats-row .col-lg-3:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-stats-row .col-lg-3:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-stats-row .col-lg-3:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-stats-row .col-lg-3:nth-child(4) { animation-delay: 0.4s; }
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .dashboard-stat-card {
-    display: block; /* Agar link memenuhi kartu */
+    display: block;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.dashboard-stat-card .card {
-    height: 100%; /* Pastikan kartu memiliki tinggi yang sama dalam row */
+.dashboard-card-item {
+    border: 1px solid var(--border-color); /* Border tipis di kartu */
+    border-radius: 8px !important;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03); /* Bayangan sangat halus */
+    background: var(--bg-card);
+    position: relative;
+    z-index: 1;
+    min-height: 120px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Gaya untuk jenis kartu berdasarkan class kustom (card-type-*) */
+.dashboard-card-item.card-type-users .dashboard-card-header h5.card-title { color: var(--color-stat-users); }
+.dashboard-card-item.card-type-bookings .dashboard-card-header h5.card-title { color: var(--color-stat-bookings); }
+.dashboard-card-item.card-type-facilities .dashboard-card-header h5.card-title { color: var(--color-stat-facilities); }
+.dashboard-card-item.card-type-warning .dashboard-card-header h5.card-title { color: var(--color-stat-warning); }
+
+
+.dashboard-stat-card .card-body {
+    padding: 20px 25px;
     display: flex;
     flex-direction: column;
+    align-items: flex-start; /* Konten rata kiri */
     justify-content: center;
+    position: relative;
 }
 
-.dashboard-stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+/* Icon dalam kartu statistik */
+.dashboard-card-icon {
+    font-size: 2.8rem !important; /* Ukuran ikon */
+    color: var(--text-light); /* Warna ikon ringan */
+    position: absolute;
+    top: 20px; /* Posisi kanan atas */
+    right: 20px;
+    opacity: 1; /* Ikon selalu terlihat */
+    transition: color 0.3s ease-in-out;
 }
+/* Warna ikon spesifik berdasarkan jenis kartu (sesuai TailAdmin) */
+.dashboard-card-item.card-type-users .dashboard-card-icon { color: var(--color-stat-users); opacity: 0.2; }
+.dashboard-card-item.card-type-bookings .dashboard-card-icon { color: var(--color-stat-bookings); opacity: 0.2; }
+.dashboard-card-item.card-type-facilities .dashboard-card-icon { color: var(--color-stat-facilities); opacity: 0.2; }
+.dashboard-card-item.card-type-warning .dashboard-card-icon { color: var(--color-stat-warning); opacity: 0.2; }
+
+
+.dashboard-stat-card h5.card-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    position: relative;
+    z-index: 1;
+}
+
+.dashboard-stat-card p.card-text {
+    font-size: 1.8rem; /* Angka lebih besar */
+    font-weight: 700; /* Lebih tebal */
+    color: var(--text-primary);
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+}
+
+/* Warna teks angka spesifik berdasarkan jenis kartu */
+.dashboard-card-item.card-type-users p.card-text { color: var(--color-stat-users); }
+.dashboard-card-item.card-type-bookings p.card-text { color: var(--color-stat-bookings); }
+.dashboard-card-item.card-type-facilities p.card-text { color: var(--color-stat-facilities); }
+.dashboard-card-item.card-type-warning p.card-text { color: var(--color-stat-warning); }
+
+
+.dashboard-stat-card:hover .dashboard-card-item {
+    transform: translateY(-3px); /* Sedikit naik saat hover */
+    box-shadow: 0 8px 20px rgba(0,0,0,.1); /* Bayangan lebih kuat saat hover */
+}
+.dashboard-stat-card:hover .dashboard-card-icon {
+    opacity: 0.3; /* Ikon sedikit lebih terlihat saat hover */
+}
+
 
 /* Gaya untuk grafik dan kalender */
+.dashboard-chart-card, .dashboard-calendar-card {
+    border: 1px solid var(--border-color);
+    border-radius: 8px !important;
+    box-shadow: var(--shadow-soft);
+    background-color: var(--bg-card);
+    padding: 25px !important;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.dashboard-chart-card:hover, .dashboard-calendar-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-medium) !important;
+}
+
 #userChart {
     width: 100% !important;
-    max-height: 400px; /* Batasi tinggi grafik */
+    max-height: 400px;
 }
 
 #calendar {
     width: 100% !important;
-    max-height: 600px; /* Batasi tinggi kalender */
+    max-height: 600px;
 }
 
-/* Penyesuaian responsif */
+/* Gaya untuk FullCalendar events */
+.fc-event {
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 0.85em;
+    border: none;
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: white;
+    font-weight: 500;
+}
+
+.fc-dayGridMonth-button, .fc-timeGridWeek-button, .fc-timeGridDay-button, .fc-prev-button, .fc-next-button, .fc-today-button {
+    background-color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+    color: white !important;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+    transition: background-color 0s ease-in-out;
+    font-weight: 500;
+}
+
+.fc-dayGridMonth-button:hover, .fc-timeGridWeek-button:hover, .fc-timeGridDay-button:hover, .fc-prev-button:hover, .fc-next-button:hover, .fc-today-button:hover {
+    background-color: var(--accent-blue) !important;
+    border-color: var(--accent-blue) !important;
+}
+
+/* Gaya untuk judul kalender */
+.fc-toolbar-title {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
+/* Responsifitas umum */
 @media (max-width: 768px) {
     #sidebar {
-        width: 0; /* Sembunyikan sidebar sepenuhnya di mobile */
+        width: 0;
     }
     #sidebar.hide {
         width: 0;
@@ -372,12 +592,24 @@ body {
         max-width: 100%;
     }
     .dashboard-welcome-title {
-        font-size: 1.8rem;
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 25px;
     }
-    .section-heading {
-        font-size: 1.4rem;
+    
+    .dashboard-card-icon {
+        font-size: 2.5rem !important;
     }
-    .dashboard-stat-card .card-body i {
-        font-size: 2.5rem;
+    .dashboard-stat-card h5.card-title {
+        font-size: 1.2rem;
+    }
+    .dashboard-stat-card p.card-text {
+        font-size: 1rem;
+    }
+    .dashboard-content {
+        padding: 20px;
+    }
+    .dashboard-chart-card, .dashboard-calendar-card {
+        padding: 25px !important;
     }
 }
