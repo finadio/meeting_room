@@ -89,7 +89,7 @@
                 <p class="section-subtitle">Fasilitas meeting room terbaik dengan teknologi modern dan kenyamanan maksimal</p>
             </div>
             
-            <div class="row">
+            <div class="row justify-content-center">
                 @php $counter = 0 @endphp
                 @forelse($facilities as $facility)
                     @if($counter < 3)
@@ -98,13 +98,13 @@
                                 <div class="facility-image">
                                     <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
                                         @if($facility->image_path)
-                                            <img src="{{ asset('storage/facility_images/' . basename($facility->image_path)) }}" 
-                                                 alt="{{ $facility->name }}" 
-                                                 loading="lazy">
+                                            <img src="{{ asset($facility->image_path) }}" 
+                                                alt="{{ $facility->name }}" 
+                                                loading="lazy">
                                         @else
                                             <img src="{{ asset('img/img-1.jpg') }}" 
-                                                 alt="{{ $facility->name }}" 
-                                                 loading="lazy">
+                                                alt="{{ $facility->name }}" 
+                                                loading="lazy">
                                         @endif
                                     </a>
                                     @auth
