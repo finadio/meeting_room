@@ -36,12 +36,57 @@
                                 Daftar Booking
                             </h5>
                         </div>
+                        
+                        <!-- Search and Filter Section -->
+                        <div class="search-filter-section p-3 border-bottom">
+                            <div class="search-box mb-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-white border-right-0">
+                                            <i class='bx bx-search text-muted'></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" 
+                                           class="form-control border-left-0" 
+                                           id="bookingSearch" 
+                                           placeholder="Cari ruangan atau tanggal...">
+                                </div>
+                            </div>
+                            
+                            <div class="filter-section">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <select class="form-control form-control-sm" id="facilityFilter">
+                                            <option value="">Semua Ruangan</option>
+                                            @php
+                                                $facilities = collect($bookedDates)->pluck('facilityName')->unique()->sort();
+                                            @endphp
+                                            @foreach($facilities as $facility)
+                                                <option value="{{ $facility }}">{{ $facility }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <select class="form-control form-control-sm" id="dateFilter">
+                                            <option value="">Semua Tanggal</option>
+                                            <option value="today">Hari Ini</option>
+                                            <option value="week">Minggu Ini</option>
+                                            <option value="month">Bulan Ini</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="card-body p-0">
                             @if(count($bookedDates) > 0)
-                                <div class="booking-list">
+                                <div class="booking-list" id="bookingList">
                                     @php $counter = 1 @endphp
                                     @foreach($bookedDates as $booking)
-                                        <div class="booking-item">
+                                        <div class="booking-item" 
+                                             data-facility="{{ $booking['facilityName'] }}"
+                                             data-date="{{ $booking['bookingDate'] }}"
+                                             data-time="{{ $booking['bookingTime'] }}">
                                             <div class="booking-header">
                                                 <span class="booking-number">{{ $counter++ }}</span>
                                                 <h6 class="booking-facility">{{ $booking['facilityName'] }}</h6>
@@ -58,6 +103,12 @@
                                             </div>
                                         </div>
                                     @endforeach
+                                </div>
+                                
+                                <!-- No Results Message -->
+                                <div class="no-results text-center py-4" id="noResults" style="display: none;">
+                                    <i class='bx bx-search-alt'></i>
+                                    <p class="text-muted mt-2">Tidak ada booking yang ditemukan</p>
                                 </div>
                             @else
                                 <div class="empty-booking text-center py-4">
@@ -109,6 +160,69 @@
                 }
             });
             calendar.render();
+
+            // Search & Filter Logic
+            const bookingSearch = document.getElementById('bookingSearch');
+            const facilityFilter = document.getElementById('facilityFilter');
+            const dateFilter = document.getElementById('dateFilter');
+            const bookingList = document.getElementById('bookingList');
+            const noResults = document.getElementById('noResults');
+
+            function filterBookings() {
+                const search = bookingSearch.value.toLowerCase();
+                const facility = facilityFilter.value;
+                const dateType = dateFilter.value;
+                let found = 0;
+                const today = new Date();
+                const startOfWeek = new Date(today);
+                startOfWeek.setDate(today.getDate() - today.getDay());
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(startOfWeek.getDate() + 6);
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+                Array.from(bookingList.getElementsByClassName('booking-item')).forEach(function(item) {
+                    const facilityName = item.getAttribute('data-facility').toLowerCase();
+                    const bookingDate = item.getAttribute('data-date');
+                    const bookingTime = item.getAttribute('data-time');
+                    let show = true;
+
+                    // Search
+                    if (search && !(facilityName.includes(search) || bookingDate.includes(search) || bookingTime.includes(search))) {
+                        show = false;
+                    }
+                    // Facility filter
+                    if (facility && facility !== item.getAttribute('data-facility')) {
+                        show = false;
+                    }
+                    // Date filter
+                    if (dateType) {
+                        const dateObj = new Date(bookingDate);
+                        if (dateType === 'today') {
+                            if (dateObj.toDateString() !== today.toDateString()) show = false;
+                        } else if (dateType === 'week') {
+                            if (dateObj < startOfWeek || dateObj > endOfWeek) show = false;
+                        } else if (dateType === 'month') {
+                            if (dateObj < startOfMonth || dateObj > endOfMonth) show = false;
+                        }
+                    }
+                    if (show) {
+                        item.style.display = '';
+                        found++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                if (found === 0) {
+                    noResults.style.display = '';
+                } else {
+                    noResults.style.display = 'none';
+                }
+            }
+
+            bookingSearch.addEventListener('input', filterBookings);
+            facilityFilter.addEventListener('change', filterBookings);
+            dateFilter.addEventListener('change', filterBookings);
         });
     </script>
 @endsection
@@ -222,6 +336,47 @@
             font-weight: 500;
         }
 
+        /* Search and Filter Section */
+        .search-filter-section {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .search-box .input-group-text {
+            border: 1px solid #d1d5db;
+            border-right: none;
+        }
+
+        .search-box .form-control {
+            border: 1px solid #d1d5db;
+            border-left: none;
+            font-size: 0.9rem;
+        }
+
+        .search-box .form-control:focus {
+            box-shadow: none;
+            border-color: #1E40AF;
+        }
+
+        .filter-section .form-control {
+            font-size: 0.85rem;
+            border: 1px solid #d1d5db;
+        }
+
+        .filter-section .form-control:focus {
+            box-shadow: none;
+            border-color: #1E40AF;
+        }
+
+        .no-results {
+            color: #94A3B8;
+        }
+
+        .no-results i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
         /* Booking List */
         .booking-list-container {
             height: fit-content;
@@ -262,6 +417,10 @@
 
         .booking-item:hover {
             background: #f8fafc;
+        }
+        .booking-item:hover .booking-facility,
+        .booking-item:hover .booking-details p {
+            color: #1E293B !important;
         }
 
         .booking-header {
@@ -370,5 +529,124 @@
                 font-size: 0.9rem;
             }
         }
+
+        /* List view event biru, dot biru, tanpa efek hover */
+        .fc-list-event {
+            background: #1E40AF !important;
+            color: #fff !important;
+            border-radius: 20px !important;
+            border: none !important;
+        }
+        .fc-list-event-dot {
+            background: #3B82F6 !important;
+        }
+        .fc-list-event:hover {
+            background: #1E40AF !important;
+        }
     </style>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing calendar code ...
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 'auto',
+        aspectRatio: 1.35,
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,listWeek'
+        },
+        buttonText: {
+            today: 'Hari Ini',
+            month: 'Bulan',
+            week: 'Minggu',
+            list: 'Daftar'
+        },
+        locale: 'id',
+        events: @json($bookedDates),
+        eventDisplay: 'block',
+        eventColor: '#1E40AF',
+        eventTextColor: '#ffffff',
+        eventRender: function(info) {
+            if (info.event.extendedProps.status === 'booked') {
+                info.el.classList.add('booking-event');
+            }
+        },
+        dayMaxEvents: true,
+        moreLinkClick: 'popover',
+        eventClick: function(info) {
+            // Handle event click
+            console.log('Event clicked:', info.event.title);
+        }
+    });
+    calendar.render();
+
+    // Search & Filter Logic
+    const bookingSearch = document.getElementById('bookingSearch');
+    const facilityFilter = document.getElementById('facilityFilter');
+    const dateFilter = document.getElementById('dateFilter');
+    const bookingList = document.getElementById('bookingList');
+    const noResults = document.getElementById('noResults');
+
+    function filterBookings() {
+        const search = bookingSearch.value.toLowerCase();
+        const facility = facilityFilter.value;
+        const dateType = dateFilter.value;
+        let found = 0;
+        const today = new Date();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        Array.from(bookingList.getElementsByClassName('booking-item')).forEach(function(item) {
+            const facilityName = item.getAttribute('data-facility').toLowerCase();
+            const bookingDate = item.getAttribute('data-date');
+            const bookingTime = item.getAttribute('data-time');
+            let show = true;
+
+            // Search
+            if (search && !(facilityName.includes(search) || bookingDate.includes(search) || bookingTime.includes(search))) {
+                show = false;
+            }
+            // Facility filter
+            if (facility && facility !== item.getAttribute('data-facility')) {
+                show = false;
+            }
+            // Date filter
+            if (dateType) {
+                const dateObj = new Date(bookingDate);
+                if (dateType === 'today') {
+                    if (dateObj.toDateString() !== today.toDateString()) show = false;
+                } else if (dateType === 'week') {
+                    if (dateObj < startOfWeek || dateObj > endOfWeek) show = false;
+                } else if (dateType === 'month') {
+                    if (dateObj < startOfMonth || dateObj > endOfMonth) show = false;
+                }
+            }
+            if (show) {
+                item.style.display = '';
+                found++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        if (found === 0) {
+            noResults.style.display = '';
+        } else {
+            noResults.style.display = 'none';
+        }
+    }
+
+    bookingSearch.addEventListener('input', filterBookings);
+    facilityFilter.addEventListener('change', filterBookings);
+    dateFilter.addEventListener('change', filterBookings);
+});
+</script>
 @endsection
