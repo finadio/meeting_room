@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}" />
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet"> {{-- Pastikan Bootstrap dimuat --}}
     @yield('styles')
     <style>
         .logout {
@@ -28,56 +29,57 @@
         <span class="text">Booking Meeting Room</span>
     </a>
     <ul class="side-menu top">
-        <li class="active">
+        {{-- Dashboard --}}
+        <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"> {{-- Diperbaiki --}}
             <a style="text-decoration: none;" href="{{ route('admin.dashboard') }}">
                 <i class='bx bxs-dashboard' ></i>
                 <span class="text">Dashboard</span>
             </a>
         </li>
+        {{-- User Management --}}
         @if(auth()->check() && auth()->user()->user_type === 'admin')
-            <li>
+            <li class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}"> {{-- Diperbaiki: user.* akan cocok dengan index, create, show, edit --}}
                 <a style="text-decoration: none;" href="{{ route('admin.users.index') }}">
                     <i class='bx bxs-user'></i>
                     <span class="text">User Management</span>
                 </a>
             </li>
         @endif
-        <li>
+        {{-- Bookings --}}
+        <li class="{{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}"> {{-- Diperbaiki --}}
             <a style="text-decoration: none;" href="{{ route('admin.bookings.index') }}">
                 <i class='bx bxs-calendar'></i>
                 <span class="text">Bookings</span>
             </a>
         </li>
-        <li>
+        {{-- Facilities --}}
+        <li class="{{ request()->routeIs('admin.facilities.*') ? 'active' : '' }}"> {{-- Diperbaiki --}}
             <a style="text-decoration: none;" href="{{ route('admin.facilities.index') }}">
                 <i class='bx bxs-building'></i>
                 <span class="text">Facilities</span>
             </a>
         </li>
-        <!-- <li>
-            <a style="text-decoration: none;" href="{{ route('admin.tournaments.index') }}">
-                <i class='bx bx-trophy'></i>
-                <span class="text">Tournaments</span>
-            </a>
-        </li> -->
+        {{-- Calendar --}}
         @if(auth()->check() && auth()->user()->user_type === 'admin')
-            <li>
+            <li class="{{ request()->routeIs('admin.calendar') ? 'active' : '' }}"> {{-- Diperbaiki --}}
                 <a style="text-decoration: none;" href="{{ route('admin.calendar') }}">
                     <i class='bx bxs-calendar'></i>
                     <span class="text">Calendar</span>
                 </a>
             </li>
         @endif
+        {{-- Notification --}}
         @if(auth()->check() && auth()->user()->user_type === 'admin')
-            <li>
+            <li class="{{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}"> {{-- Diperbaiki --}}
                 <a style="text-decoration: none;" href="{{ route('admin.notifications.index') }}">
                     <i class='bx bxs-bell'></i>
                     <span class="text">Notification</span>
                 </a>
             </li>
         @endif
+        {{-- Contact Us --}}
         @if(auth()->check() && auth()->user()->user_type === 'admin')
-            <li>
+            <li class="{{ request()->routeIs('admin.contact.*') ? 'active' : '' }}"> {{-- Diperbaiki --}}
                 <a style="text-decoration: none;" href="{{ route('admin.contact.index') }}">
                     <i class='bx bx-envelope'></i>
                     <span class="text">Contact Us</span>
@@ -86,7 +88,8 @@
         @endif
     </ul>
     <ul class="side-menu">
-        <li>
+        {{-- Logout --}}
+        <li class="{{ request()->routeIs('logout') ? 'active' : '' }}"> {{-- Diperbaiki --}}
             <a style="text-decoration: none;" href="{{ route('logout') }}" class="logout">
                 <i class='bx bxs-log-out-circle' ></i>
                 <span class="text">Logout</span>
@@ -120,14 +123,15 @@
             </div>
         </div>
     </nav>
+
+    {{-- KONTEN UTAMA HALAMAN --}}
+    <main class="py-4"> {{-- Tambahkan kelas 'py-4' untuk padding vertikal --}}
+        @yield('content')
+    </main>
 </section>
 
-<div class="content">
-    @yield('content')
-</div>
-
 <script src="{{ asset('js/admin_dashboard.js') }}"></script>
-<!-- Area untuk memuat script -->
-    @yield('scripts')
+{{-- Area untuk memuat script --}}
+@yield('scripts')
 </body>
 </html>
