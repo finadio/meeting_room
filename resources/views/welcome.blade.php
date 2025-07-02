@@ -6,149 +6,186 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Meeting Room</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/user_dashboard.css') }}">
     <style>
         body {
-            font-family: 'Karla', sans-serif;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-light);
+            color: var(--text-primary);
             margin: 0;
             padding: 0;
-            background-color: #D5EAF2;
-            color: #121257;
         }
-
-        header {
-            background-color: #121257;
+        .hero-landing {
+            background: linear-gradient(120deg, var(--primary-color) 60%, var(--primary-dark) 100%);
             color: white;
+            padding: 3.5rem 0 2.5rem 0;
             text-align: center;
-            padding: 4em 0;
+            position: relative;
         }
-
-        header img {
-            width: 280px;
+        .hero-landing .hero-logo {
+            width: 90px;
+            margin-bottom: 1.2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            background: white;
+            padding: 8px;
         }
-
-        section {
-            text-align: center;
-            padding: 4em 0;
+        .hero-landing .hero-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.7rem;
+            letter-spacing: -1px;
         }
-
-        h1 {
-            color: #121257;
+        .hero-landing .hero-desc {
+            font-size: 1.05rem;
+            color: #e0e7ef;
+            margin-bottom: 2.2rem;
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
         }
-
-        p {
-            color: #6c757d;
-            font-size: 1.2em;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: #121257;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            font-size: 1.2em;
-            border-radius: 5px;
-            margin-top: 1em;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .btn:hover {
-            background-color: black;
-            color: white;
-        }
-
-
-        .features {
+        .hero-cta-group {
             display: flex;
-            justify-content: space-around;
-            margin-top: 4em;
+            justify-content: center;
+            gap: 1.1rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
         }
-
-        .feature {
-            text-align: left;
+        .hero-cta-group .btn {
+            background: var(--background-white);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 1.1rem 2.5rem;
+            font-size: 1.1rem;
+            border: none;
+            transition: all 0.18s;
+            box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+        }
+        .hero-cta-group .btn:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 24px rgba(30,64,175,0.13);
+        }
+        .features-landing {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2.2rem;
+            margin: 0 auto 2.2rem auto;
+            max-width: 1000px;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(30,64,175,0.07);
+            padding: 1.7rem 1.2rem 1.2rem 1.2rem;
             max-width: 300px;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
+            min-width: 220px;
+            flex: 1 1 220px;
+            text-align: center;
+            transition: box-shadow 0.18s, transform 0.18s;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-
-        .feature i {
-            font-size: 2em;
-            color: #121257;
+        .feature-card:hover {
+            box-shadow: 0 8px 32px rgba(30,64,175,0.13);
+            transform: translateY(-4px) scale(1.03);
         }
-
-        .feature h3 {
-            color: #121257;
-            margin-top: 1em;
+        .feature-card i {
+            font-size: 2.3rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.7rem;
         }
-
-        .feature p {
-            color: #6c757d;
-            font-size: 1em;
-            line-height: 1.4;
+        .feature-card h3 {
+            color: var(--primary-dark);
+            font-size: 1.08rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
-
-        .feature:hover {
-            transform: translateY(-10px);
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.97rem;
+            line-height: 1.5;
+            margin-bottom: 0;
         }
-
+        @media (max-width: 900px) {
+            .features-landing {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        @media (max-width: 600px) {
+            .hero-landing .hero-title {
+                font-size: 1.3rem;
+            }
+            .features-landing {
+                gap: 1.1rem;
+            }
+            .feature-card {
+                padding: 1.1rem 0.7rem;
+            }
+            .hero-cta-group .btn {
+                width: 100%;
+                padding: 1rem 0;
+            }
+        }
         footer {
-            background-color: #121257;
+            background: var(--primary-dark);
             color: white;
             text-align: center;
             padding: 1em 0;
+            font-size: 0.97rem;
+            margin-top: 1.5rem;
         }
     </style>
 </head>
 
-<body>
+<body style="font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--background-light); color: var(--text-primary); margin:0; padding:0;">
 
-<header>
-    <img src="{{ asset('img/shaka_utama.png') }}" alt="logo" />
-    <h1>Meeting Room Booking System</h1>
-    <p>Pesan Ruang Rapat favorit Anda dengan mudah dan nikmati kenyamanannya bersama teman dan kolega Anda!</p>
-    <br>
+<section class="hero-landing">
+    <img src="{{ asset('img/shaka_utama.png') }}" alt="logo" class="hero-logo">
+    <div class="hero-title">Booking Meeting Room System</div>
+    <div class="hero-desc">Pesan ruang rapat favorit Anda dengan mudah, cepat, dan nyaman. Reservasi meeting room profesional untuk kebutuhan bisnis, komunitas, maupun acara penting Anda.</div>
+    <div class="hero-cta-group">
+        <a href="{{ route('register') }}" class="btn">Sign Up Now</a>
+        <a href="{{ route('login') }}" class="btn">Login</a>
+    </div>
     @if(auth()->check())
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong style="color: white">Hey there!</strong> <p style="color: red">You are already logged in. If you wish to log in with a different account, please log out first your previous account.</p>
-            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn" style="color: red; font-weight: bold; text-decoration: none;">Log out</a>
+        <div class="info-alert" style="max-width: 420px; margin: 1.5rem auto 0 auto; background: #f3f6fd; color: var(--primary-dark); border-radius: 10px; border: 1.5px solid var(--primary-color); display: flex; align-items: center; gap: 0.8rem; padding: 0.95rem 1.2rem; box-shadow: 0 4px 18px rgba(30,64,175,0.10);">
+            <i class="fas fa-info-circle" style="font-size: 1.3rem; color: var(--primary-dark);"></i>
+            <span style="flex:1; font-size: 1.01rem; font-weight: 500;">Anda sudah login. <span style='display:none;'>Logout untuk ganti akun.</span></span>
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn" style="background: var(--primary-dark); color: white; font-size: 0.97rem; padding: 0.5rem 1.1rem; border-radius: 7px; font-weight: 600; margin-left: 0.5rem; transition: background 0.18s;">Logout</a>
             <form id="logout-form" action="{{ route('logout') }}" method="GET" style="display: none;">
                 @csrf
             </form>
         </div>
     @endif
+</section>
 
-    <a href="{{ route('register') }}" class="btn">Sign Up Now</a>
-    <a href="{{ route('login') }}" class="btn">Login</a>
-</header>
-
-<section id="features">
-    <h2>Fitur Utama</h2>
-    <section class="features">
-        <div class="feature">
-            <i class="fas fa-calendar-alt"></i>
-            <h3>Easy Booking</h3>
-            <p>Jadwalkan Meeting Anda secara online dengan mudah dengan sistem booking kami yang ramah pengguna.</p>
+<section style="padding: 1.5rem 0 0.5rem 0; background: var(--background-light);">
+    <h2 class="section-title" style="color: var(--primary-dark); font-size: 1.3rem; font-weight: 700; text-align: center; margin-bottom: 1.7rem; letter-spacing: -0.5px;">Fitur Unggulan</h2>
+    <div class="features-landing">
+        <div class="feature-card">
+            <i class="fas fa-calendar-check"></i>
+            <h3>Booking Online Mudah</h3>
+            <p>Proses pemesanan ruang rapat yang cepat, praktis, dan bisa diakses kapan saja secara online.</p>
         </div>
-
-        <div class="feature">
-        <!-- <img src="{{ asset('img/logo3.png') }}" alt="logo" /> -->
-            <!-- <i class="fas fa-trophy"></i>
-            <h3>Tournaments</h3>
-            <p>Play in tournaments, earn certificates, and engage in exciting matches to showcase your Meeting Room.</p> -->
+        <div class="feature-card">
+            <i class="fas fa-users"></i>
+            <h3>Fleksibel & Kolaboratif</h3>
+            <p>Berbagai pilihan ruang meeting untuk kebutuhan tim, komunitas, atau acara bisnis Anda.</p>
         </div>
-        <div class="feature">
-            <i class="fas fa-star"></i>
-            <h3>Events</h3>
-            <p>Jelajahi tantangan Meeting mingguan Anda dengan fasilitas terbaik untuk meningkatkan pengalaman meeting Anda.</p>
+        <div class="feature-card">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Keamanan & Kenyamanan</h3>
+            <p>Fasilitas terjaga, sistem terintegrasi, dan dukungan customer service yang responsif.</p>
         </div>
-    </section>
-
+    </div>
 </section>
 
 <footer>

@@ -20,7 +20,6 @@ body {
 :root {
     --primary-color: #1E40AF;
     --primary-dark: #1E3A8A;
-    --secondary-color: #F59E0B;
     --accent-color: #0F766E;
     --text-primary: #1E293B;
     --text-secondary: #64748B;
@@ -28,10 +27,24 @@ body {
     --background-light: #F8FAFC;
     --background-white: #FFFFFF;
     --border-color: #E2E8F0;
+    --border-light: #EEE;
+    --neutral: #333;
+    --info: #007bff;
+    --info-light: #CFE8FF;
+    --success: #28a745;
+    --danger: #dc3545;
+    --muted: #555;
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    /* Font size */
+    --font-xl: 3.5rem;
+    --font-lg: 2.5rem;
+    --font-md: 1.5rem;
+    --font-base: 1.1rem;
+    --font-sm: 0.95rem;
+    --font-xs: 0.85rem;
 }
 
 /* Override Bootstrap navbar classes */
