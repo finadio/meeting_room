@@ -64,15 +64,9 @@
                     <i class='bx bx-home'></i> Home
                 </a>
             </li>
-            <li class="nav-item {{ request()->routeIs('about.show') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('about.show') }}">
-                    <i class='bx bx-info-circle'></i> About
-                </a>
-            </li>
-
-            <li class="nav-item {{ request()->routeIs('contact.show') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('contact.show') }}">
-                    <i class='bx bx-envelope'></i> Contact Us
+            <li class="nav-item {{ request()->routeIs('user.booking.index') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('user.booking.index') }}">
+                    <i class='bx bxs-calendar'></i> Booking
                 </a>
             </li>
             <li class="nav-item {{ request()->routeIs('user.calendar') ? 'active' : '' }}">
@@ -80,26 +74,16 @@
                     <i class='bx bxs-calendar'></i> Calendar
                 </a>
             </li>
-            <li class="nav-item {{ request()->routeIs('user.booking.index') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('user.booking.index') }}">
-                    <i class='bx bxs-calendar'></i> Booking
+            <li class="nav-item {{ request()->routeIs('about.show') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('about.show') }}">
+                    <i class='bx bx-info-circle'></i> About
                 </a>
             </li>
-            <!-- <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownTournaments" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class='bx bx-trophy'></i> Tournaments
+            <li class="nav-item {{ request()->routeIs('contact.show') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('contact.show') }}">
+                    <i class='bx bx-envelope'></i> Contact Us
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownTournaments">
-                    <a class="dropdown-item" href="{{ route('user.tournaments.index') }}">View Tournament</a>
-                    <a class="dropdown-item" href="{{ route('user.teams.index') }}">Teams</a>
-                    <a class="dropdown-item" href="{{ route('user.teams.create') }}">Create Teams</a>
-                </div>
-            </li> -->
-            <!-- <li class="nav-item {{ request()->routeIs('user.events.show') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('user.events.show') }}">
-                    <i class='bx bx-calendar-event'></i> Events
-                </a>
-            </li> -->
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link" href="{{ route('user.profile') }}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     @if (auth()->check() && $user = auth()->user())
