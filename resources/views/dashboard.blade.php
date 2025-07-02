@@ -55,7 +55,7 @@
     </div>
 
     <div class="container mt-5">
-        <h1 class="text-center mb-5">Ruang meeting yang tersedia</h1>
+        <h1 class="text-center mb-5">Ruang meeting yang Tersedia</h1>
         <div class="row">
             @php $counter = 0 @endphp
             @forelse($facilities as $facility)

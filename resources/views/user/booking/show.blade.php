@@ -31,7 +31,7 @@
             <div class="col-md-6 mb-4">
                 <div class="facility-gallery">
                     @if ($facility->image_path)
-                        <img src="{{ asset('storage/facility_images/' . basename($facility->image_path)) }}" alt="{{ $facility->name }}" class="facility-image rounded-4">
+                        <img src="{{ asset($facility->image_path) }}" class="facility-image rounded-4" alt="{{ $facility->name }}">
                     @else
                         <img src="{{ asset('img/img-1.jpg') }}" class="facility-image rounded-4" alt="{{ $facility->name }}">
                     @endif

@@ -4,7 +4,7 @@
 
     <div class="container mt-5">
         <h2 class="text-center mb-5 section-main-title">Booking</h2>    
-        <h2 class="text-center mb-4 section-description-text">Pilih Ruang Meeting yang tersedia</h2> 
+        <h2 class="text-center mb-4 section-description-text">Pilih Ruang Meeting yang Tersedia</h2> 
 
         @if(session('success'))
             <div class="alert alert-success">
@@ -41,7 +41,7 @@
                         <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
                             <div class="position-relative">
                                 @if($facility->image_path)
-                                    <img src="{{ asset('storage/facility_images/' . basename($facility->image_path)) }}" class="card-img-top rounded-4 img-fluid" alt="{{ $facility->name }}">
+                                    <img src="{{ asset($facility->image_path) }}" class="card-img-top rounded-4 img-fluid" alt="{{ $facility->name }}">
                                 @else
                                     <div class=" text-light text-center">
                                         <img src="{{ asset('img/img-1.jpg') }}" class="card-img-top rounded-4 img-fluid" alt="{{ $facility->name }}">
