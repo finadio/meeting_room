@@ -97,15 +97,10 @@
                             <div class="facility-card">
                                 <div class="facility-image">
                                     <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
-                                        @if($facility->image_path)
-                                            <img src="{{ asset($facility->image_path) }}" 
-                                                alt="{{ $facility->name }}" 
-                                                loading="lazy">
-                                        @else
-                                            <img src="{{ asset('img/img-1.jpg') }}" 
-                                                alt="{{ $facility->name }}" 
-                                                loading="lazy">
-                                        @endif
+                                        <img src="{{ asset('img/meeting_lobby.jpeg') }}" 
+                                            alt="{{ $facility->name }}" 
+                                            loading="lazy"
+                                            onerror="console.log('Image failed to load:', this.src); this.style.border='2px solid red';">
                                     </a>
                                     @auth
                                         <form action="{{ route('user.facility.bookmark', ['facility' => $facility->id]) }}" 
@@ -174,4 +169,22 @@
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
         }
     </style>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard loaded');
+    const images = document.querySelectorAll('.facility-image img');
+    images.forEach((img, index) => {
+        console.log('Image ' + index + ':', img.src);
+        img.addEventListener('load', function() {
+            console.log('Image ' + index + ' loaded successfully');
+        });
+        img.addEventListener('error', function() {
+            console.log('Image ' + index + ' failed to load');
+        });
+    });
+});
+</script>
 @endsection
