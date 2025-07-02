@@ -5,7 +5,8 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-8 offset-md-2">
-                <h2 class="text-center mb-4">About Us</h2>
+                <h2 class="text-center mb-5 section-main-title">Tentang Kami</h2>
+
                 @if(session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
@@ -18,33 +19,45 @@
                     </div>
                 @endif
 
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <img src="{{ asset('img/global.jpg') }}" alt="pic1" class="img-fluid mb-2">
+                {{-- Bagian Visi - Gambar Utama Gedung BPR dan Teks Visi --}}
+                <div class="row align-items-center mb-5 about-section">
+                    <div class="col-md-7 mb-4 mb-md-0">
+                        <div class="about-image-frame primary-image-frame">
+                            <img src="{{ asset('img/msa1.jpeg') }}" alt="Visi BPR MSA" class="img-fluid d-block mx-auto">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <img src="{{ asset('img/Meeting_lt2.jpeg') }}" alt="pic2" class="img-fluid mb-2">
-                    </div>
-                    <div class="col-md-14">
-                        <img src="{{ asset('img/Futsal3.jpeg') }}" alt="pic3" class="img-fluid mb-2">
+                    <div class="col-md-5">
+                        <h3 class="section-subtitle">Visi Kami</h3>
+                        <p class="lead">
+                            Menjadi “Smart Banking” BPR terbaik di Indonesia.
+                        </p>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <h3>Your Vision</h3>
-                        <p>
-                            We envision a thriving badminton ecosystem with innovative technologies that enhance skills and cultivate a love for the sport.
-                            Our platform inspires individuals to unleash their full potential in futsal. We revolutionize football, empowering players to excel.
-                            Our platform offers comprehensive tools and support for growth within the football community. Join us and reach new heights of excellence!
-                        </p>
+                {{-- Bagian Misi - Teks Misi dan Gambar Tim BPR --}}
+                <div class="row align-items-center mb-5 about-section">
+                    <div class="col-md-5 order-md-2 mb-4 mb-md-0"> {{-- Gambar Tim BPR --}}
+                        <div class="about-image-frame secondary-image-frame">
+                            <img src="{{ asset('img/timbpr.png') }}" alt="Misi BPR MSA" class="img-fluid d-block mx-auto">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <h3>Our Mission</h3>
-                        <p>
-                            We provide players with a seamless platform for connectivity and personalized insights. Together, we foster a collaborative community
-                            that supports growth and success in futsal.
-                        </p>
+                    <div class="col-md-7 order-md-1">
+                        <h3 class="section-subtitle">Misi Kami</h3>
+                        <ol class="lead"> 
+                            <li>Terciptanya Good Corporate Governance, berbasis pada Perbankan yang sehat.</li>
+                            <li>Menjalankan bisnis perbankan secara prudent (mengutamakan prinsip kehati-hatian) dengan tidak mengesampingkan pertumbuhan bisnis.</li>
+                            <li>Menjadi partner bisnis bagi usaha mikro, kecil dan menengah untuk menunjang peningkatan ekonomi regional.</li>
+                            <li>Memberikan pelayanan prima untuk memuaskan nasabah.</li>
+                            <li>Memberikan keuntungan dan manfaat yang optimal kepada stake holder.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                {{-- Bagian Logo Besar BPR --}}
+                <div class="row mb-5 justify-content-center about-section">
+                    <div class="col-md-10 text-center">
+                        <h3 class="section-subtitle mb-4">Kami Adalah BPR MSA</h3>
+                        <img src="{{ asset('img/msa.png') }}" alt="Logo Besar BPR MSA" class="img-fluid d-block mx-auto about-large-logo">
                     </div>
                 </div>
 
