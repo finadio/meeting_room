@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="hero-container">
-                    <img src="{{ asset('img/background.png') }}" alt="Premium Meeting Rooms" class="hero-image">
+                    <img src="{{ asset('img/background.png') }}" alt="Premium Meeting Rooms" class="hero-image" style="height: 650px; object-fit: cover;">
                     <div class="hero-content">
                         <h1 class="hero-title">Ruang Meeting Premium</h1>
                         <p class="hero-subtitle">Solusi meeting profesional dengan fasilitas terbaik untuk bisnis Anda</p>
