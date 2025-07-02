@@ -3,7 +3,8 @@
 @section('content')
 
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Pilih Ruang Meeting yang tersedia</h2>
+        <h2 class="text-center mb-5 section-main-title">Booking</h2>    
+        <h2 class="text-center mb-4 section-description-text">Pilih Ruang Meeting yang tersedia</h2> 
 
         @if(session('success'))
             <div class="alert alert-success">
@@ -150,6 +151,17 @@
             100% {
                 transform: scale(1);
             }
+        }
+
+        .section-description-text {
+            font-size: 1.2rem; 
+            font-weight: normal; 
+            color: #555; 
+            margin-top: 15px; 
+        }
+
+        .mb-4.section-description-text {
+            margin-bottom: 50px !important; 
         }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core/main.css">
