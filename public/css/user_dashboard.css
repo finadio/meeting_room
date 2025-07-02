@@ -39,8 +39,8 @@ body {
     background-color: #23395d !important; /* biru navy soft */
     box-shadow: 0 2px 10px rgba(35, 57, 93, 0.08) !important;
     border-bottom: 1px solid #e2e8f0 !important;
-    padding: 0.5rem 1rem !important; /* kurangi padding */
-    min-height: 60px !important; /* set tinggi minimum */
+    padding: 0.3rem 1rem !important; /* kurangi padding */
+    min-height: 50px !important; /* set tinggi minimum */
 }
 
 .navbar.navbar-light .navbar-brand {
@@ -59,7 +59,7 @@ body {
     color: #ffffff !important; /* putih untuk kontras dengan background biru */
     font-weight: 500 !important;
     font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-    padding: 0.5rem 0.75rem !important; /* kurangi padding */
+    padding: 0.3rem 0.75rem !important; /* kurangi padding */
     font-size: 0.9rem !important; /* kurangi ukuran font */
 }
 
@@ -81,8 +81,8 @@ body {
     background-color: #23395d !important; /* biru navy soft */
     box-shadow: 0 2px 10px rgba(35, 57, 93, 0.08) !important;
     border-bottom: 1px solid #e2e8f0 !important;
-    padding: 0.5rem 1rem !important; /* kurangi padding */
-    min-height: 60px !important; /* set tinggi minimum */
+    padding: 0.3rem 1rem !important; /* kurangi padding */
+    min-height: 50px !important; /* set tinggi minimum */
 }
 
 .navbar-brand {
@@ -114,7 +114,7 @@ body {
     font-weight: 500 !important;
     transition: all 0.3s ease !important;
     position: relative !important;
-    padding: 0.5rem 0.75rem !important; /* kurangi padding */
+    padding: 0.3rem 0.75rem !important; /* kurangi padding */
     font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
     font-size: 0.9rem !important; /* kurangi ukuran font */
 }
@@ -141,7 +141,7 @@ body {
 
 /* Tambahkan margin top untuk main content agar tidak tertutup navbar */
 main {
-    margin-top: 70px !important; /* sesuaikan dengan tinggi navbar */
+    margin-top: 60px !important; /* sesuaikan dengan tinggi navbar */
 }
 
 .dropdown-menu {
@@ -256,7 +256,8 @@ main {
 }
 
 .section-subtitle {
-    font-size: 1.125rem;
+    font-size: 1.05rem;
+    font-weight: 400;
     color: var(--text-secondary);
     max-width: 600px;
     margin: 0 auto;
@@ -590,8 +591,8 @@ h1, h2, h3, h4, h5, h6, .btn, .hero-title, .section-title {
 }
 
 .section-subtitle {
-    font-size: 1.8rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 400;
     color: #555;
     margin-bottom: 25px;
 }
@@ -678,7 +679,7 @@ p.lead {
         font-size: 2rem;
     }
     .section-subtitle {
-        font-size: 1.5rem;
+        font-size: 1rem;
     }
 }
 
