@@ -1,3 +1,80 @@
+<style>
+    .footer {
+        background-color: #002147;
+        color: white;
+        padding-top: 40px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .footer h4, .footer h5 {
+        color: #ffffff;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .footer p {
+        color: #ddd;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .footer .social-links a {
+        font-size: 20px;
+        margin-right: 12px;
+        color: #ffffff;
+        transition: color 0.3s;
+    }
+
+    .footer .social-links a:hover {
+        color: #00aced;
+    }
+
+    .footer .contact-item,
+    .footer .address-info {
+        display: flex;
+        align-items: start;
+        margin-bottom: 12px;
+    }
+
+    .footer .contact-item i,
+    .footer .address-info i {
+        font-size: 18px;
+        margin-right: 10px;
+        color: #ffffff;
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255,255,255,0.15);
+        padding: 20px 0;
+        margin-top: 40px;
+        font-size: 13px;
+    }
+
+    .footer-links a {
+        color: #bbb;
+        margin-left: 15px;
+        transition: color 0.3s;
+        text-decoration: none;
+    }
+
+    .footer-links a:hover {
+        color: #fff;
+    }
+
+    .map-container iframe {
+        width: 100%;
+        border-radius: 12px;
+        border: none;
+    }
+
+    @media (max-width: 767.98px) {
+        .footer-bottom .text-md-right {
+            text-align: left !important;
+            margin-top: 10px;
+        }
+    }
+</style>
+
 <footer class="footer">
     <div class="container">
         <div class="footer-content">
@@ -71,9 +148,7 @@
                         <div class="map-container">
                             <iframe 
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3952.802405099179!2d110.3919133!3d-7.8117617!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a5795c524ba5b%3A0xa22172ae761fdf30!2sPT%20BPR%20MSA%20Yogyakarta!5e0!3m2!1sen!2sid!4v1719858441234!5m2!1sen!2sid" 
-                                width="100%" 
                                 height="200" 
-                                style="border:0; border-radius:12px;" 
                                 allowfullscreen 
                                 loading="lazy"
                                 title="Lokasi BPR MSA Yogyakarta">
@@ -103,6 +178,7 @@
         </div>
     </div>
 </footer>
+<<<<<<< HEAD
 
 <style>
 /* Footer Styles */
@@ -315,3 +391,5 @@
     }
 }
 </style>
+=======
+>>>>>>> 71ac2fb (pdate fpdate footer)
