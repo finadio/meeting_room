@@ -92,13 +92,8 @@
                                         <span class="required-indicator">*</span>
                                     </label>
                                     <div class="input-wrapper">
-                                        <select name="type" id="type" class="form-control-enhanced" required>
-                                            <option value="">Pilih Tipe Fasilitas</option>
-                                            <option value="meeting_room" {{ old('type') == 'meeting_room' ? 'selected' : '' }}>Ruang Rapat</option>
-                                            <option value="futsal_field" {{ old('type') == 'futsal_field' ? 'selected' : '' }}>Lapangan Futsal</option>
-                                            <option value="badminton_court" {{ old('type') == 'badminton_court' ? 'selected' : '' }}>Lapangan Bulutangkis</option>
-                                            <option value="basketball_court" {{ old('type') == 'basketball_court' ? 'selected' : '' }}>Lapangan Basket</option>
-                                        </select>
+                                        {{-- Diubah dari <select> menjadi <input type="text"> --}}
+                                        <input type="text" name="type" id="type" class="form-control-enhanced" value="{{ old('type') }}" placeholder="Contoh: ruang rapat" required>
                                         <div class="input-border"></div>
                                     </div>
                                 </div>
@@ -518,6 +513,8 @@
     .btn-back:hover {
         transform: translateY(-3px);
         box-shadow: 0 12px 35px rgba(108, 117, 125, 0.4);
+        color: white;
+        text-decoration: none;
     }
 
     .btn-back:active {
@@ -633,5 +630,12 @@
 @endsection
 
 @section('scripts')
-{{-- No specific scripts needed for this form yet, but keep the section for consistency --}}
+<script>
+    // Alert close functionality
+    document.querySelectorAll('.alert-close').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('.custom-alert').style.display = 'none';
+        });
+    });
+</script>
 @endsection

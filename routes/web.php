@@ -16,7 +16,7 @@ use App\Http\Controllers\User\AboutUsController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\BracketController;
 use App\Http\Controllers\User\CalendarController;
-use App\Http\Controllers\User\ContactUsController;
+use App\Http\Controllers\User\ContactUsController; // Pastikan ini diimpor
 use App\Http\Controllers\User\EventController;
 use App\Http\Controllers\User\FacilitySubmissionController;
 use App\Http\Controllers\User\TeamController;
@@ -203,7 +203,8 @@ Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin
     Route::get('bookings', [BookingsController::class, 'index'])->name('admin.bookings.index');
     Route::get('bookings/{booking}', [BookingsController::class, 'show'])->name('admin.bookings.show');
     Route::post('bookings/{id}/approve', [BookingsController::class, 'approve'])->name('admin.bookings.approve');
-    
+    Route::post('bookings/{id}/reject', [BookingsController::class, 'reject'])->name('admin.bookings.reject'); // Added this line
+
 });
 
 // Contact us Route
@@ -213,6 +214,7 @@ Route::post('/contactUs', [ContactUsController::class, 'submitForm'])->name('con
 // Admin Contact us Route
 Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin')->group(function () {
     Route::get('/admin_contactUs', [ContactUsController::class, 'index'])->name('admin.contact.index');
+    Route::delete('/admin_contactUs/{id}', [ContactUsController::class, 'destroy'])->name('admin.contact.destroy'); // Added this line
 });
 
 // About Us Route

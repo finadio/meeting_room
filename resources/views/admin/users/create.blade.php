@@ -540,6 +540,8 @@
     .btn-back:hover {
         transform: translateY(-3px);
         box-shadow: 0 12px 35px rgba(108, 117, 125, 0.4);
+        color: white;
+        text-decoration: none;
     }
 
     .btn-back:active {
