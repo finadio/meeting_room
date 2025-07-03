@@ -7,9 +7,9 @@ use App\Models\Facility;
 use App\Models\Notification;
 use App\Models\Tournament;
 use App\Models\User;
-use App\Models\Booking;
+use App\Models\Booking; // Pastikan hanya ada satu baris ini
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon; // Pastikan ini ada
+use Carbon\Carbon; 
 
 class AdminDashboardController extends Controller
 {
@@ -23,6 +23,9 @@ class AdminDashboardController extends Controller
         $facilityCount = Facility::count();
         $tournamentCount = Tournament::count(); 
 
+        // --- Tambahkan baris ini untuk menghitung totalPendingBookings ---
+        $totalPendingBookings = Booking::where('status', 'Menunggu Konfirmasi')->count();
+        // -----------------------------------------------------------------
 
         $unreadNotificationCount = Notification::where('is_read', false)->count();
         
@@ -60,6 +63,7 @@ class AdminDashboardController extends Controller
             'bookedDates', 
             'userCounts',
             'newUsersCount', 
+            'totalPendingBookings', // Pastikan ini ada di sini
         ));
     }
 
