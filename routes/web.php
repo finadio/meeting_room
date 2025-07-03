@@ -149,7 +149,7 @@ Route::middleware(['auth', 'log.last.active'])->group(function () {
     Route::post('/profile/additional-details', [UserProfileController::class, 'additionalDetails'])->name('profile.update.additionaldetails');
     Route::post('/profile/update-password', [UserProfileController::class, 'updatePassword'])->name('profile.update.password');
     Route::delete('/delete-account', [UserProfileController::class, 'deleteAccount'])->name('delete.account');
-
+    Route::delete('/profile/delete-picture', [UserProfileController::class, 'deletePicture'])->name('profile.delete.picture');
 });
 
 //Calendar Route
@@ -196,6 +196,7 @@ Route::middleware(['auth', 'log.last.active'])->group(function () {
     Route::post('/facility/bookmark/{facility}', [BookingController::class, 'bookmark'])->name('user.facility.bookmark');
     Route::get('/bookmarks', [BookingController::class, 'bookmarks'])->name('user.bookmarks');
     Route::delete('/user/unbookmark/{facilityId}', [BookingController::class, 'unbookmark'])->name('user.unbookmark');
+    Route::post('/user/unbookmark/{facilityId}', [BookingController::class, 'unbookmark']);
 });
 
 //Admin Booking History Route

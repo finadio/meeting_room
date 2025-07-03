@@ -92,16 +92,15 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link" href="{{ route('user.profile') }}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    @if (auth()->check() && $user = auth()->user())
-                        <div class="d-flex align-items-center">
-                            @if ($user->profile_picture && Storage::exists('public/profile_pictures/' . $user->profile_picture))
-                                <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" class="rounded-circle" style="width: 30px;">
-                            @else
-                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Default Profile Picture" class="rounded-circle" style="width: 30px;">
-                            @endif
-                            <span class="ml-2">{{ $user->name }}</span>
-                        </div>
-                    @endif
+                    <div class="d-flex align-items-center">
+                        @php $user = auth()->user(); @endphp
+                        @if ($user->profile_picture && file_exists(public_path('storage/profile_pictures/' . $user->profile_picture)))
+                            <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover; margin-right: 8px;">
+                        @else
+                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Default Profile Picture" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover; margin-right: 8px;">
+                        @endif
+                        <span>{{ $user->name }}</span>
+                    </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item profile-link" href="{{ route('user.profile') }}">
@@ -135,7 +134,7 @@
 </main>
 <x-footer />
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -173,5 +172,6 @@ defer>
     })();
 </script> -->
 <!--End of Tawk.to Script-->
+@yield('scripts')
 </body>
 </html>

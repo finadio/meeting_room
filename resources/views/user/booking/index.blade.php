@@ -1,112 +1,115 @@
 @extends('user.layouts.app')
 @section('title', 'Booking')
 @section('content')
+    <!-- Alert Container -->
+    <div id="alert-container"></div>
 
-<div class="container mt-5 pt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <!-- Header Section -->
-            <div class="calendar-header text-center mb-4">
-                <h1 class="calendar-title">Booking</h1>
-                <p class="calendar-subtitle">Pilih Ruang Meeting yang Tersedia</p>
-            </div>
-
-            <!-- Alert Messages -->
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                    <i class='bx bx-check-circle me-2'></i>
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Header Section -->
+                <div class="calendar-header text-center mb-4">
+                    <h1 class="calendar-title">Booking</h1>
+                    <p class="calendar-subtitle">Pilih Ruang Meeting yang Tersedia</p>
                 </div>
-            @endif
 
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                    <i class='bx bx-error-circle me-2'></i>
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+                <!-- Alert Messages -->
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                        <i class='bx bx-check-circle me-2'></i>
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
 
-            <!-- Search Bar -->
-            <div class="row justify-content-center mb-5">
-                <div class="col-lg-8">
-                    <div class="search-card">
-                        <form action="{{ route('user.booking.search') }}" method="GET">
-                            <div class="input-group align-items-stretch">
-                                <input type="text" class="form-control" placeholder="Cari ruang meeting..." name="search" style="height:48px;">
-                                <button class="btn btn-primary d-flex align-items-center justify-content-center" type="submit" style="height:48px; min-width:48px; padding:0;">
-                                    <i class='bx bx-search' style="font-size:1.3rem;"></i>
-                                </button>
-                            </div>
-                        </form>
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                        <i class='bx bx-error-circle me-2'></i>
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                <!-- Search Bar -->
+                <div class="row justify-content-center mb-5">
+                    <div class="col-lg-8">
+                        <div class="search-card">
+                            <form action="{{ route('user.booking.search') }}" method="GET">
+                                <div class="input-group align-items-stretch">
+                                    <input type="text" class="form-control" placeholder="Cari ruang meeting..." name="search" style="height:48px;">
+                                    <button class="btn btn-primary d-flex align-items-center justify-content-center" type="submit" style="height:48px; min-width:48px; padding:0;">
+                                        <i class='bx bx-search' style="font-size:1.3rem;"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Facilities Grid -->
-            <div class="row">
-                @forelse($facilities as $facility)
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="facility-card">
-                            <div class="facility-image">
-                                <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
-                                    @php
-                                        $imgPath = $facility->image_path && file_exists(public_path($facility->image_path))
-                                            ? asset($facility->image_path)
-                                            : asset('img/meeting_lobby.jpeg');
-                                    @endphp
-                                    <img src="{{ $imgPath }}" alt="{{ $facility->name }}">
-                                </a>
-                                @auth
-                                    <form action="{{ route('user.facility.bookmark', ['facility' => $facility->id]) }}" 
-                                          method="post" 
-                                          class="bookmark-form">
-                                        @csrf
-                                        <button type="submit" class="bookmark-btn" aria-label="Bookmark {{ $facility->name }}">
-                                            @if(in_array($facility->id, $bookmarkedIds))
-                                                <i class='bx bxs-bookmark'></i>
-                                            @else
-                                                <i class='bx bx-bookmark'></i>
-                                            @endif
-                                        </button>
-                                    </form>
-                                @endauth
-                            </div>
-                            
-                            <div class="facility-content">
-                                <h3 class="facility-title">
+                <!-- Facilities Grid -->
+                <div class="row">
+                    @forelse($facilities as $facility)
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="facility-card">
+                                <div class="facility-image">
                                     <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
-                                        {{ $facility->name }}
+                                        @php
+                                            $imgPath = $facility->image_path && file_exists(public_path($facility->image_path))
+                                                ? asset($facility->image_path)
+                                                : asset('img/meeting_lobby.jpeg');
+                                        @endphp
+                                        <img src="{{ $imgPath }}" alt="{{ $facility->name }}">
                                     </a>
-                                </h3>
-                                <p class="facility-location">
-                                    <i class='bx bx-map-pin'></i>
-                                    {{ $facility->location }}
-                                </p>
-                                <div class="facility-actions">
-                                    <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}" 
-                                       class="booking-btn">
-                                        <i class='bx bx-calendar'></i>
-                                        Reservasi
-                                    </a>
+                                    @auth
+                                        <div class="bookmark-form">
+        <button type="button" 
+                class="bookmark-btn" 
+                data-facility-id="{{ $facility->id }}"
+                data-bookmarked="{{ in_array($facility->id, $bookmarkedIds) ? 'true' : 'false' }}"
+                aria-label="Bookmark {{ $facility->name }}">
+            @if(in_array($facility->id, $bookmarkedIds))
+                <i class='bx bxs-bookmark'></i>
+            @else
+                <i class='bx bx-bookmark'></i>
+            @endif
+        </button>
+                                        </div>
+                                    @endauth
+                                </div>
+                                
+                                <div class="facility-content">
+                                    <h3 class="facility-title">
+                                        <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
+                                            {{ $facility->name }}
+                                        </a>
+                                    </h3>
+                                    <p class="facility-location">
+                                        <i class='bx bx-map-pin'></i>
+                                        {{ $facility->location }}
+                                    </p>
+                                    <div class="facility-actions">
+                                        <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}" 
+                                           class="booking-btn">
+                                            <i class='bx bx-calendar'></i>
+                                            Reservasi
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @empty
-                    <div class="col-12">
-                        <div class="empty-state">
-                            <i class='bx bx-building-house'></i>
-                            <h3>Tidak ada ruang meeting tersedia</h3>
-                            <p>Mohon cek kembali nanti atau hubungi tim kami untuk informasi lebih lanjut.</p>
+                    @empty
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <i class='bx bx-building-house'></i>
+                                <h3>Tidak ada ruang meeting tersedia</h3>
+                                <p>Mohon cek kembali nanti atau hubungi tim kami untuk informasi lebih lanjut.</p>
+                            </div>
                         </div>
-                    </div>
-                @endforelse
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('styles')
@@ -269,6 +272,7 @@
             font-size: 1.2rem;
             transition: all 0.3s;
             box-shadow: 0 2px 6px rgba(35, 57, 93, 0.08);
+            cursor: pointer;
         }
         .bookmark-btn:hover {
             background: #F59E0B;
@@ -339,4 +343,86 @@
             }
         }
     </style>
+@endsection
+
+@section('scripts')
+    <script>
+    // Fungsi untuk menampilkan alert
+    function showAlert(type, message) {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
+        let alertContainer = document.getElementById('alert-container');
+        if (!alertContainer) {
+            alertContainer = document.createElement('div');
+            alertContainer.id = 'alert-container';
+            alertContainer.className = 'mb-3';
+            document.querySelector('.container').prepend(alertContainer);
+        }
+        alertContainer.innerHTML = alertHtml;
+        setTimeout(function() {
+            alertContainer.innerHTML = '';
+        }, 5000);
+    }
+
+    // Event delegation untuk tombol bookmark
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('.bookmark-btn');
+        if (button) {
+            e.preventDefault();
+            e.stopPropagation();
+            const facilityId = button.getAttribute('data-facility-id');
+            let isBookmarked = button.getAttribute('data-bookmarked') === 'true';
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+            if (button.disabled) return;
+            button.disabled = true;
+            let url = isBookmarked ? `/user/unbookmark/${facilityId}` : `/facility/bookmark/${facilityId}`;
+            let method = isBookmarked ? 'DELETE' : 'POST';
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: `_token=${encodeURIComponent(csrfToken)}&_method=${method}`
+            })
+            .then(response => {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json();
+                        } else {
+                    throw new Error('Server returned non-JSON response or an error occurred. Status: ' + response.status);
+                }
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    if (isBookmarked) {
+                        button.setAttribute('data-bookmarked', 'false');
+                        button.querySelector('i').className = 'bx bx-bookmark';
+                    } else {
+                        button.setAttribute('data-bookmarked', 'true');
+                        button.querySelector('i').className = 'bx bxs-bookmark';
+                    }
+                    showAlert('success', data.message);
+                } else {
+                    showAlert('danger', data.message || 'Terjadi kesalahan.');
+                    }
+            })
+            .catch(err => {
+                console.error("AJAX Error:", err);
+                showAlert('danger', 'Terjadi kesalahan saat memproses bookmark: ' + err.message);
+            })
+            .finally(() => {
+                button.disabled = false;
+            });
+        }
+    });
+    </script>
 @endsection

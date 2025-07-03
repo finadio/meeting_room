@@ -15,7 +15,12 @@ class UserProfileController extends Controller
     public function index()
     {
         $user = auth()->user();
-        return view('user.profile.index', ['user' => $user]);
+        if ($user->profile_picture && \Storage::exists('public/profile_pictures/' . $user->profile_picture)) {
+            $profilePic = asset('storage/profile_pictures/' . $user->profile_picture);
+        } else {
+            $profilePic = asset('img/avatar-default.png');
+        }
+        return view('user.profile.index', ['user' => $user, 'profilePic' => $profilePic]);
     }
 
     public function updateDetails(Request $request)
@@ -132,5 +137,16 @@ class UserProfileController extends Controller
             // If the user is not authenticated, redirect to the login page
             return redirect('/login');
         }
+    }
+
+    public function deletePicture(Request $request)
+    {
+        $user = auth()->user();
+        if ($user->profile_picture && \Storage::exists('public/profile_pictures/' . $user->profile_picture)) {
+            \Storage::delete('public/profile_pictures/' . $user->profile_picture);
+        }
+        $user->profile_picture = null;
+        $user->save();
+        return redirect()->route('user.profile')->with('success', 'Foto profil berhasil dihapus.');
     }
 }

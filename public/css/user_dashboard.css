@@ -63,7 +63,7 @@ body {
 }
 
 .navbar.navbar-light .navbar-brand:hover {
-    color: #F59E0B !important; /* orange saat hover */
+    color: #3B82F6 !important; /* biru light saat hover */
 }
 
 .navbar.navbar-light .navbar-nav .nav-link {
@@ -75,7 +75,7 @@ body {
 }
 
 .navbar.navbar-light .navbar-nav .nav-link:hover {
-    color: #F59E0B !important; /* orange saat hover */
+    color: #3B82F6 !important; /* biru light saat hover */
 }
 
 .navbar.navbar-light .navbar-toggler {
@@ -116,7 +116,7 @@ body {
 }
 
 .navbar-brand:hover {
-    color: #F59E0B !important; /* orange saat hover */
+    color: #3B82F6 !important; /* biru light saat hover */
     transform: translateY(-1px) !important;
 }
 
@@ -131,7 +131,7 @@ body {
 }
 
 .navbar-nav .nav-link:hover {
-    color: #F59E0B !important; /* orange saat hover */
+    color: #3B82F6 !important; /* biru light saat hover */
 }
 
 .navbar-nav .nav-link::after {
@@ -141,7 +141,7 @@ body {
     height: 2px !important;
     bottom: 0 !important;
     left: 50% !important;
-    background-color: #F59E0B !important; /* orange untuk underline */
+    background-color: #3B82F6 !important; /* biru light untuk underline */
     transition: all 0.3s ease !important;
     transform: translateX(-50%) !important;
 }
@@ -786,4 +786,10 @@ footer {
 @media (max-width: 767px) {
     .contactus-divider { display: none; }
     .col-lg-6.p-5 { padding: 1rem 0.5rem !important; }
+}
+
+/* Fix: btn-danger harus tetap merah meski ada override global .btn */
+.btn-danger {
+    background: #dc3545 !important;
+    color: #fff !important;
 }

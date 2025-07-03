@@ -1,203 +1,124 @@
 @extends('user.layouts.app')
 @section('title', 'User Profile')
 @section('content')
-    <br>
-    <br>
-    <div class="container light-style flex-grow-1 container-p-y">
-        <h4 class="font-weight-bold py-3 mb-4">
-            Profile Page
-        </h4>
+    <div class="container py-4">
+        <h4 class="font-weight-bold mb-4">Profil Saya</h4>
         @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
+            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
-
         @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
+            <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
         @if ($errors->any())
             <div class="alert alert-danger">
-                <ul>
+                <ul class="mb-0">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
         @endif
-        <div class="card overflow-hidden">
-            <div class="row no-gutters row-bordered row-border-light">
-                <div class="col-md-3 pt-0">
-                    <div class="list-group list-group-flush account-settings-links">
-                        <a class="list-group-item list-group-item-action active" data-toggle="list"
-                           href="#account-general">Account Details</a>
-                        <a class="list-group-item list-group-item-action" data-toggle="list"
-                           href="#account-additional">Additional Details</a>
-                        <a class="list-group-item list-group-item-action" data-toggle="list"
-                           href="#account-change-password">Security</a>
-                        <a class="list-group-item list-group-item-action" data-toggle="list"
-                           href="#account-danger-zone">Danger Zone</a>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-white border-bottom-0 pb-0">
+                        <h5 class="mb-0">Data Profil</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-4">
+                            @if ($user->profile_picture && Storage::exists('public/profile_pictures/' . $user->profile_picture))
+                                <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" class="rounded-circle me-3" style="width: 72px; height: 72px; object-fit: cover; border: 2px solid #e2e8f0;">
+                            @else
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Default Profile Picture" class="rounded-circle me-3" style="width: 72px; height: 72px; object-fit: cover; border: 2px solid #e2e8f0;">
+                            @endif
+                            <div class="d-flex align-items-center" style="gap:6px;">
+                                <form action="{{ route('profile.update.details') }}" method="post" enctype="multipart/form-data" class="d-inline">
+                                    @csrf
+                                    <label class="btn btn-outline-primary btn-xs p-1 mb-0">
+                                        Upload Foto
+                                        <input type="file" class="d-none" name="profile_picture" onchange="this.form.submit()">
+                                    </label>
+                                </form>
+                                @if ($user->profile_picture && Storage::exists('public/profile_pictures/' . $user->profile_picture))
+                                    <form action="{{ route('profile.delete.picture') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-xs p-1">Hapus Foto Profil</button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                        <form action="{{ route('profile.update.details') }}" method="post" enctype="multipart/form-data">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label">Nama</label>
+                                <input type="text" class="form-control" name="name" value="{{ $user->name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">E-mail</label>
+                                <input type="email" class="form-control" name="email" value="{{ $user->email }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tanggal Lahir</label>
+                                <input type="date" name="dob" value="{{ $user->dob }}" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">No. HP</label>
+                                <input type="tel" name="contact_number" value="{{ $user->contact_number }}" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Alamat</label>
+                                <textarea name="address" class="form-control">{{ $user->address }}</textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="bx bx-save"></i> Simpan</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="col-md-9">
-                    <div class="tab-content">
-                        <div class="tab-pane fade active show" id="account-general">
-                            <form action="{{ route('profile.update.details') }}" method="post" enctype="multipart/form-data">
-                                @csrf
-                                <div class="card-body media align-items-center">
-                                    @if ($user->profile_picture && Storage::exists('public/profile_pictures/' . $user->profile_picture))
-                                        <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt class="d-block ui-w-80">
-                                    @else
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt class="d-block ui-w-80">
-                                    @endif
-
-                                    <div class="media-body ml-4">
-                                        <label class="btn btn-outline-primary">
-                                            Upload new photo
-                                            <input type="file" class="account-settings-fileinput" name="profile_picture">
-                                        </label> &nbsp;
-                                        <div class="text-light small mt-1">Allowed JPG, GIF, or PNG. Max size of 800K</div>
-                                    </div>
-                                </div>
-                                <hr class="border-light m-0">
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control mb-1" name="name" value="{{ $user->name }}">
-                                        @error('name')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">E-mail</label>
-                                        <input type="text" class="form-control mb-1" name="email" value="{{ $user->email }}">
-                                        @error('email')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="text-right mt-3">
-                                    <button type="submit" class="btn btn-primary">Save changes</button>&nbsp;
-                                    <button type="button" class="btn btn-default" onclick="goBack()">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="tab-pane fade" id="account-additional">
-                            <form action="{{ route('profile.update.additionaldetails') }}" method="post">
-                                @csrf
-                                <div class="card-body pb-2">
-                                    <div class="form-group">
-                                        <label for="dob">Date of Birth:</label>
-                                        <input type="date" id="dob" name="dob" value="{{ $user->dob }}" class="form-control">
-                                        @error('dob')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="gender">Gender:</label>
-                                        <select id="gender" name="gender" class="form-control">
-                                            <option value="male" {{ $user->gender === 'male' ? 'selected' : '' }}>Male</option>
-                                            <option value="female" {{ $user->gender === 'female' ? 'selected' : '' }}>Female</option>
-                                            <option value="other" {{ $user->gender === 'other' ? 'selected' : '' }}>Other</option>
-                                        </select>
-                                        @error('gender')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="contact_number">Contact Number:</label>
-                                        <input type="tel" id="contact_number" name="contact_number" value="{{ $user->contact_number }}" class="form-control">
-                                        @error('contact_number')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="address">Address:</label>
-                                        <textarea id="address" name="address" class="form-control">{{ $user->address }}</textarea>
-                                        @error('address')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="preferred_position">Preferred Futsal Position:</label>
-                                        <input type="text" id="preferred_position" name="preferred_position" value="{{ $user->preferred_position }}" class="form-control">
-                                        @error('preferred_position')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="experience_level">Futsal Experience Level:</label>
-                                        <select id="experience_level" name="experience_level" class="form-control">
-                                            <option value="beginner" {{ $user->experience_level === 'beginner' ? 'selected' : '' }}>Beginner</option>
-                                            <option value="intermediate" {{ $user->experience_level === 'intermediate' ? 'selected' : '' }}>Intermediate</option>
-                                            <option value="advanced" {{ $user->experience_level === 'advanced' ? 'selected' : '' }}>Advanced</option>
-                                        </select>
-                                        @error('experience_level')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="text-right mt-3">
-                                    <button type="submit" class="btn btn-primary">Save changes</button>&nbsp;
-                                    <button type="button" class="btn btn-default" onclick="goBack()">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="tab-pane fade" id="account-change-password">
-                            <form action="{{ route('profile.update.password') }}" method="post">
-                                @csrf
-                                <div class="card-body pb-2">
-                                    <div class="form-group">
-                                        <label for="password" class="form-label">New password</label>
-                                        <div class="input-group">
-                                            <input type="password" class="form-control" name="password" id="password">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" onclick="password()" id="show-hide-password" style="cursor: pointer;"><i class="mdi mdi-eye"></i></span>
-                                            </div>
-                                        </div>
-                                        @error('password')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="password-confirm" class="form-label">Confirm new password</label>
-                                        <div class="input-group">
-                                            <input type="password" class="form-control" name="password-confirm" id="password-confirm">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" onclick="passwordconfirm()" id="show-hide-password-confirm" style="cursor: pointer;"><i class="mdi mdi-eye"></i></span>
-                                            </div>
-                                        </div>
-                                        @error('password-confirm')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="text-right mt-3">
-                                        <button type="submit" class="btn btn-primary">Save changes</button>&nbsp;
-                                        <button type="button" class="btn btn-default" onclick="goBack()">Cancel</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="tab-pane fade" id="account-danger-zone">
-                            <h4>Danger Zone</h4>
-                            <p>Be careful! Deleting your account is irreversible.</p>
-                            <form id="deleteAccountForm" action="{{ route('delete.account') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Delete Account</button>
-                            </form>
-                        </div>
-
+            </div>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-white border-bottom-0 pb-0">
+                        <h5 class="mb-0">Ganti Password</h5>
+                    </div>
+                    <div class="card-body">
+                        @if(session('password_success'))
+                            <div class="alert alert-success">{{ session('password_success') }}</div>
+                        @endif
+                        @if(session('password_error'))
+                            <div class="alert alert-danger">{{ session('password_error') }}</div>
+                        @endif
+                        <form action="{{ route('profile.update.password') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label">Password Lama</label>
+                                <input type="password" name="current_password" class="form-control" required autocomplete="current-password">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password Baru</label>
+                                <input type="password" name="new_password" class="form-control" required autocomplete="new-password">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Konfirmasi Password Baru</label>
+                                <input type="password" name="new_password_confirmation" class="form-control" required autocomplete="new-password">
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="bx bx-key"></i> Ganti Password</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0"><i class="bx bx-error"></i> Danger Zone</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="deleteAccountForm" action="{{ route('delete.account') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Hapus Akun</button>
+                        </form>
                     </div>
                 </div>
             </div>

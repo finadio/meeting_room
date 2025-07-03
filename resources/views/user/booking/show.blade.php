@@ -1,221 +1,22 @@
-@extends('user.layouts.app')
-@section('title', $facility->name)
-@section('content')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title')</title>
+    {{-- Pastikan ini ada di layout utama Anda, contoh: user.layouts.app --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}"> 
 
-<div class="container mt-5 pt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <!-- Header Section -->
-            <div class="text-center mb-5">
-                <h1 class="calendar-title" style="font-size:2.5rem;font-weight:700;color:#1E293B;margin-bottom:0.5rem;letter-spacing:-1px;text-transform:uppercase;">{{ $facility->name }}</h1>
-                <p class="lead text-muted">Detail Ruang Meeting</p>
-            </div>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
 
-            <!-- Alert Messages -->
-            <div id="alert-container">
-                @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                        <i class='bx bx-check-circle me-2'></i>
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                        <i class='bx bx-error-circle me-2'></i>
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if ($errors->has('date'))
-                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                        <i class='bx bx-error-circle me-2'></i>
-                        {{ $errors->first('date') }}
-                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-            </div>
-
-            <!-- Facility Details -->
-            <div class="row mb-5">
-                <div class="col-lg-6 mb-4">
-                    <div class="facility-image-card position-relative">
-                        @php
-                            $imgPath = $facility->image_path && file_exists(public_path($facility->image_path))
-                                ? asset($facility->image_path)
-                                : asset('img/meeting_lobby.jpeg');
-                        @endphp
-                        <img src="{{ $imgPath }}" alt="{{ $facility->name }}">
-                        @if(auth()->check())
-                            <form action="{{ route('user.facility.bookmark', ['facility' => $facility->id]) }}" method="post" class="bookmark-form-detail text-center mt-2 mb-3">
-                                @csrf
-                                <button type="submit" class="bookmark-btn-detail" aria-label="Bookmark {{ $facility->name }}">
-                                    @if(auth()->user()->bookmarkedFacilities->contains($facility->id))
-                                        <i class='bx bxs-bookmark'></i><span>Hapus Bookmark</span>
-                                    @else
-                                        <i class='bx bx-bookmark'></i><span>Tambah Bookmark</span>
-                                    @endif
-                                </button>
-                            </form>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="col-lg-6 mb-4">
-                    <div class="facility-info-card">
-                        <div class="card-header">
-                            <h4 class="mb-0">
-                                <i class='bx bx-info-circle me-2'></i>Informasi Ruangan
-                            </h4>
-                        </div>
-                        <div class="card-body">
-                            <p class="facility-description">{{ $facility->description }}</p>
-                            
-                            <div class="info-item">
-                                <i class='bx bx-map-pin'></i>
-                                <div>
-                                    <strong>Lokasi:</strong>
-                                    <p>{{ $facility->location }}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <i class='bx bx-time'></i>
-                                <div>
-                                    <strong>Jam Operasional:</strong>
-                                    <p>{{ \Carbon\Carbon::parse($facility->opening_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($facility->closing_time)->format('H:i') }}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <i class='bx bx-user'></i>
-                                <div>
-                                    <strong>Contact Person:</strong>
-                                    <p>{{ $facility->contact_person }}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <i class='bx bx-envelope'></i>
-                                <div>
-                                    <strong>Email:</strong>
-                                    <p>{{ $facility->contact_email }}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <i class='bx bx-phone'></i>
-                                <div>
-                                    <strong>Telepon:</strong>
-                                    <p>{{ $facility->contact_phone }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Booking Form -->
-            <div class="row justify-content-center mb-5">
-                <div class="col-lg-8">
-                    <div class="booking-form-card">
-                        <div class="card-header">
-                            <h4 class="mb-0">
-                                <i class='bx bx-calendar-plus me-2'></i>Form Reservasi
-                            </h4>
-                        </div>
-                        <div class="card-body">
-                            <form action="{{ route('user.booking.confirm', ['facilityId' => $facility->id]) }}" method="post">
-                                @csrf
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
-                                        <input type="date" id="date" name="date" class="form-control" required min="{{ date('Y-m-d') }}">
-                                    </div>
-                                    
-                                    <div class="col-md-6 mb-3">
-                                        <label for="meeting_title" class="form-label">Judul Meeting <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="meeting_title" name="meeting_title" placeholder="Masukkan judul meeting" required>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="time" class="form-label">Jam Mulai <span class="text-danger">*</span></label>
-                                        <input type="time" id="time" name="time" class="form-control" required>
-                                    </div>
-                                    
-                                    <div class="col-md-6 mb-3">
-                                        <label for="end_time" class="form-label">Jam Selesai <span class="text-danger">*</span></label>
-                                        <input type="time" id="end_time" name="end_time" class="form-control" required>
-                                    </div>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="group_name" class="form-label">Instansi/Kelompok <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="group_name" name="group_name" placeholder="Masukkan instansi/kelompok" required>
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class='bx bx-calendar-check me-2'></i>Proses Reservasi
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reviews Section -->
-            @if($ratingsAndReviews->isNotEmpty())
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div class="reviews-card">
-                            <div class="card-header">
-                                <h4 class="mb-0">
-                                    <i class='bx bx-star me-2'></i>Ulasan dan Rating
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                @foreach($ratingsAndReviews as $booking)
-                                    <div class="review-item">
-                                        <div class="review-header">
-                                            <div class="reviewer-info">
-                                                @if ($booking->user->profile_picture && Storage::exists('public/profile_pictures/' . $booking->user->profile_picture))
-                                                    <img src="{{ asset('storage/profile_pictures/' . $booking->user->profile_picture) }}" alt="{{ $booking->user->name }}" class="reviewer-avatar">
-                                                @else
-                                                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Default Profile Picture" class="reviewer-avatar">
-                                                @endif
-                                                <div>
-                                                    <h6 class="reviewer-name">{{ $booking->user->name }}</h6>
-                                                    <div class="rating-stars">@ratingStars($booking->ratings)</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="review-content">
-                                            <p>{{ $booking->reviews }}</p>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-        </div>
-    </div>
-</div>
-@endsection
-
-@section('styles')
     <link rel="stylesheet" href="{{ asset('css/user_dashboard.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.1.0/css/boxicons.min.css' rel='stylesheet'>
+
+    @yield('styles')
+
     <style>
-        /* Booking Detail Page Specific Styles */
+        /* Gaya spesifik halaman Booking Detail */
         .facility-image-card {
             position: relative;
             background: white;
@@ -349,6 +150,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative; /* Pastikan ini ada */
+            z-index: 1; /* Biarkan z-index container lebih rendah atau default */
         }
         
         .bookmark-btn-detail {
@@ -367,6 +170,13 @@
             padding: 0 18px 0 12px;
             gap: 0.5rem;
             font-weight: 500;
+            cursor: pointer;
+            
+            /* ---- START: Perbaikan untuk tombol bookmark ---- */
+            position: relative; /* Penting agar z-index berfungsi */
+            z-index: 1000; /* Pastikan ini di atas elemen lain yang mungkin menutupi */
+            pointer-events: auto !important; /* Paksa agar event klik aktif */
+            /* ---- END: Perbaikan untuk tombol bookmark ---- */
         }
         
         .bookmark-btn-detail i {
@@ -487,73 +297,327 @@
             text-transform: uppercase;
         }
     </style>
-@endsection
-
-@section('scripts')
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Fungsi untuk menampilkan pesan alert
-        function showAlert(type, message) {
-            let alertHtml = `<div class="alert alert-${type} alert-dismissible fade show mb-4" role="alert">
-                <i class='bx bx-${type === 'success' ? 'check' : 'error'}-circle me-2'></i>
-                ${message}
-                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
-            </div>`;
-            $('#alert-container').html(alertHtml);
-            setTimeout(function() {
-                $('#alert-container').empty();
-            }, 5000);
-        }
-
-        // Tangani klik pada tombol bookmark
-        $('.bookmark-btn').on('click', function() {
-            const button = $(this);
-            const facilityId = button.data('facility-id');
-            let isBookmarked = button.data('bookmarked');
-            const csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-            let url = '';
-            let method = '';
-
-            if (isBookmarked) {
-                url = `/user/unbookmark/${facilityId}`;
-                method = 'DELETE';
-            } else {
-                url = `/facility/bookmark/${facilityId}`;
-                method = 'POST';
-            }
-
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: {
-                    _token: csrfToken,
-                    _method: isBookmarked ? 'DELETE' : 'POST'
-                },
-                success: function(response) {
-                    if (response.status === 'success') {
-                        if (isBookmarked) {
-                            button.find('i').removeClass('bxs-bookmark').addClass('bx-bookmark');
-                            button.data('bookmarked', false);
-                            button.html('<i class="bx bx-bookmark"></i><span>Hapus Bookmark</span>');
-                            showAlert('success', response.message);
-                        } else {
-                            button.find('i').removeClass('bx-bookmark').addClass('bxs-bookmark');
-                            button.data('bookmarked', true);
-                            button.html('<i class="bxs-bookmark"></i><span>Tambah Bookmark</span>');
-                            showAlert('success', response.message);
-                        }
-                    } else if (response.status === 'warning') {
-                        showAlert('warning', response.message);
-                    } else {
-                        showAlert('danger', response.message || 'Terjadi kesalahan.');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    showAlert('danger', 'Terjadi kesalahan saat memproses bookmark.');
-                }
+</head>
+<body>
+    @extends('user.layouts.app')
+    @section('title', $facility->name)
+    @section('content')
+        {{-- <button id="test-click-btn" style="z-index:9999;position:fixed;top:10px;left:10px;">TEST CLICK</button>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('test-click-btn').addEventListener('click', function() {
+                alert('TOMBOL TEST BERFUNGSI!');
             });
         });
-    </script>
-@endsection
+        </script> --}}
+
+        <div id="alert-container"></div>
+
+        <div class="container mt-5 pt-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="text-center mb-5">
+                        <h1 class="calendar-title" style="font-size:2.5rem;font-weight:700;color:#1E293B;margin-bottom:0.5rem;letter-spacing:-1px;text-transform:uppercase;">{{ $facility->name }}</h1>
+                        <p class="lead text-muted">Detail Ruang Meeting</p>
+                    </div>
+
+                    <div id="session-alert-container">
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                                <i class='bx bx-check-circle me-2'></i>
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                                <i class='bx bx-error-circle me-2'></i>
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        @if ($errors->has('date'))
+                            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                                <i class='bx bx-error-circle me-2'></i>
+                                {{ $errors->first('date') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-lg-6 mb-4">
+                            <div class="facility-image-card position-relative">
+                                @php
+                                    $imgPath = $facility->image_path && file_exists(public_path($facility->image_path))
+                                        ? asset($facility->image_path)
+                                        : asset('img/meeting_lobby.jpeg');
+                                @endphp
+                                <img src="{{ $imgPath }}" alt="{{ $facility->name }}">
+                                @if(auth()->check())
+                                    <div class="bookmark-form-detail text-center mt-2 mb-3">
+                                        <button type="button"
+                                                class="bookmark-btn-detail"
+                                                data-facility-id="{{ $facility->id }}"
+                                                data-bookmarked="{{ auth()->user()->bookmarkedFacilities->contains($facility->id) ? 'true' : 'false' }}"
+                                                aria-label="Bookmark {{ $facility->name }}">
+                                            @if(auth()->user()->bookmarkedFacilities->contains($facility->id))
+                                                <i class='bx bxs-bookmark'></i><span>Hapus Bookmark</span>
+                                            @else
+                                                <i class='bx bx-bookmark'></i><span>Tambah Bookmark</span>
+                                            @endif
+                                        </button>
+                                        {{-- <button id="test-bookmark-area-btn" style="margin-left:10px;z-index:9999;">TEST AREA</button>
+                                        <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            var btn = document.getElementById('test-bookmark-area-btn');
+                                            if(btn) btn.addEventListener('click', function() {
+                                                alert('TOMBOL TEST AREA BERFUNGSI!');
+                                            });
+                                        });
+                                        </script> --}}
+
+                                        {{-- <button id="bookmark-btn-test"
+                                                data-facility-id="{{ $facility->id }}"
+                                                data-bookmarked="{{ auth()->user()->bookmarkedFacilities->contains($facility->id) ? 'true' : 'false' }}"
+                                                style="margin-left:10px;z-index:9999;background:yellow;">
+                                            TEST BOOKMARK PURE JS
+                                        </button>
+                                        <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            var btn = document.getElementById('bookmark-btn-test');
+                                            if(btn) btn.addEventListener('click', function() {
+                                                alert('BOOKMARK BUTTON PURE JS BERFUNGSI!');
+                                            });
+                                        });
+                                        </script> --}}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-4">
+                            <div class="facility-info-card">
+                                <div class="card-header">
+                                    <h4 class="mb-0">
+                                        <i class='bx bx-info-circle me-2'></i>Informasi Ruangan
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <p class="facility-description">{{ $facility->description }}</p>
+                                    
+                                    <div class="info-item">
+                                        <i class='bx bx-map-pin'></i>
+                                        <div>
+                                            <strong>Lokasi:</strong>
+                                            <p>{{ $facility->location }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <i class='bx bx-time'></i>
+                                        <div>
+                                            <strong>Jam Operasional:</strong>
+                                            <p>{{ \Carbon\Carbon::parse($facility->opening_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($facility->closing_time)->format('H:i') }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <i class='bx bx-user'></i>
+                                        <div>
+                                            <strong>Contact Person:</strong>
+                                            <p>{{ $facility->contact_person }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <i class='bx bx-envelope'></i>
+                                        <div>
+                                            <strong>Email:</strong>
+                                            <p>{{ $facility->contact_email }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <i class='bx bx-phone'></i>
+                                        <div>
+                                            <strong>Telepon:</strong>
+                                            <p>{{ $facility->contact_phone }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-center mb-5">
+                        <div class="col-lg-8">
+                            <div class="booking-form-card">
+                                <div class="card-header">
+                                    <h4 class="mb-0">
+                                        <i class='bx bx-calendar-plus me-2'></i>Form Reservasi
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <form action="{{ route('user.booking.confirm', ['facilityId' => $facility->id]) }}" method="post">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                                                <input type="date" id="date" name="date" class="form-control" required min="{{ date('Y-m-d') }}">
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-3">
+                                                <label for="meeting_title" class="form-label">Judul Meeting <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="meeting_title" name="meeting_title" placeholder="Masukkan judul meeting" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="time" class="form-label">Jam Mulai <span class="text-danger">*</span></label>
+                                                <input type="time" id="time" name="time" class="form-control" required>
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-3">
+                                                <label for="end_time" class="form-label">Jam Selesai <span class="text-danger">*</span></label>
+                                                <input type="time" id="end_time" name="end_time" class="form-control" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="group_name" class="form-label">Instansi/Kelompok <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="group_name" name="group_name" placeholder="Masukkan instansi/kelompok" required>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class='bx bx-calendar-check me-2'></i>Proses Reservasi
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if($ratingsAndReviews->isNotEmpty())
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="reviews-card">
+                                    <div class="card-header">
+                                        <h4 class="mb-0">
+                                            <i class='bx bx-star me-2'></i>Ulasan dan Rating
+                                        </h4>
+                                    </div>
+                                    <div class="card-body">
+                                        @foreach($ratingsAndReviews as $booking)
+                                            <div class="review-item">
+                                                <div class="review-header">
+                                                    <div class="reviewer-info">
+                                                        @if ($booking->user->profile_picture && Storage::exists('public/profile_pictures/' . $booking->user->profile_picture))
+                                                            <img src="{{ asset('storage/profile_pictures/' . $booking->user->profile_picture) }}" alt="{{ $booking->user->name }}" class="reviewer-avatar">
+                                                        @else
+                                                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Default Profile Picture" class="reviewer-avatar">
+                                                        @endif
+                                                        <div>
+                                                            <h6 class="reviewer-name">{{ $booking->user->name }}</h6>
+                                                            <div class="rating-stars">@ratingStars($booking->ratings)</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="review-content">
+                                                    <p>{{ $booking->reviews }}</p>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endsection
+
+    @section('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        {{-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> --}}
+        {{-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script> --}}
+        {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> --}}
+
+        <script>
+            // Fungsi untuk menampilkan pesan alert
+            function showAlert(type, message) {
+                let alertHtml = `<div class="alert alert-${type} alert-dismissible fade show mb-4" role="alert">
+                    <i class='bx bx-${type === 'success' ? 'check' : 'error'}-circle me-2'></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                </div>`;
+                $('#alert-container').html(alertHtml);
+                setTimeout(function() {
+                    $('#alert-container').empty();
+                }, 5000);
+            }
+
+            // Event delegation untuk tombol bookmark detail
+            document.addEventListener('click', function(e) {
+                const button = e.target.closest('.bookmark-btn-detail');
+                if (button) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const facilityId = button.getAttribute('data-facility-id');
+                    let isBookmarked = button.getAttribute('data-bookmarked') === 'true';
+                    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+                    const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+                    if (button.disabled) return;
+                    button.disabled = true;
+                    let url = isBookmarked ? `/user/unbookmark/${facilityId}` : `/facility/bookmark/${facilityId}`;
+                    let method = isBookmarked ? 'DELETE' : 'POST';
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: `_token=${encodeURIComponent(csrfToken)}&_method=${method}`
+                    })
+                    .then(response => {
+                        const contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            return response.json();
+                        } else {
+                            throw new Error('Server returned non-JSON response or an error occurred. Status: ' + response.status);
+                        }
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            if (isBookmarked) {
+                                button.setAttribute('data-bookmarked', 'false');
+                                button.innerHTML = '<i class="bx bx-bookmark"></i><span>Tambah Bookmark</span>';
+                            } else {
+                                button.setAttribute('data-bookmarked', 'true');
+                                button.innerHTML = '<i class="bx bxs-bookmark"></i><span>Hapus Bookmark</span>';
+                            }
+                            showAlert('success', data.message);
+                        } else {
+                            showAlert('danger', data.message || 'Terjadi kesalahan.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error("AJAX Error:", err);
+                        showAlert('danger', 'Terjadi kesalahan saat memproses bookmark: ' + err.message);
+                    })
+                    .finally(() => {
+                        button.disabled = false;
+                    });
+                }
+            });
+        </script>
+    @endsection
+</body>
+</html>

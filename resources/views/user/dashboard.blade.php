@@ -102,16 +102,7 @@
                                             loading="lazy"
                                             onerror="console.log('Image failed to load:', this.src); this.style.border='2px solid red';">
                                     </a>
-                                    @auth
-                                        <form action="{{ route('user.facility.bookmark', ['facility' => $facility->id]) }}" 
-                                              method="post" 
-                                              class="bookmark-form">
-                                            @csrf
-                                            <button type="submit" class="bookmark-btn" aria-label="Bookmark {{ $facility->name }}">
-                                                <i class='bx bx-bookmark'></i>
-                                            </button>
-                                        </form>
-                                    @endauth
+
                                 </div>
                                 
                                 <div class="facility-content">
@@ -170,19 +161,22 @@
 @endsection
 
 @section('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Dashboard loaded');
-    const images = document.querySelectorAll('.facility-image img');
-    images.forEach((img, index) => {
-        console.log('Image ' + index + ':', img.src);
-        img.addEventListener('load', function() {
-            console.log('Image ' + index + ' loaded successfully');
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            console.log('Dashboard loaded');
+            const images = document.querySelectorAll('.facility-image img');
+            images.forEach((img, index) => {
+                console.log('Image ' + index + ':', img.src);
+                img.addEventListener('load', function() {
+                    console.log('Image ' + index + ' loaded successfully');
+                });
+                img.addEventListener('error', function() {
+                    console.log('Image ' + index + ' failed to load');
+                });
+            });
+
+
         });
-        img.addEventListener('error', function() {
-            console.log('Image ' + index + ' failed to load');
-        });
-    });
-});
-</script>
+    </script>
 @endsection

@@ -11,6 +11,6 @@ class UserDashboardController extends Controller
     {
         $facilities = Facility::all();
 
-        return view('user.dashboard' , compact('facilities'));
+        return view('user.dashboard', compact('facilities'));
     }
 }
