@@ -3,66 +3,85 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Models\Facility;
 use App\Models\Notification;
-use App\Models\Tournament;
 use App\Models\User;
-use App\Models\Booking;
+use App\Models\Booking; 
+use App\Models\Facility; 
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon; // Pastikan ini ada
+use Carbon\Carbon;
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
-        $userCount = User::count();
-        $newUsersCount = User::where('created_at', '>=', Carbon::now()->subDays(30))->count();
 
+        // Statistik Dashboard
+        $userCount = User::count();
         $bookingCount = Booking::count();
         $facilityCount = Facility::count();
-        $tournamentCount = Tournament::count(); 
-
-
-        $unreadNotificationCount = Notification::where('is_read', false)->count();
+        $totalPendingBookings = Booking::where('status', 'Menunggu Konfirmasi')->count();
         
+        // Data untuk Chart Distribusi Pengguna
+        // Menggunakan get() untuk mengambil Collection, lalu mengakses dengan property object
         $userTypes = User::select('user_type', DB::raw('count(*) as count'))
-            ->groupBy('user_type')
-            ->pluck('count', 'user_type');
+                         ->groupBy('user_type')
+                         ->pluck('count', 'user_type');
         
         $userCounts = [
-            'admin' => $userTypes->get('admin', 0),
-            'user' => $userTypes->get('user', 0),
+            'Admin' => $userTypes->get('admin', 0), 
+            'User' => $userTypes->get('user', 0),
         ];
-        
-        $bookings = Booking::all();
-        $bookedDates = $bookings->map(function ($booking) {
-            $formattedDate = Carbon::parse($booking->booking_date)->format('Y-m-d');
+
+        // Memuat semua bookings dengan relasi user dan facility
+        // PENTING: Pastikan relasi user dan facility DIMUAT DI SINI
+        $allBookings = Booking::with(['user', 'facility'])->get(); 
+
+        // Memetakan data bookings ke format yang dibutuhkan oleh tampilan, termasuk untuk catatan
+        // Menambahkan penanganan null (menggunakan ?-> dan ??) untuk properti relasi
+        $bookedDates = $allBookings->map(function ($booking) {
+            $facilityName = $booking->facility->name ?? 'Fasilitas Tidak Dikenal'; // Pastikan relasi facility dimuat
+            $userName = $booking->user->name ?? 'Pengguna Tidak Dikenal'; // Pastikan relasi user dimuat
+
+            $bookingDate = Carbon::parse($booking->booking_date)->format('Y-m-d');
+            $bookingTime = Carbon::parse($booking->booking_time)->format('H:i:s');
+            $bookingHours = $booking->hours ?? 1; 
+
+            // Judul event untuk catatan
+            $title = "{$facilityName} - {$userName} (" . Carbon::parse($booking->booking_time)->format('H:i') . ")";
 
             return [
-                'title' => $booking->meeting_title ?? $booking->facility->name,
-                'start' => Carbon::parse($formattedDate . ' ' . $booking->booking_time)->toIso8601String(),
-                'end' => Carbon::parse($formattedDate . ' ' . $booking->booking_end)->toIso8601String(),
-                'status' => $booking->status,
-                'classNames' => [
-                    'fc-event-' . strtolower(str_replace(' ', '-', $booking->status)), // Membuat class dari status, misal 'fc-event-disetujui'
-                ],
+                'title' => $title,
+                // Menggunakan booking_date yang sudah diformat di sini
+                'bookingDate' => $bookingDate, 
+                'bookingTime' => $bookingTime, 
+                'bookingHours' => $bookingHours,
+                'facilityName' => $facilityName,
+                'userName' => $userName,
+                'bookingStatus' => $booking->status,
+                'bookingAmount' => $booking->amount ?? 0, 
+                'bookingPaymentMethod' => $booking->payment_method ?? 'N/A',
+                // Data 'start' dan 'end' diperlukan untuk FullCalendar, namun di dashboard ini tidak ada FullCalendar.
+                // Jika Anda ingin menggunakannya lagi, pastikan formatnya benar
+                'start' => Carbon::parse($bookingDate . ' ' . $bookingTime)->toIso8601String(),
+                'end' => Carbon::parse($bookingDate . ' ' . ($booking->booking_end ?? '00:00:00'))->toIso8601String(), // Pastikan booking_end ada
+                'classNames' => ['fc-event-' . strtolower(str_replace(' ', '-', $booking->status))],
             ];
         });
+        
+        $unreadNotificationCount = Notification::where('is_read', false)->count();
 
         return view('admin.dashboard', compact(
-            'user', 
+            'user', // Variabel $user ini diperlukan untuk Auth::user()->name di Blade
             'userCount', 
             'bookingCount', 
             'facilityCount', 
-            'tournamentCount', 
-            'unreadNotificationCount', 
+            'totalPendingBookings', 
+            'userCounts', 
             'bookedDates', 
-            'userCounts',
-            'newUsersCount', 
+            'unreadNotificationCount'
         ));
     }
-
 
     public function notifications()
     {

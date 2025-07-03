@@ -26,7 +26,7 @@
 <section id="sidebar">
     <a href="{{route('admin.dashboard')}}" class="brand" style="text-decoration: none;">
         <div>
-            <img src="{{ asset('img/msa.png') }}" alt="logo" style="width: 65px;" />
+            <img src="{{ asset('img/logo3.png') }}" alt="logo" style="width: 60px;" />
         </div>
         <span class="text">Booking Meeting Room</span>
     </a>
