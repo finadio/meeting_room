@@ -61,8 +61,6 @@
                         <td>
                             @if($user->user_type === 'user')
                                 <span class="badge badge-secondary">{{ ucfirst($user->user_type) }}</span>
-                            @elseif($user->user_type === 'futsal_manager')
-                                <span class="badge badge-info">{{ ucfirst($user->user_type) }}</span>
                             @elseif($user->user_type === 'admin')
                                 <span class="badge badge-danger">{{ ucfirst($user->user_type) }}</span>
                             @endif

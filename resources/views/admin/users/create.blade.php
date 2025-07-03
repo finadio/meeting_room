@@ -41,7 +41,6 @@
                 <label for="user_type">User Type:</label>
                 <select name="user_type" id="user_type" class="form-control">
                     <!-- <option value="admin" {{ old('user_type') == 'admin' ? 'selected' : '' }}>Admin</option> -->
-                    <option value="manager" {{ old('user_type') == 'futsal_manager' ? 'selected' : '' }}>Manager</option>
                     <option value="user" {{ old('user_type') == 'user' ? 'selected' : '' }}>User</option>
                 </select>
             </div>

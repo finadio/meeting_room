@@ -1,105 +1,187 @@
 @extends('admin.layouts.admin_dashboard')
 
 @section('content')
-<div class="container-fluid px-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="card shadow-lg border-0 rounded-lg">
-                <div class="card-header bg-gradient-primary text-white">
-                    <h3 class="mb-0 text-center">
-                        <i class="bx bx-calendar-plus me-2"></i>
-                        Buat Booking Ruang
-                    </h3>
-                </div>
-                
-                <div class="card-body p-4">
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="bx bx-check-circle me-2"></i>
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="booking-page-wrapper">
+    <div class="container-fluid px-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <!-- Main Booking Card -->
+                <div class="booking-card">
+                    <!-- Header Section -->
+                    <div class="booking-header">
+                        <div class="header-icon">
+                            <i class="bx bx-calendar-plus"></i>
                         </div>
-                    @endif
+                        <h3 class="header-title">Buat Booking Ruang</h3>
+                        <div class="header-decoration"></div>
+                    </div>
                     
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="bx bx-error-circle me-2"></i>
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    @endif
-
-                    <form action="{{ route('admin.bookings.store') }}" method="POST" class="booking-form">
-                        @csrf
+                    <!-- Content Section -->
+                    <div class="booking-content">
+                        <!-- Alert Messages -->
+                        @if (session('success'))
+                            <div class="custom-alert success-alert">
+                                <div class="alert-icon">
+                                    <i class="bx bx-check-circle"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <strong>Berhasil!</strong>
+                                    <span>{{ session('success') }}</span>
+                                </div>
+                                <button type="button" class="alert-close" data-bs-dismiss="alert">
+                                    <i class="bx bx-x"></i>
+                                </button>
+                            </div>
+                        @endif
                         
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="facility_id" class="form-label">
-                                    <i class="bx bx-building me-1"></i>
-                                    Fasilitas
-                                </label>
-                                <select name="facility_id" id="facility_id" class="form-select custom-select" required>
-                                    <option value="">-- Pilih Fasilitas --</option>
-                                    @foreach($facilities as $facility)
-                                        <option value="{{ $facility->id }}">{{ $facility->name }}</option>
-                                    @endforeach
-                                </select>
+                        @if (session('error'))
+                            <div class="custom-alert danger-alert">
+                                <div class="alert-icon">
+                                    <i class="bx bx-error-circle"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <strong>Error!</strong>
+                                    <span>{{ session('error') }}</span>
+                                </div>
+                                <button type="button" class="alert-close" data-bs-dismiss="alert">
+                                    <i class="bx bx-x"></i>
+                                </button>
                             </div>
-                        </div>
+                        @endif
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="date" class="form-label">
-                                    <i class="bx bx-calendar me-1"></i>
-                                    Tanggal Booking
-                                </label>
-                                <input type="date" name="date" id="date" class="form-control custom-input" required>
-                            </div>
+                        <!-- Booking Form -->
+                        <form action="{{ route('admin.bookings.store') }}" method="POST" class="booking-form">
+                            @csrf
                             
-                            <div class="col-md-3 mb-3">
-                                <label for="booking_time" class="form-label">
-                                    <i class="bx bx-time me-1"></i>
-                                    Jam Mulai
-                                </label>
-                                <input type="time" name="booking_time" id="booking_time" class="form-control custom-input" required>
+                            <!-- Facility Selection -->
+                            <div class="form-section">
+                                <div class="form-group-enhanced">
+                                    <label for="facility_id" class="form-label-enhanced">
+                                        <div class="label-icon">
+                                            <i class="bx bx-building"></i>
+                                        </div>
+                                        <span>Fasilitas</span>
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <select name="facility_id" id="facility_id" class="form-control-enhanced" required>
+                                            <option value="">-- Pilih Fasilitas --</option>
+                                            @foreach($facilities as $facility)
+                                                <option value="{{ $facility->id }}">{{ $facility->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="input-border"></div>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <div class="col-md-3 mb-3">
-                                <label for="booking_end" class="form-label">
-                                    <i class="bx bx-time-five me-1"></i>
-                                    Jam Selesai
-                                </label>
-                                <input type="time" name="booking_end" id="booking_end" class="form-control custom-input" required>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="meeting_title" class="form-label">
-                                    <i class="bx bx-notepad me-1"></i>
-                                    Judul Meeting
-                                </label>
-                                <input type="text" name="meeting_title" id="meeting_title" class="form-control custom-input" placeholder="Masukkan judul meeting" required>
+                            <!-- Date and Time Section -->
+                            <div class="form-section">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group-enhanced">
+                                            <label for="date" class="form-label-enhanced">
+                                                <div class="label-icon">
+                                                    <i class="bx bx-calendar"></i>
+                                                </div>
+                                                <span>Tanggal Booking</span>
+                                                <span class="required-indicator">*</span>
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input type="date" name="date" id="date" class="form-control-enhanced" required>
+                                                <div class="input-border"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-3">
+                                        <div class="form-group-enhanced">
+                                            <label for="booking_time" class="form-label-enhanced">
+                                                <div class="label-icon">
+                                                    <i class="bx bx-time"></i>
+                                                </div>
+                                                <span>Jam Mulai</span>
+                                                <span class="required-indicator">*</span>
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input type="time" name="booking_time" id="booking_time" class="form-control-enhanced" required>
+                                                <div class="input-border"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-3">
+                                        <div class="form-group-enhanced">
+                                            <label for="booking_end" class="form-label-enhanced">
+                                                <div class="label-icon">
+                                                    <i class="bx bx-time-five"></i>
+                                                </div>
+                                                <span>Jam Selesai</span>
+                                                <span class="required-indicator">*</span>
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input type="time" name="booking_end" id="booking_end" class="form-control-enhanced" required>
+                                                <div class="input-border"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-12 mb-4">
-                                <label for="group_name" class="form-label">
-                                    <i class="bx bx-group me-1"></i>
-                                    Kelompok
-                                </label>
-                                <input type="text" name="group_name" id="group_name" class="form-control custom-input" placeholder="Masukkan nama kelompok" required>
+                            <!-- Meeting Details Section -->
+                            <div class="form-section">
+                                <div class="form-group-enhanced">
+                                    <label for="meeting_title" class="form-label-enhanced">
+                                        <div class="label-icon">
+                                            <i class="bx bx-notepad"></i>
+                                        </div>
+                                        <span>Judul Meeting</span>
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input type="text" name="meeting_title" id="meeting_title" class="form-control-enhanced" placeholder="Masukkan judul meeting" required>
+                                        <div class="input-border"></div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg custom-btn">
-                                <i class="bx bx-save me-2"></i>
-                                Buat Booking
-                            </button>
-                        </div>
-                    </form>
+                            <div class="form-section">
+                                <div class="form-group-enhanced">
+                                    <label for="group_name" class="form-label-enhanced">
+                                        <div class="label-icon">
+                                            <i class="bx bx-group"></i>
+                                        </div>
+                                        <span>Kelompok</span>
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input type="text" name="group_name" id="group_name" class="form-control-enhanced" placeholder="Masukkan nama kelompok" required>
+                                        <div class="input-border"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="form-section submit-section">
+                                <div class="button-group">
+                                    <button type="submit" class="btn-submit">
+                                        <div class="btn-content">
+                                            <i class="bx bx-save"></i>
+                                            <span>Buat Booking</span>
+                                        </div>
+                                        <div class="btn-ripple"></div>
+                                    </button>
+                                    <button type="button" class="btn-back" onclick="window.history.back()">
+                                        <div class="btn-content">
+                                            <i class="bx bx-arrow-back"></i>
+                                            <span>Kembali</span>
+                                        </div>
+                                        <div class="btn-ripple"></div>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,82 +193,377 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 <style>
-    .bg-gradient-primary {
-        background: linear-gradient(135deg, #3C91E6 0%, #2d7dd2 100%);
-        border-radius: 0.375rem 0.375rem 0 0 !important;
+    /* Page Wrapper */
+    .booking-page-wrapper {
+        min-height: 100vh;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px 0;
+        position: relative;
     }
-    
-    .card {
-        border-radius: 0.5rem;
-        transition: all 0.3s ease;
+
+    .booking-page-wrapper::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="50" cy="10" r="1" fill="%23ffffff" opacity="0.03"/><circle cx="10" cy="50" r="1" fill="%23ffffff" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        pointer-events: none;
     }
-    
-    .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(60, 145, 230, 0.15) !important;
+
+    /* Main Card */
+    .booking-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
-    
-    .custom-input, .custom-select {
-        border: 2px solid #e3e6f0;
-        border-radius: 0.5rem;
-        padding: 12px 15px;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        background-color: #fff;
+
+    .booking-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background-size: 400% 400%;
+        animation: gradient-flow 3s ease infinite;
     }
-    
-    .custom-input:focus, .custom-select:focus {
-        border-color: #3C91E6;
-        box-shadow: 0 0 0 0.2rem rgba(60, 145, 230, 0.25);
-        background-color: #fff;
+
+    @keyframes gradient-flow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
-    
-    .form-label {
-        font-weight: 600;
-        color: #5a5c69;
-        margin-bottom: 8px;
-        font-size: 14px;
+
+    /* Header */
+    .booking-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        padding: 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
     }
-    
-    .custom-btn {
-        background: linear-gradient(135deg, #3C91E6 0%, #2d7dd2 100%);
-        border: none;
-        border-radius: 0.5rem;
-        padding: 12px 30px;
-        font-weight: 600;
-        font-size: 16px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(60, 145, 230, 0.3);
+
+    .booking-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        animation: rotate 8s linear infinite;
     }
-    
-    .custom-btn:hover {
-        background: linear-gradient(135deg, #2d7dd2 0%, #1e6bb8 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(60, 145, 230, 0.4);
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
     }
-    
-    .alert {
-        border-radius: 0.5rem;
-        border: none;
-        padding: 15px 20px;
-        margin-bottom: 25px;
-        font-weight: 500;
+
+    .header-icon {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
     }
-    
-    .alert-success {
-        background: linear-gradient(135deg, #1cc88a 0%, #17a673 100%);
+
+    .header-icon i {
+        font-size: 2rem;
         color: white;
     }
-    
-    .alert-danger {
-        background: linear-gradient(135deg, #e74a3b 0%, #c0392b 100%);
+
+    .header-title {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+        z-index: 2;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-decoration {
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, #4facfe, #00f2fe);
+        margin: 15px auto 0;
+        border-radius: 2px;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Content */
+    .booking-content {
+        padding: 40px;
+    }
+
+    /* Alerts */
+    .custom-alert {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+        border: none;
+        animation: slideInDown 0.5s ease-out;
+    }
+
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .success-alert {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
     }
-    
+
+    .danger-alert {
+        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        color: white;
+    }
+
+    .alert-icon {
+        font-size: 1.5rem;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+    }
+
+    .alert-content {
+        flex: 1;
+    }
+
+    .alert-content strong {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 2px;
+    }
+
+    .alert-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 50%;
+        transition: background-color 0.3s ease;
+    }
+
+    .alert-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Form Sections */
+    .form-section {
+        margin-bottom: 30px;
+    }
+
+    .form-group-enhanced {
+        position: relative;
+    }
+
+    .form-label-enhanced {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.95rem;
+    }
+
+    .label-icon {
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+    }
+
+    .label-icon i {
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .required-indicator {
+        color: #e53e3e;
+        margin-left: 4px;
+        font-weight: 700;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .form-control-enhanced {
+        width: 100%;
+        padding: 16px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        background: white;
+        transition: all 0.3s ease;
+        outline: none;
+        position: relative;
+        z-index: 1;
+    }
+
+    .form-control-enhanced:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
+        background: white;
+    }
+
+    .form-control-enhanced::placeholder {
+        color: #a0aec0;
+        font-weight: 400;
+    }
+
+    .input-border {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #4facfe, #00f2fe);
+        transition: all 0.3s ease;
+        border-radius: 1px;
+        transform: translateX(-50%);
+    }
+
+    .form-control-enhanced:focus + .input-border {
+        width: 100%;
+    }
+
+    /* Submit Section */
+    .submit-section {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 18px 40px;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        min-width: 200px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-submit:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-back {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 18px 40px;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+        min-width: 200px;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(108, 117, 125, 0.4);
+    }
+
+    .btn-back:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .btn-content i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .btn-ripple {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s ease, height 0.3s ease;
+    }
+
+    .btn-submit:active .btn-ripple,
+    .btn-back:active .btn-ripple {
+        width: 300px;
+        height: 300px;
+    }
+
+    /* Animation */
     .booking-form {
-        animation: fadeInUp 0.5s ease-out;
+        animation: fadeInUp 0.6s ease-out;
     }
-    
+
     @keyframes fadeInUp {
         from {
             opacity: 0;
@@ -197,30 +574,63 @@
             transform: translateY(0);
         }
     }
-    
-    .container-fluid {
-        padding-top: 20px;
-        padding-bottom: 20px;
-    }
-    
-    .img-fluid {
-        max-width: 100px;
-        height: auto;
-    }
-    
-    /* Responsive adjustments */
+
+    /* Responsive Design */
     @media (max-width: 768px) {
+        .booking-page-wrapper {
+            padding: 20px 0;
+        }
+
+        .booking-content {
+            padding: 30px 20px;
+        }
+
+        .booking-header {
+            padding: 25px 20px;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .header-icon i {
+            font-size: 1.5rem;
+        }
+
+        .form-control-enhanced {
+            padding: 14px 16px;
+        }
+
+        .btn-submit,
+        .btn-back {
+            padding: 16px 30px;
+            min-width: 150px;
+        }
+
+        .button-group {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+
+    @media (max-width: 576px) {
         .container-fluid {
             padding-left: 15px;
             padding-right: 15px;
         }
-        
-        .card-body {
-            padding: 20px !important;
+
+        .booking-content {
+            padding: 25px 15px;
         }
-        
-        .custom-input, .custom-select {
-            padding: 10px 12px;
+
+        .btn-submit,
+        .btn-back {
+            width: 100%;
         }
     }
 </style>

@@ -4,7 +4,12 @@
 
 @section('content')
     <div class="container-fluid dashboard-content">
-        <h2 class="mb-4 dashboard-welcome-title">Welcome, {{ $user->name }}!</h2>
+        {{-- HEADER UTAMA DASHBOARD --}}
+        <div class="dashboard-header-main mb-4">
+            <h2 class="dashboard-welcome-title">Welcome Back, Administrator!</h2>
+            <p class="dashboard-summary-text">Dashboard ringkasan data penting Anda.</p>
+        </div>
+        {{-- AKHIR HEADER UTAMA --}}
 
         @if(session('success'))
             <div class="alert alert-success mt-4 animated fadeIn" role="alert">
@@ -12,72 +17,88 @@
             </div>
         @endif
 
-        <h3 class="section-heading mt-5">Overview</h3>
-        <div class="row mt-4 dashboard-stats-row">
-            <div class="col-md-6 col-lg-3 mb-4">
+        {{-- BAGIAN OVERVIEW - KARTU STATISTIK (4 KARTU UTAMA) --}}
+        <div class="row mt-4 dashboard-stats-row g-3">
+            {{-- Kartu Total Users --}}
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
                 <a href="{{ route('admin.users.index') }}" class="card-link dashboard-stat-card">
-                    <div class="card rounded dashboard-card-item card-type-users">
-                        <div class="card-body text-left">
-                            <div class="dashboard-card-header">
-                                <h5 class="card-title text-uppercase">Total Users</h5>
-                                <i class='bx bx-user dashboard-card-icon'></i>
+                    <div class="card rounded dashboard-card-item card-type-users"> {{-- Hapus bg-primary text-white --}}
+                        <div class="card-body">
+                            <div class="stat-icon-square"><i class='bx bx-user'></i></div> {{-- Icon di kotak putih --}}
+                            <div class="stat-text-block">
+                                <h5 class="stat-label">Total Users</h5>
+                                <p class="stat-value">{{ $userCount }}</p>
                             </div>
-                            <p class="card-text">{{ $userCount }}</p>
                         </div>
                     </div>
                 </a>
             </div>
 
-            <div class="col-md-6 col-lg-3 mb-4">
+            {{-- Kartu Total Bookings --}}
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
                 <a href="{{ route('admin.bookings.index') }}" class="card-link dashboard-stat-card">
                     <div class="card rounded dashboard-card-item card-type-bookings">
-                        <div class="card-body text-left">
-                            <div class="dashboard-card-header">
-                                <h5 class="card-title text-uppercase">Total Bookings</h5>
-                                <i class='bx bx-calendar dashboard-card-icon'></i>
+                        <div class="card-body">
+                            <div class="stat-icon-square"><i class='bx bx-calendar'></i></div>
+                            <div class="stat-text-block">
+                                <h5 class="stat-label">Total Bookings</h5>
+                                <p class="stat-value">{{ $bookingCount }}</p>
                             </div>
-                            <p class="card-text">{{ $bookingCount }}</p>
                         </div>
                     </div>
                 </a>
             </div>
 
-            <div class="col-md-6 col-lg-3 mb-4">
+            {{-- Kartu Total Facilities --}}
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
                 <a href="{{ route('admin.facilities.index') }}" class="card-link dashboard-stat-card">
                     <div class="card rounded dashboard-card-item card-type-facilities">
-                        <div class="card-body text-left">
-                            <div class="dashboard-card-header">
-                                <h5 class="card-title text-uppercase">Total Facilities</h5>
-                                <i class='bx bxs-building dashboard-card-icon'></i>
+                        <div class="card-body">
+                            <div class="stat-icon-square"><i class='bx bxs-building'></i></div>
+                            <div class="stat-text-block">
+                                <h5 class="stat-label">Total Facilities</h5>
+                                <p class="stat-value">{{ $facilityCount }}</p>
                             </div>
-                            <p class="card-text">{{ $facilityCount }}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            {{-- Kartu New Users --}}
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <a href="{{ route('admin.users.index') }}" class="card-link dashboard-stat-card">
+                    <div class="card rounded dashboard-card-item">
+                        <div class="card-body">
+                            <div class="stat-icon-square"><i class='bx bx-user-plus'></i></div>
+                            <div class="stat-text-block">
+                                <h5 class="stat-label">New Users (30 Hari)</h5>
+                                <p class="stat-value">{{ $newUsersCount }}</p>
+                            </div>
                         </div>
                     </div>
                 </a>
             </div>
         </div>
 
-        {{-- BAGIAN USER DISTRIBUTION DAN CALENDAR OVERVIEW DIGABUNG --}}
-        <div class="row mt-5"> {{-- Hapus justify-content-center dari sini, biarkan kolomnya sendiri yang justify --}}
-            {{-- Kolom untuk User Distribution --}}
-            <div class="col-md-6 mb-4"> {{-- Ubah dari col-md-8 col-lg-6 menjadi col-md-6 --}}
-                <h3 class="section-heading-in-column">User Distribution</h3> {{-- Ubah kelas heading --}}
+        {{-- BAGIAN GRAFIK DAN KALENDER (BERSEBELAHAN) --}}
+        <div class="row mt-5 g-3">
+            <div class="col-lg-5 mb-4"> {{-- DIUBAH: Lebar kolom grafik menjadi 7/12 --}}
+                
                 <div class="card p-4 shadow-lg dashboard-chart-card">
                     <canvas id="userChart"></canvas>
                 </div>
             </div>
 
-            {{-- Kolom untuk Booking Calendar Overview --}}
-            <div class="col-md-6 mb-4"> {{-- Ubah dari col-md-8 col-lg-6 menjadi col-md-6 --}}
+            <div class="col-lg-7 mb-4"> {{-- DIUBAH: Lebar kolom kalender menjadi 5/12 --}}
                 @if(auth()->check() && auth()->user()->user_type === 'admin')
-                <h3 class="section-heading-in-column">Booking Calendar Overview</h3> {{-- Ubah kelas heading --}}
-                <a href="{{ route('admin.calendar') }}" style="text-decoration: none; color: black;">
+                <a href="{{ route('admin.calendar') }}" class="text-decoration-none text-dark">
                 <div id="calendar" class="card p-4 shadow-lg dashboard-calendar-card"></div>
                 </a>
                 @endif
             </div>
         </div>
-        {{-- AKHIR BAGIAN USER DISTRIBUTION DAN CALENDAR OVERVIEW DIGABUNG --}}
+        {{-- AKHIR BAGIAN GRAFIK DAN KALENDER --}}
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -94,7 +115,8 @@
                     labels: userTypes,
                     datasets: [{
                         label: 'Types of Users',
-                        backgroundColor: ['#A0D9FF', '#FFB7B7', '#D7A7FF'],
+                        backgroundColor: ['#4A6DFB', '#28A745', '#17A2B8', '#FFC107'], /* Warna chart sesuai tema utama */
+                        borderRadius: 5,
                         data: Object.values(userCounts)
                     }]
                 },
@@ -105,12 +127,20 @@
                         y: {
                             beginAtZero: true,
                             grid: {
-                                display: false
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#A5A5A5'
                             }
                         },
                         x: {
                             grid: {
-                                display: false
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#A5A5A5'
                             }
                         }
                     },
@@ -120,7 +150,7 @@
                             display: true,
                             text: 'User Distribution by Type',
                             font: { size: 16, weight: '600' },
-                            color: '#343a40'
+                            color: '#343A40'
                         }
                     }
                 }
@@ -136,10 +166,8 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 events: @json($bookedDates),
-                eventRender: function(info) {
-                    if (info.event.extendedProps.status === 'booked') {
-                        info.el.classList.add('badge', 'badge-primary', 'badge-pill');
-                    }
+                eventContent: function(arg) {
+                    return { html: '<div class="fc-event-custom">' + arg.event.title + '</div>' };
                 },
                 headerToolbar: {
                     left: 'prev,next today',
@@ -149,8 +177,6 @@
                 height: 'auto',
                 contentHeight: 'auto',
                 eventDisplay: 'block',
-                eventBackgroundColor: '#A0D9FF',
-                eventBorderColor: '#A0D9FF',
                 eventTextColor: '#fff',
                 dayMaxEvents: true,
                 views: {
