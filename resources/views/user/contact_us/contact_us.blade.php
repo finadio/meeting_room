@@ -3,9 +3,6 @@
 
 @section('content')
 <main>
-    <div class="container mb-4">
-        <h1 class="text-center fw-bold" style="font-size:2.4rem; color:#23395d; margin-top:1.5rem; margin-bottom:2.2rem; letter-spacing:-1px;">Hubungi Kami</h1>
-    </div>
     <div class="contactus-hero-bg py-5">
         <div class="container">
             <div class="contactus-card mx-auto">
@@ -114,6 +111,7 @@
     .contactus-hero-bg {
         background: #f4f6fa;
         min-height: 100vh;
+        padding-top: 1.2rem !important;
     }
     .contactus-card {
         background: #fff;
