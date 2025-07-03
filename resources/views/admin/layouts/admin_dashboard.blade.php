@@ -101,12 +101,10 @@
 <section id="content">
     <nav>
         <i class='bx bx-menu' ></i>
-        <form action="#">
-            <div class="form-input">
-                <input type="search" placeholder="Search...">
-                <button type="submit" class="search-btn"><i class='bx bx-search' ></i></button>
+        <div class="dropdown">
             </div>
-        </form>
+        <div class="dropdown">
+            </div>
         <div class="dropdown">
             <a href="{{ route('admin.profile') }}" class="profile" id="profileDropdown" style="text-decoration: none;">
                 @if (auth()->check() && $user = auth()->user())

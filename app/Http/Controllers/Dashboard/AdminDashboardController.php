@@ -9,6 +9,7 @@ use App\Models\Tournament;
 use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon; // Pastikan ini ada
 
 class AdminDashboardController extends Controller
 {
@@ -16,39 +17,52 @@ class AdminDashboardController extends Controller
     {
         $user = auth()->user();
         $userCount = User::count();
+        $newUsersCount = User::where('created_at', '>=', Carbon::now()->subDays(30))->count();
+
         $bookingCount = Booking::count();
         $facilityCount = Facility::count();
-        $tournamentCount = Tournament::count();
+        $tournamentCount = Tournament::count(); 
+
+
         $unreadNotificationCount = Notification::where('is_read', false)->count();
-        $userCounts = User::select('user_type', DB::raw('count(*) as count'))
+        
+        $userTypes = User::select('user_type', DB::raw('count(*) as count'))
             ->groupBy('user_type')
             ->pluck('count', 'user_type');
-
-        $events = [];
-        $user = auth()->user();
+        
+        $userCounts = [
+            'admin' => $userTypes->get('admin', 0),
+            'user' => $userTypes->get('user', 0),
+        ];
+        
         $bookings = Booking::all();
-
         $bookedDates = $bookings->map(function ($booking) {
-            $bookingDate = \Carbon\Carbon::parse($booking->booking_date)->format('Y-m-d');
-            $bookingTime = \Carbon\Carbon::parse($booking->booking_time)->format('H:i:s');
-            // $bookingStatus = \Carbon\Carbon::parse($booking->status);
-            $facilityName = $booking->facility->name;
-
-            $title = "{$facilityName} - " . \Carbon\Carbon::parse($booking->booking_time)->format('h:i A');
+            $formattedDate = Carbon::parse($booking->booking_date)->format('Y-m-d');
 
             return [
-                'title' => $title,
-                'start' => $bookingDate,
-                'bookingDate' => $bookingDate,
-                'bookingTime' => $bookingTime,
-                'facilityName' => $facilityName,
-                'className' => 'badge badge-danger badge-pill',
-                'borderColor' => 'red',
+                'title' => $booking->meeting_title ?? $booking->facility->name,
+                'start' => Carbon::parse($formattedDate . ' ' . $booking->booking_time)->toIso8601String(),
+                'end' => Carbon::parse($formattedDate . ' ' . $booking->booking_end)->toIso8601String(),
+                'status' => $booking->status,
+                'classNames' => [
+                    'fc-event-' . strtolower(str_replace(' ', '-', $booking->status)), // Membuat class dari status, misal 'fc-event-disetujui'
+                ],
             ];
         });
 
-        return view('admin.dashboard', compact('user', 'userCount', 'bookingCount', 'facilityCount', 'tournamentCount', 'unreadNotificationCount', 'bookedDates', 'userCounts'));
+        return view('admin.dashboard', compact(
+            'user', 
+            'userCount', 
+            'bookingCount', 
+            'facilityCount', 
+            'tournamentCount', 
+            'unreadNotificationCount', 
+            'bookedDates', 
+            'userCounts',
+            'newUsersCount', 
+        ));
     }
+
 
     public function notifications()
     {
@@ -84,14 +98,14 @@ class AdminDashboardController extends Controller
 
         // Ambil booking yang sedang berlangsung
         $ongoingBooking = Booking::where('facility_id', $id)
-            ->where('date', $currentDate)
+            ->where('booking_date', $currentDate) // Ubah 'date' menjadi 'booking_date'
             ->where('booking_time', '<=', $currentTime)
             ->where('booking_end', '>', $currentTime)
             ->first();
 
         // Ambil booking mendatang setelah waktu saat ini
         $upcomingBookings = Booking::where('facility_id', $id)
-            ->where('date', $currentDate)
+            ->where('booking_date', $currentDate) // Ubah 'date' menjadi 'booking_date'
             ->where('booking_time', '>', $currentTime)
             ->orderBy('booking_time')
             ->get();
@@ -103,4 +117,3 @@ class AdminDashboardController extends Controller
         ]);
     }
 }
-

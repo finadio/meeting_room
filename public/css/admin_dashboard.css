@@ -15,25 +15,32 @@ li {
 }
 
 :root {
-    /* Palet Warna Inspirasi TailAdmin */
-    --primary-blue: #4a6dfc; /* Biru utama yang lebih cerah */
-    --accent-blue: #63a4ff; /* Aksen biru untuk hover/highlight */
-    --text-primary: #343a40; /* Teks gelap */
-    --text-secondary: #6c757d; /* Teks abu-abu */
-    --bg-light: #f8fafd; /* Latar belakang halaman sangat terang */
-    --bg-card: #ffffff; /* Latar belakang kartu putih bersih */
-    --border-color: #e9ecef; /* Warna border tipis */
-    --shadow-soft: 0px 4px 15px rgba(0, 0, 0, 0.05); /* Bayangan sangat halus */
-    --shadow-medium: 0px 8px 25px rgba(0, 0, 0, 0.1); /* Bayangan sedang untuk hover */
-    --shadow-strong: 0px 12px 35px rgba(0, 0, 0, 0.15); /* Bayangan kuat */
-    --bg-panel: #FFFFFF; /* Latar belakang panel/kartu, termasuk sidebar */
-    --text-light: #ADB5BD;
+    /* Palet Warna Inspirasi Referensi Baru (Cerah & Profesional) */
+    --primary-ref-blue: #4A6DFB;
+    --sidebar-bg-blue: #2A3B52; /* Biru gelap solid untuk sidebar */
+    --sidebar-active-bg: #4A6DFB; /* Warna aktif menu */
+    --sidebar-text-color: #ABB2BF; /* Warna teks menu default */
+    --sidebar-text-active: #FFFFFF; /* Warna teks menu aktif */
 
-    /* Warna untuk kartu statistik sesuai referensi (digunakan di CSS, bukan di HTML bg-class) */
-    --color-stat-users: #4a6dfc; /* Biru */
-    --color-stat-bookings: #28a745; /* Hijau */
-    --color-stat-facilities: #17a2b8; /* Teal */
-    --color-stat-warning: #ffc107; /* Kuning (jika ada) */
+    --secondary-ref-blue: #63A4FF; /* Biru kedua untuk aksen/hover */
+    --accent-ref-red: #FF708A; /* Merah muda dari ref */
+    --accent-ref-green: #28A745; /* Hijau */
+    --accent-ref-teal: #17A2B8; /* Teal */
+    --accent-ref-orange: #FFC107; /* Oranye */
+
+    --dark-navy-ref: #282F4E; /* Sidebar gelap */
+    --text-dark-ref: #343A40; /* Teks gelap utama */
+    --text-medium-ref: #6C757D; /* Teks abu-abu */
+    --text-light-ref: #FFFFFF; /* Teks putih */
+
+    --bg-page-light-ref: #F8F9FA; /* Latar belakang halaman */
+    --bg-card-white-ref: #FFFFFF; /* Latar belakang kartu */
+    --border-ref: #E9ECEF; /* Warna border tipis */
+
+    /* Bayangan Halus & Modern */
+    --shadow-ref-extra-soft: 0px 2px 4px rgba(0, 0, 0, 0.02);
+    --shadow-ref-soft: 0px 4px 10px rgba(0, 0, 0, 0.04);
+    --shadow-ref-medium: 0px 8px 25px rgba(0, 0, 0, 0.08);
 }
 
 html {
@@ -41,9 +48,9 @@ html {
 }
 
 body {
-    background-color: var(--bg-light); /* Latar belakang keseluruhan halaman */
-    font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
-    color: var(--text-primary);
+    background-color: var(--bg-page-light-ref);
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-dark-ref);
     line-height: 1.6;
     font-weight: 400;
 }
@@ -55,14 +62,13 @@ body {
     left: 0;
     width: 280px;
     height: 100%;
-    background: #282f4e; /* Latar belakang sidebar gelap */
     z-index: 2000;
     font-family: 'Poppins', sans-serif;
     transition: width .3s ease, box-shadow 0.3s ease;
     overflow-x: hidden;
     scrollbar-width: none;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15); /* Bayangan di sisi sidebar */
-    
+    box-shadow: var(--shadow-ref-medium);
+    background: var(--sidebar-bg-blue);
 }
 #sidebar.hide {
     width: 90px;
@@ -70,22 +76,22 @@ body {
 #sidebar .brand {
     font-size: 24px;
     font-weight: 700;
-    height: 60px; /* Pertahankan tinggi atau sesuaikan jika perlu */
+    height: 60px;
     display: flex;
     align-items: center;
-    color: var(--bg-card);
-    background: #282f4e;
+    background: var(--sidebar-bg-blue); 
+    color: var(--sidebar-text-active);
     position: sticky;
     top: 0;
     left: 0;
     z-index: 500;
-    padding-top: 15px; 
+    padding-top: 15px;
     padding-bottom: 0;
     box-sizing: border-box;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     padding-left: 20px;
+    background: var(--primary-dark);
 }
-
 #sidebar .brand img {
     width: 40px;
     margin-right: 10px;
@@ -109,7 +115,7 @@ body {
     transition: background 0.2s ease-in-out;
 }
 #sidebar .side-menu li.active {
-    background: var(--primary-blue);
+    background: var(--primary-ref-blue);
     position: relative;
     border-radius: 8px;
     margin: 0 15px;
@@ -127,7 +133,7 @@ body {
     align-items: center;
     border-radius: 8px;
     font-size: 1rem;
-    color: #abb2bf;
+    color: var(--sidebar-text-color);
     white-space: nowrap;
     overflow-x: hidden;
     font-weight: 400;
@@ -139,19 +145,33 @@ body {
     border-radius: 8px;
 }
 #sidebar .side-menu.top li.active a {
-    color: var(--bg-card);
+    color: var(--sidebar-text-active);
+    background-color: var(--sidebar-active-bg);
+    border-radius: 8px; /* Pastikan ini ada agar aktif bulat */
+    margin: 0 15px; /* Pastikan margin ada */
 }
 #sidebar.hide .side-menu li a {
     width: 100%;
     justify-content: center;
     padding: 0;
 }
+#sidebar .side-menu li a .text {
+    white-space: nowrap;
+    opacity: 1;
+    width: auto;
+    transition: opacity 0.2s ease, width 0.2s ease;
+}
+#sidebar.hide .side-menu li a .text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
 #sidebar .side-menu li a.logout {
-    color: var(--danger-color);
+    color: var(--accent-ref-red);
 }
 #sidebar .side-menu.top li a:hover:not(.active) {
-    color: var(--accent-blue);
-    background-color: rgba(255,255,255,0.05);
+    color: var(--sidebar-text-active); /* Warna teks hover */
+    background-color: rgba(255,255,255,0.08); /* Background hover lebih terlihat */
     border-radius: 8px;
 }
 #sidebar .side-menu li a .bx {
@@ -164,34 +184,22 @@ body {
     font-size: 1.8rem;
 }
 
-#sidebar .side-menu li a .text {
-    white-space: nowrap; /* Mencegah teks melipat baris */
-    transition: opacity 0.2s ease, width 0.2s ease; /* Sedikit percepat transisi */
-    opacity: 1;
-    width: auto;
-}
-#sidebar.hide .side-menu li a .text {
-    opacity: 0;
-    width: 0;
-    overflow: hidden;
-}
-
 /* CONTENT */
 #content {
     position: relative;
     width: calc(100% - 280px);
     left: 280px;
-    transition: .3s ease;
+    transition: 0 ease;
 }
 #sidebar.hide ~ #content {
-    width: calc(100% - 80px);
-    left: 80px;
+    width: calc(100% - 100px); 
+    left: 100px; 
 }
 
 /* NAVBAR */
 #content nav {
     height: 60px;
-    background: var(--bg-card);
+    background: var(--bg-card-ref);
     padding: 0 24px;
     display: flex;
     align-items: center;
@@ -201,18 +209,18 @@ body {
     top: 0;
     left: 0;
     z-index: 1000;
-    box-shadow: var(--shadow-soft);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid var(--border-color);
 }
 #content nav::before {
     content: none;
 }
 #content nav a {
-    color: var(--text-primary);
+    color: var(--text-dark-ref);
 }
 #content nav .bx.bx-menu {
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--text-muted-ref);
     font-size: 1.5rem;
 }
 #content nav .nav-link {
@@ -220,7 +228,7 @@ body {
     font-weight: 500;
 }
 #content nav .nav-link:hover {
-    color: var(--primary-blue);
+    color: var(--primary-ref-blue);
 }
 #content nav form {
     max-width: 400px;
@@ -236,12 +244,12 @@ body {
     flex-grow: 1;
     padding: 0 16px;
     height: 100%;
-    border: 1px solid var(--border-color);
-    background: var(--bg-light);
+    border: 1px solid var(--border-ref);
+    background: var(--bg-page-ref);
     border-radius: 8px 0 0 8px;
     outline: none;
     width: 100%;
-    color: var(--text-primary);
+    color: var(--text-dark-ref);
 }
 #content nav form .form-input button {
     width: 40px;
@@ -249,8 +257,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--primary-blue);
-    color: var(--bg-card);
+    background: var(--primary-ref-blue);
+    color: var(--text-light-ref);
     font-size: 1.2rem;
     border: none;
     outline: none;
@@ -259,13 +267,13 @@ body {
     transition: background-color 0.2s ease-in-out;
 }
 #content nav form .form-input button:hover {
-    background-color: var(--accent-blue);
+    background-color: var(--secondary-ref-blue);
 }
 
 #content nav .notification {
     font-size: 1.5rem;
     position: relative;
-    color: var(--text-secondary);
+    color: var(--text-muted-ref);
 }
 #content nav .notification .num {
     position: absolute;
@@ -274,9 +282,9 @@ body {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    border: 2px solid var(--bg-panel);
-    background: var(--danger-color);
-    color: var(--bg-card);
+    border: 2px solid var(--bg-card-ref);
+    background: var(--accent-ref-red);
+    color: var(--text-light-ref);
     font-weight: 700;
     font-size: 10px;
     display: flex;
@@ -288,8 +296,21 @@ body {
     height: 40px;
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid var(--primary-blue);
+    border: 2px solid var(--primary-ref-blue);
 }
+
+#content nav .navbar-title-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-dark-ref);
+    /* margin-right: auto; HAPUS BARIS INI */
+    margin-left: 15px;
+}
+/* Kemudian, tambahkan margin-left: auto; ke .dropdown */
+#content nav .dropdown {
+    margin-left: auto; /* Pindahkan ikon profil ke paling kanan */
+}
+
 .dropdown {
     position: relative;
     display: inline-block;
@@ -303,8 +324,8 @@ body {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: var(--bg-card);
-    box-shadow: var(--shadow-medium);
+    background-color: var(--bg-card-ref);
+    box-shadow: var(--shadow-ref-medium);
     border-radius: 8px;
     overflow: hidden;
     z-index: 1;
@@ -313,7 +334,7 @@ body {
     text-decoration: none;
 }
 .dropdown-content a {
-    color: var(--text-dark);
+    color: var(--text-dark-ref);
     padding: 12px 15px;
     display: flex;
     align-items: center;
@@ -323,28 +344,78 @@ body {
     font-weight: 500;
 }
 .dropdown-content a:hover {
-    background-color: var(--bg-light);
-    color: var(--primary-blue);
+    background-color: var(--bg-page-ref);
+    color: var(--primary-ref-blue);
 }
 .dropdown-content a .bx {
     font-size: 1.1rem;
 }
 
-/* --- Gaya untuk Dashboard Admin yang Elegan --- */
+/* --- Gaya untuk Dashboard Admin yang Total Menarik & Profesional (sesuai Referensi) --- */
 
 .dashboard-content {
-    padding: 30px 100px;
-    background-color: var(--bg-light);
+    padding: 30px 60px; /* Padding utama konten dashboard */
+    background-color: var(--bg-page-ref);
     min-height: calc(100vh - 60px);
+}
+
+/* Welcome Section */
+.dashboard-header-main {
+    background-color: var(--bg-card-ref); /* Latar belakang putih */
+    border: 1px solid var(--border-ref);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow-ref-soft); /* Bayangan halus */
+    margin-bottom: 40px;
+    text-align: left; /* Teks rata kiri */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; /* Konten rata kiri */
+    position: relative;
+    overflow: hidden;
 }
 
 .dashboard-welcome-title {
     font-size: 2.2rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 30px;
-    animation: fadeInDown 0.8s ease-out;
+    font-weight: 700;
+    color: var(--text-dark-ref);
+    margin-bottom: 8px;
+    line-height: 1.2;
 }
+
+.dashboard-summary-text {
+    font-size: 0.95rem;
+    color: var(--text-muted-ref);
+}
+
+
+/* Section Headings */
+.section-heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark-ref);
+    border-bottom: 1px solid var(--border-ref);
+    display: inline-block;
+    padding-bottom: 8px;
+    margin-bottom: 40px;
+    animation: fadeInRight 0.8s ease-out forwards;
+    opacity: 0;
+}
+/* Untuk heading di dalam kolom (grafik/kalender/jadwal) */
+.section-heading-in-column {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark-ref);
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-ref);
+    display: inline-block;
+    padding-bottom: 5px;
+    width: 100%;
+    text-align: left;
+    text-transform: uppercase;
+}
+
 
 @keyframes fadeInDown {
     from {
@@ -355,30 +426,6 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.section-heading {
-    font-size: 1.4rem; /* Ukuran lebih kecil dari sebelumnya */
-    font-weight: 600;
-    color: var(--text-primary);
-    border-bottom: 2px solid var(--border-color); /* Garis bawah lebih tipis dan sesuai border color */
-    display: inline-block;
-    padding-bottom: 8px;
-    margin-bottom: 40px;
-    animation: fadeInRight 0.8s ease-out forwards;
-    opacity: 0;
-}
-
-.section-heading-in-column {
-    font-size: 1.2rem; /* Ukuran lebih kecil untuk heading di dalam kolom */
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 25px; /* Spasi bawah yang sesuai */
-    border-bottom: 2px solid var(--border-color); /* Garis bawah tipis */
-    display: inline-block;
-    padding-bottom: 5px; /* Padding di bawah teks heading */
-    width: 100%; /* Agar garis bawah memenuhi lebar kolom */
-    text-align: left; /* Teks heading rata kiri */
 }
 
 @keyframes fadeInRight {
@@ -392,20 +439,24 @@ body {
     }
 }
 
+/* Alerts */
 .alert-info, .alert-success {
     border-radius: 8px;
-    box-shadow: var(--shadow-soft);
-    border: none;
-    background-color: var(--bg-card);
-    color: var(--text-primary);
+    box-shadow: var(--shadow-ref-extra-soft);
+    border: 1px solid var(--border-ref);
+    background-color: var(--bg-card-ref);
+    color: var(--text-dark-ref);
     font-weight: 500;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    border-left: 5px solid;
 }
+.alert-info { border-color: var(--primary-ref-blue); background-color: #EBF7FD; }
+.alert-success { border-color: var(--primary-green); background-color: #EBFDF4; }
 
-.alert-info { background-color: #E6F0FF; }
-.alert-success { background-color: #E8F5E9; }
 
-
-.dashboard-stats-row .col-lg-3 {
+/* Kartu Statistik */
+.dashboard-stats-row .col-lg-3 { /* Asumsi 4 kartu di desktop */
     animation: fadeInUp 0.8s ease-out forwards;
     opacity: 0;
 }
@@ -435,91 +486,163 @@ body {
 }
 
 .dashboard-card-item {
-    border: 1px solid var(--border-color); /* Border tipis di kartu */
+    border: 1px solid var(--border-ref);
     border-radius: 8px !important;
     overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03); /* Bayangan sangat halus */
-    background: var(--bg-card);
+    box-shadow: var(--shadow-ref-soft);
+    background: var(--bg-card-ref);
     position: relative;
     z-index: 1;
-    min-height: 120px;
+    min-height: 140px; /* Tinggi minimum kartu */
     transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column; /* Konten bertumpuk */
+    justify-content: space-between; /* Spasi antar konten */
+    align-items: flex-start; /* Konten rata kiri */
+    padding: 20px 25px; /* Padding kartu */
 }
 
-/* Gaya untuk jenis kartu berdasarkan class kustom (card-type-*) */
-.dashboard-card-item.card-type-users .dashboard-card-header h5.card-title { color: var(--color-stat-users); }
-.dashboard-card-item.card-type-bookings .dashboard-card-header h5.card-title { color: var(--color-stat-bookings); }
-.dashboard-card-item.card-type-facilities .dashboard-card-header h5.card-title { color: var(--color-stat-facilities); }
-.dashboard-card-item.card-type-warning .dashboard-card-header h5.card-title { color: var(--color-stat-warning); }
-
-
-.dashboard-stat-card .card-body {
-    padding: 20px 25px;
+/* Gaya ikon wrapper dan ikon stat card (sesuai referensi TailAdmin) */
+/* Struktur ini disesuaikan untuk ikon di kanan atas, angka di kiri bawah */
+.dashboard-card-item .card-body {
+    padding: 0; /* Hapus padding default Bootstrap card-body */
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Konten rata kiri */
-    justify-content: center;
-    position: relative;
+    height: 100%;
+    justify-content: space-between; /* Spasi antara ikon dan teks/angka */
+    align-items: flex-start; /* Rata kiri */
+    position: relative; /* Agar ikon bisa absolute di dalamnya */
 }
 
-/* Icon dalam kartu statistik */
-.dashboard-card-icon {
-    font-size: 2.8rem !important; /* Ukuran ikon */
-    color: var(--text-light); /* Warna ikon ringan */
+.stat-icon-wrapper {
     position: absolute;
-    top: 20px; /* Posisi kanan atas */
-    right: 20px;
-    opacity: 1; /* Ikon selalu terlihat */
-    transition: color 0.3s ease-in-out;
+    top: 20px; /* Jarak dari atas */
+    right: 20px; /* Jarak dari kanan */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem; /* Ukuran ikon */
+    color: var(--text-light-ref); /* Warna ikon */
+    background-color: var(--primary-ref-blue); /* Background ikon (default) */
+    opacity: 0.7; /* Transparansi ikon */
 }
-/* Warna ikon spesifik berdasarkan jenis kartu (sesuai TailAdmin) */
-.dashboard-card-item.card-type-users .dashboard-card-icon { color: var(--color-stat-users); opacity: 0.2; }
-.dashboard-card-item.card-type-bookings .dashboard-card-icon { color: var(--color-stat-bookings); opacity: 0.2; }
-.dashboard-card-item.card-type-facilities .dashboard-card-icon { color: var(--color-stat-facilities); opacity: 0.2; }
-.dashboard-card-item.card-type-warning .dashboard-card-icon { color: var(--color-stat-warning); opacity: 0.2; }
+
+/* Warna background icon wrapper spesifik per tipe kartu */
+.dashboard-card-item.card-type-users .stat-icon-wrapper { background-color: var(--primary-ref-blue); }
+.dashboard-card-item.card-type-bookings .stat-icon-wrapper { background-color: var(--accent-ref-red); }
+.dashboard-card-item.card-type-facilities .stat-icon-wrapper { background-color: var(--accent-ref-green); }
+.dashboard-card-item.card-type-new-users .stat-icon-wrapper { background-color: var(--secondary-ref-blue); } /* Biru muda */
+.dashboard-card-item.card-type-revenue .stat-icon-wrapper { background-color: var(--accent-ref-orange); }
 
 
-.dashboard-stat-card h5.card-title {
+.stat-label {
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--text-muted-ref);
     text-transform: uppercase;
-    margin-bottom: 5px;
+    margin-bottom: 5px; /* Spasi bawah label */
+    line-height: 1.2;
+    position: relative; /* Agar di atas ikon watermark */
+    z-index: 1;
+}
+
+.stat-value {
+    font-size: 2.2rem; /* Ukuran angka besar */
+    font-weight: 700;
+    color: var(--text-dark-ref);
+    margin-top: 0; /* Hapus margin atas */
+    margin-bottom: 0; /* Hapus margin bawah */
+    line-height: 1.2;
     position: relative;
     z-index: 1;
 }
 
-.dashboard-stat-card p.card-text {
-    font-size: 1.8rem; /* Angka lebih besar */
-    font-weight: 700; /* Lebih tebal */
-    color: var(--text-primary);
-    margin-bottom: 0;
-    position: relative;
-    z-index: 1;
-}
-
-/* Warna teks angka spesifik berdasarkan jenis kartu */
-.dashboard-card-item.card-type-users p.card-text { color: var(--color-stat-users); }
-.dashboard-card-item.card-type-bookings p.card-text { color: var(--color-stat-bookings); }
-.dashboard-card-item.card-type-facilities p.card-text { color: var(--color-stat-facilities); }
-.dashboard-card-item.card-type-warning p.card-text { color: var(--color-stat-warning); }
+/* Warna teks angka spesifik per kartu */
+.dashboard-card-item.card-type-users .stat-value { color: var(--primary-ref-blue); }
+.dashboard-card-item.card-type-bookings .stat-value { color: var(--accent-ref-red); }
+.dashboard-card-item.card-type-facilities .stat-value { color: var(--accent-ref-green); }
+.dashboard-card-item.card-type-new-users .stat-value { color: var(--secondary-ref-blue); }
+.dashboard-card-item.card-type-revenue .stat-value { color: var(--accent-ref-orange); }
 
 
 .dashboard-stat-card:hover .dashboard-card-item {
-    transform: translateY(-3px); /* Sedikit naik saat hover */
-    box-shadow: 0 8px 20px rgba(0,0,0,.1); /* Bayangan lebih kuat saat hover */
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium) !important;
 }
-.dashboard-stat-card:hover .dashboard-card-icon {
-    opacity: 0.3; /* Ikon sedikit lebih terlihat saat hover */
+.dashboard-stat-card:hover .stat-icon-wrapper {
+    opacity: 1; /* Ikon lebih terlihat saat hover */
+}
+
+
+/* Gaya untuk Jadwal / Schedule Widget */
+.dashboard-schedule-card {
+    border: 1px solid var(--border-ref);
+    border-radius: 8px !important;
+    box-shadow: var(--shadow-soft);
+    background-color: var(--bg-card-ref);
+    padding: 25px !important;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.widget-heading {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-dark-ref);
+    margin-bottom: 20px;
+}
+.schedule-item {
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border-ref);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.schedule-item:last-child {
+    border-bottom: none;
+}
+.schedule-item h6 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-dark-ref);
+}
+.schedule-item small {
+    font-size: 0.8rem;
+    color: var(--text-muted-ref);
+}
+.badge.schedule-status-approved { background-color: var(--primary-ref-blue); }
+.badge.schedule-status-pending { background-color: var(--accent-orange); }
+.badge.schedule-status-rejected { background-color: var(--accent-red); }
+.badge.schedule-status-completed { background-color: var(--accent-green); }
+
+.view-all-link {
+    display: block;
+    text-align: center;
+    margin-top: auto;
+    font-size: 0.9rem;
+    color: var(--primary-ref-blue);
+    font-weight: 500;
+    transition: color 0.2s ease;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-ref);
+    margin-top: 15px;
+}
+.view-all-link:hover {
+    color: var(--secondary-ref-blue);
 }
 
 
 /* Gaya untuk grafik dan kalender */
 .dashboard-chart-card, .dashboard-calendar-card {
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-ref);
     border-radius: 8px !important;
     box-shadow: var(--shadow-soft);
-    background-color: var(--bg-card);
+    background-color: var(--bg-card-ref);
     padding: 25px !important;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
@@ -545,32 +668,38 @@ body {
     padding: 3px 6px;
     font-size: 0.85em;
     border: none;
-    background-color: var(--primary-blue);
-    border-color: var(--primary-blue);
+    background-color: var(--primary-ref-blue);
+    border-color: var(--primary-ref-blue);
     color: white;
     font-weight: 500;
 }
+/* Kelas kustom untuk event kalender berdasarkan status */
+.fc-event-approved { background-color: var(--primary-ref-blue) !important; border-color: var(--primary-ref-blue) !important; }
+.fc-event-pending { background-color: var(--accent-orange) !important; border-color: var(--accent-orange) !important; }
+.fc-event-rejected { background-color: var(--accent-red) !important; border-color: var(--accent-red) !important; }
+.fc-event-completed { background-color: var(--accent-green) !important; border-color: var(--accent-green) !important; }
+
 
 .fc-dayGridMonth-button, .fc-timeGridWeek-button, .fc-timeGridDay-button, .fc-prev-button, .fc-next-button, .fc-today-button {
-    background-color: var(--primary-blue) !important;
-    border-color: var(--primary-blue) !important;
-    color: white !important;
+    background-color: var(--primary-ref-blue) !important;
+    border-color: var(--primary-ref-blue) !important;
+    color: var(--text-white) !important;
     box-shadow: none !important;
     border-radius: 6px !important;
-    transition: background-color 0s ease-in-out;
+    transition: background-color 0.2s ease-in-out;
     font-weight: 500;
 }
 
 .fc-dayGridMonth-button:hover, .fc-timeGridWeek-button:hover, .fc-timeGridDay-button:hover, .fc-prev-button:hover, .fc-next-button:hover, .fc-today-button:hover {
-    background-color: var(--accent-blue) !important;
-    border-color: var(--accent-blue) !important;
+    background-color: var(--secondary-ref-blue) !important;
+    border-color: var(--secondary-ref-blue) !important;
 }
 
 /* Gaya untuk judul kalender */
 .fc-toolbar-title {
     font-size: 1.5rem !important;
     font-weight: 600 !important;
-    color: var(--text-primary) !important;
+    color: var(--text-dark-ref) !important;
 }
 
 /* Responsifitas umum */
@@ -591,27 +720,48 @@ body {
     #content nav form {
         max-width: 100%;
     }
+    .dashboard-header-main {
+        padding: 20px;
+    }
     .dashboard-welcome-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+    }
+    .dashboard-summary-text {
+        font-size: 0.85rem;
+    }
+    .dashboard-stats-row > div {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    .section-heading {
+        font-size: 1.2rem;
+        display: block;
+        width: 100%;
         text-align: center;
         margin-bottom: 25px;
+        border-bottom: 1px solid var(--border-color);
     }
-    
-    .dashboard-card-icon {
-        font-size: 2.5rem !important;
-    }
-    .dashboard-stat-card h5.card-title {
-        font-size: 1.2rem;
-    }
-    .dashboard-stat-card p.card-text {
+    .section-heading-in-column {
         font-size: 1rem;
+        margin-bottom: 10px;
     }
     .dashboard-content {
         padding: 20px;
     }
-    .dashboard-chart-card, .dashboard-calendar-card {
-        padding: 25px !important;
+    .dashboard-chart-card, .dashboard-calendar-card, .dashboard-schedule-card {
+        padding: 20px !important;
     }
-
-    
+    .stat-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+    .stat-label {
+        font-size: 0.75rem;
+    }
+    .stat-value {
+        font-size: 1.4rem;
+    }
 }
