@@ -2,214 +2,242 @@
 @section('title', 'Contact Us')
 
 @section('content')
-<div class="container mt-5 pt-4">
-    <div class="row">
-        <div class="col-md-10 offset-md-1">
-
-            <!-- Header -->
-            <div class="text-center mb-5">
-                <h1 class="display-5 fw-bold text-primary mb-3">Hubungi Kami</h1>
-                <p class="lead text-muted">Rajut dan Jalin #KolaborasiDalamHarmoni Bersama BPR MSA!</p>
-                <p class="text-muted">#AndaTidakSendiri</p>
-            </div>
-
-            <!-- Alert -->
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class='bx bx-check-circle me-2'></i>
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="contactus-hero-bg py-5">
+    <div class="container">
+        <div class="contactus-card mx-auto position-relative">
+            <div class="row g-0 align-items-stretch flex-lg-nowrap flex-wrap">
+                <!-- Kiri: Info Kontak -->
+                <div class="col-lg-6 p-5 d-flex flex-column justify-content-center position-relative">
+                    <h2 class="contactus-title mb-2">Hubungi Kami</h2>
+                    <span class="badge badge-support mb-3">24/7 Support</span>
+                    <div class="contactus-desc mb-3">Ada pertanyaan atau butuh bantuan?<br>Tim kami siap membantu Anda dalam melakukan reservasi ruang meeting premium.</div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <div class="contactus-icon me-2"><i class='bx bx-map'></i></div>
+                        <div><b>Alamat:</b> Jl. Sukses No.123, Yogyakarta</div>
+                    </div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <div class="contactus-icon me-2"><i class='bx bx-phone'></i></div>
+                        <div><b>Telepon:</b> (0274) 123–456</div>
+                    </div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <div class="contactus-icon me-2"><i class='bx bx-envelope'></i></div>
+                        <div><b>Email:</b> support@meetingroom.id</div>
+                    </div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <div class="contactus-icon me-2"><i class='bx bx-time'></i></div>
+                        <div><b>Jam Operasional:</b> 08.00 – 22.00 WIB</div>
+                    </div>
+                    <div class="contactus-social-label mb-1 mt-3" style="font-size:0.98rem;color:#64748B;font-weight:500;">Media Sosial Kami</div>
+                    <div class="contactus-social mt-2">
+                        <a href="#" class="me-2"><i class='bx bxl-instagram'></i></a>
+                        <a href="#" class="me-2"><i class='bx bxl-facebook'></i></a>
+                        <a href="#" class="me-2"><i class='bx bxl-twitter'></i></a>
+                        <a href="#"><i class='bx bxl-whatsapp'></i></a>
+                    </div>
                 </div>
-            @endif
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class='bx bx-error-circle me-2'></i>
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <!-- Divider Vertikal -->
+                <div class="d-none d-lg-block col-auto px-0">
+                    <div class="contactus-divider h-100 mx-2"></div>
                 </div>
-            @endif
-
-            <!-- Contact Info -->
-            <div class="row mb-5">
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="contact-card card border-0 shadow-lg h-100">
-                        <div class="card-body text-center p-4">
-                            <i class='bx bx-map text-primary fs-2 mb-3'></i>
-                            <h5 class="card-title fw-bold">Alamat</h5>
-                            <p class="card-text text-muted">Jalan C. Simanjuntak No. 26<br>Kota Yogyakarta 55223</p>
+                <!-- Kanan: Form & Maskot -->
+                <div class="col-lg-6 p-5 position-relative d-flex flex-column justify-content-center">
+                    <form class="contactus-form bg-white rounded-4 p-4 shadow-sm position-relative z-2">
+                        <div class="mb-4">
+                            <label for="name" class="form-label">Nama Anda</label>
+                            <input type="text" class="form-control rounded-3" id="name" name="name" placeholder="Nama Anda">
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="contact-card card border-0 shadow-lg h-100">
-                        <div class="card-body text-center p-4">
-                            <i class='bx bx-phone text-success fs-2 mb-3'></i>
-                            <h5 class="card-title fw-bold">Telepon</h5>
-                            <p><a href="tel:0274549400" class="text-decoration-none text-dark">0274-549400</a></p>
+                        <div class="mb-4">
+                            <label for="email" class="form-label">Email Anda</label>
+                            <input type="email" class="form-control rounded-3" id="email" name="email" placeholder="Email Anda">
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="contact-card card border-0 shadow-lg h-100">
-                        <div class="card-body text-center p-4">
-                            <i class='bx bxl-whatsapp text-success fs-2 mb-3'></i>
-                            <h5 class="card-title fw-bold">WhatsApp</h5>
-                            <p><a href="https://wa.me/6285172024202" class="text-decoration-none text-dark" target="_blank">0851-7202-4202</a></p>
+                        <div class="mb-4">
+                            <label for="message" class="form-label">Pesan Anda</label>
+                            <textarea class="form-control rounded-3" id="message" name="message" rows="4" placeholder="Pesan Anda"></textarea>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="contact-card card border-0 shadow-lg h-100">
-                        <div class="card-body text-center p-4">
-                            <i class='bx bx-envelope text-primary fs-2 mb-3'></i>
-                            <h5 class="card-title fw-bold">Email</h5>
-                            <p><a href="mailto:bprmadani@gmail.com" class="text-decoration-none text-dark">bprmadani@gmail.com</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Jam Operasional -->
-            <div class="row mb-5">
-                <div class="col-md-6 offset-md-3">
-                    <div class="card border-0 shadow-lg text-center">
-                        <div class="card-body p-4">
-                            <i class='bx bx-time text-warning fs-2 mb-2'></i>
-                            <h5 class="card-title fw-bold">Jam Operasional</h5>
-                            <p class="text-muted mb-0">Senin–Jumat: 08.00–17.00</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Form Kontak -->
-            <div class="row">
-                <div class="col-md-8 offset-md-2">
-                    <div class="card border-0 shadow-lg">
-                        <div class="card-body p-5">
-                            <h3 class="text-center mb-4 fw-bold text-primary">Kirim Pesan</h3>
-                            <form id="contactForm" action="{{ route('contact.submit') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="name" class="form-label fw-bold">Nama <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control form-control-lg @error('name') is-invalid @enderror" id="name" name="name" placeholder="Nama Anda" required value="{{ old('name') }}">
-                                        @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="email" class="form-label fw-bold">Email <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control form-control-lg @error('email') is-invalid @enderror" id="email" name="email" placeholder="Email Anda" required value="{{ old('email') }}">
-                                        @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="subject" class="form-label fw-bold">Subjek <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-lg @error('subject') is-invalid @enderror" id="subject" name="subject" placeholder="Subjek Pesan" required value="{{ old('subject') }}">
-                                    @error('subject')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="message" class="form-label fw-bold">Pesan <span class="text-danger">*</span></label>
-                                    <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message" rows="6" placeholder="Tulis pesan Anda..." required>{{ old('message') }}</textarea>
-                                    @error('message')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn-msa btn-lg px-5">
-                                        <i class='bx bx-send me-2'></i>Kirim Pesan
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sosial Media -->
-            <div class="row mt-5 mb-4">
-                <div class="col-md-12 text-center">
-                    <h5 class="fw-bold mb-3">Ikuti Kami</h5>
-                    <div class="social-links mb-4">
-                        <a href="#" class="social-link me-3"><i class='bx bxl-facebook-circle'></i></a>
-                        <a href="#" class="social-link me-3"><i class='bx bxl-instagram-alt'></i></a>
-                        <a href="#" class="social-link me-3"><i class='bx bxl-twitter'></i></a>
-                        <a href="#" class="social-link me-3"><i class='bx bxl-youtube'></i></a>
-                        <a href="#" class="social-link"><i class='bx bxl-tiktok'></i></a>
-                    </div>
-                    <div class="disclaimer">
-                        <p class="small text-muted mb-2"><strong>Bank MSA</strong> berizin & diawasi oleh <strong>OJK</strong>, serta peserta penjaminan <strong>LPS</strong>.</p>
-                        <p class="small text-muted">#KolaborasiDalamHarmoni</p>
-                    </div>
+                        <button type="submit" class="btn btn-primary rounded-3 px-5 py-3 fw-semibold contactus-btn-big">Kirim</button>
+                    </form>
+                    <img src="/img/shaka_utama.png" alt="Maskot Mashaka" class="contactus-mashaka-logo-inside position-absolute animated-mashaka">
                 </div>
             </div>
         </div>
     </div>
 </div>
-<x-footer />
-
-<script>
-    function clearForm() {
-        document.getElementById("contactForm").reset();
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        @if(session('success'))
-        clearForm();
-        @endif
-    });
-</script>
-@endsection
-
 @section('styles')
 <style>
-    .btn-msa {
-        background: #3B82F6 !important;
-        color: #fff !important;
-        border-radius: 10px;
+    .contactus-hero-bg {
+        background: linear-gradient(135deg, #f4f6fa 60%, #e3eafc 100%);
+        min-height: 100vh;
+    }
+    .contactus-card {
+        background: #fff;
+        border-radius: 32px;
+        box-shadow: 0 8px 32px rgba(30,64,175,0.10);
+        max-width: 1100px;
+        overflow: hidden;
+        border: 1.2px solid #e2e8f0;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        padding: 0 0.5rem;
+    }
+    .row.g-0.align-items-stretch.flex-lg-nowrap.flex-wrap {
+        gap: 0;
+    }
+    .col-lg-6.p-5 {
+        padding: 2.5rem 2.2rem !important;
+    }
+    .contactus-title {
+        font-size: 2.3rem;
+        font-weight: 700;
+        color: #1E293B;
+        margin-bottom: 0.7rem;
+        letter-spacing: -1px;
+    }
+    .badge-support {
+        background: #3B82F6;
+        color: #fff;
+        font-size: 0.98rem;
         font-weight: 600;
-        border: none;
-        padding: 0.85rem 2.2rem;
-        font-size: 1.1rem;
-        transition: all 0.18s;
-        box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+        border-radius: 10px;
+        padding: 0.32em 0.95em;
+        box-shadow: 0 1px 4px rgba(30,64,175,0.08);
+        display: inline-block;
+        margin-bottom: 0.7rem;
+        letter-spacing: 0.5px;
     }
-
-    .btn-msa:hover {
-        background: var(--primary-dark) !important;
-        color: #fff !important;
+    .contactus-desc {
+        color: #334155;
+        font-size: 1.08rem;
+        margin-bottom: 1.2rem;
+        font-weight: 400;
+        line-height: 1.6;
     }
-
-    .contact-card {
-        border-radius: 15px;
-        background: white;
-        transition: 0.3s;
-    }
-
-    .contact-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 25px rgba(0,0,0,0.15);
-    }
-
-    .social-link {
-        width: 50px;
-        height: 50px;
-        background: #2563eb;
-        color: white;
+    .contactus-icon {
+        width: 38px;
+        height: 38px;
+        background: #e6eefb;
+        color: #23395d;
         border-radius: 50%;
-        display: inline-flex;
-        justify-content: center;
+        display: flex;
         align-items: center;
-        font-size: 1.5rem;
-        transition: 0.3s;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-top: 2px;
+        box-shadow: 0 1px 4px rgba(30,64,175,0.06);
+        margin-right: 0.7rem;
     }
-
-    .social-link:hover {
-        background: #f59e0b;
-        color: white;
-        transform: scale(1.1);
+    .contactus-divider {
+        width: 1.2px;
+        background: linear-gradient(180deg, #e3eafc 0%, #b6c6e6 100%);
+        border-radius: 2px;
+        min-height: 90%;
+        margin: 2.5rem 0;
+        opacity: 0.7;
+    }
+    .contactus-form {
+        border: 1.2px solid #e2e8f0;
+        min-height: 400px;
+        font-size: 1.08rem;
+        background: #fcfdff;
+        padding: 2.2rem 1.5rem;
+        box-shadow: 0 2px 12px rgba(30,64,175,0.06);
+        transition: box-shadow 0.18s;
+    }
+    .contactus-form .form-label {
+        font-weight: 600;
+        color: #1E293B;
+        font-size: 1.08rem;
+        margin-bottom: 0.3rem;
+    }
+    .contactus-form .form-control {
+        font-size: 1.08rem;
+        border-radius: 12px;
+        border: 1.2px solid #dbeafe;
+        background: #f8fafc;
+        color: #1E293B;
+        box-shadow: none;
+        transition: border-color 0.18s, box-shadow 0.18s;
+        padding: 0.8em 1em;
+        margin-bottom: 0.7rem;
+    }
+    .contactus-form .form-control:focus {
+        border-color: #3B82F6;
+        background: #fff;
+        box-shadow: 0 0 0 2.5px #3B82F633;
+    }
+    .contactus-form .btn-primary.contactus-btn-big {
+        background: #3B82F6;
+        border: none;
+        font-weight: 700;
+        font-size: 1.08rem;
+        box-shadow: 0 2px 8px rgba(30,64,175,0.10);
+        transition: background 0.18s, transform 0.18s;
+        margin-top: 8px;
+        padding: 0.7em 2.2em;
+        border-radius: 10px;
+    }
+    .contactus-form .btn-primary.contactus-btn-big:hover {
+        background: #23395d;
+        transform: translateY(-2px) scale(1.04);
+    }
+    .contactus-mashaka-logo-inside {
+        right: -40px;
+        bottom: -18px;
+        width: 270px;
+        max-width: 70%;
+        z-index: 2;
+        pointer-events: none;
+        user-select: none;
+        filter: drop-shadow(0 6px 24px rgba(30,64,175,0.13));
+        transition: width 0.2s, right 0.2s, bottom 0.2s;
+    }
+    .animated-mashaka {
+        animation: mashaka-float 2.8s ease-in-out infinite alternate;
+    }
+    @keyframes mashaka-float {
+        0% { transform: translateY(0) scale(1.00); }
+        100% { transform: translateY(-10px) scale(1.03); }
+    }
+    .contactus-social {
+        margin-top: 0.7rem;
+        margin-bottom: 0.2rem;
+        display: flex;
+        gap: 0.2em;
+    }
+    .contactus-social a {
+        color: #23395d;
+        font-size: 1.25rem;
+        margin-right: 0.1em;
+        transition: color 0.18s, transform 0.18s;
+        display: inline-block;
+        background: #e6eefb;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .contactus-social a:hover {
+        color: #3B82F6;
+        background: #e0edff;
+        transform: scale(1.13) rotate(-6deg);
+    }
+    @media (max-width: 1400px) {
+        .contactus-card { max-width: 99vw; }
+        .contactus-mashaka-logo-inside { width: 180px; right: -10px; bottom: -8px; }
+    }
+    @media (max-width: 991px) {
+        .contactus-card { max-width: 99vw; }
+        .contactus-mashaka-logo-inside { width: 120px; right: -10px; bottom: -8px; }
+        .contactus-title { font-size: 2.1rem; }
+        .col-lg-6.p-5 { padding: 1.5rem 1rem !important; }
+    }
+    @media (max-width: 767px) {
+        .contactus-mashaka-logo-inside { display: none; }
+        .contactus-divider { display: none; }
+        .contactus-title { font-size: 1.5rem; }
+        .contactus-form { font-size: 1rem; }
+        .col-lg-6.p-5 { padding: 1rem 0.5rem !important; }
     }
 </style>
 @endsection
