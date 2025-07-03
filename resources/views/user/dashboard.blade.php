@@ -157,8 +157,6 @@
             </div>
         </div>
     </section>
-
-    <x-footer />
 @endsection
 
 @section('styles')
