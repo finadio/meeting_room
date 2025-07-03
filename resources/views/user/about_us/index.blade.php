@@ -5,7 +5,7 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-8 offset-md-2">
-                <h2 class="text-center mb-5 section-main-title">Tentang Kami</h2>
+                <h2 class="text-center mb-5 section-main-title" style="font-size:2.3rem;font-weight:700;color:#1E293B;letter-spacing:-1px;margin-bottom:2.5rem;border-bottom:none;box-shadow:none;background:none;">Tentang Kami</h2>
 
                 @if(session('success'))
                     <div class="alert alert-success">
@@ -29,7 +29,7 @@
                     <div class="col-md-5">
                         <h3 class="section-subtitle">Visi Kami</h3>
                         <p class="lead">
-                            Menjadi “Smart Banking” BPR terbaik di Indonesia.
+                            Menjadi "Smart Banking" BPR terbaik di Indonesia.
                         </p>
                     </div>
                 </div>
@@ -64,7 +64,12 @@
             </div>
         </div>
     </div>
+@endsection
 
-    <x-footer />
-
+@section('styles')
+<style>
+.section-main-title::after {
+    display: none !important;
+}
+</style>
 @endsection
