@@ -41,6 +41,12 @@ class AdminCalendarController extends Controller
         // Gunakan get() untuk mengambil koleksi data, karena keduanya (kalender & list) akan memprosesnya
         $bookings = $bookingsQuery->get(); 
 
+        // Menghitung statistik untuk sidebar
+        $today = Carbon::today();
+        $todayBookings = Booking::whereDate('booking_date', $today)->count();
+        $approvedBookings = Booking::where('status', 'Disetujui')->count();
+        $pendingBookings = Booking::where('status', 'Menunggu Konfirmasi')->count();
+
         // Memetakan data $bookings ke format yang dibutuhkan oleh FullCalendar dan tampilan list tabel
         // Variabel $bookedDates DIDEFINISIKAN di sini
         $bookedDates = $bookings->map(function ($booking) {
@@ -78,8 +84,8 @@ class AdminCalendarController extends Controller
             ];
         });
 
-        // Meneruskan variabel 'user' dan 'bookedDates' ke tampilan
+        // Meneruskan variabel 'user', 'bookedDates', dan statistik ke tampilan
         // Variabel $bookedDates DIKIRIMKAN ke tampilan di sini
-        return view('admin.calendar.index', compact('user', 'bookedDates'));
+        return view('admin.calendar.index', compact('user', 'bookedDates', 'todayBookings', 'approvedBookings', 'pendingBookings'));
     }
 }

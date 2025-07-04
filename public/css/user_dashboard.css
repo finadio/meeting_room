@@ -793,3 +793,27 @@ footer {
     background: #dc3545 !important;
     color: #fff !important;
 }
+
+/* Hilangkan efek hover/klik/selected pada event booking di calendar, warna tetap biru */
+.fc-event,
+.fc-list-event,
+.booking-event,
+.fc-event:active,
+.fc-list-event:active,
+.booking-event:active,
+.fc-event:focus,
+.fc-list-event:focus,
+.booking-event:focus,
+.fc-event[aria-selected="true"],
+.fc-list-event[aria-selected="true"],
+.booking-event[aria-selected="true"],
+.fc-event.fc-event-selected,
+.fc-list-event.fc-event-selected {
+    background: #2046b3 !important;
+    color: #fff !important;
+    box-shadow: none !important;
+    filter: none !important;
+    outline: none !important;
+    border: none !important;
+    cursor: default !important;
+}
