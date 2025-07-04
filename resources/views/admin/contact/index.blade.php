@@ -47,6 +47,17 @@
                         @endif
 
                         <div class="table-container">
+                            <div class="table-actions-controls">
+                                <form action="{{ route('admin.contact.index') }}" method="GET" class="search-form">
+                                    <div class="search-input-wrapper">
+                                        <input type="text" name="search" class="form-control-enhanced search-input" placeholder="Cari submission..." value="{{ request('search') }}">
+                                        <button type="submit" class="search-button">
+                                            <i class="bx bx-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            
                             @if($submissions->isEmpty())
                                 <div class="alert alert-info text-center m-4 p-4 rounded-lg shadow-sm">
                                     Tidak ada submission kontak.
@@ -79,8 +90,6 @@
                                             <td data-label="Dikirim Pada">{{ \Carbon\Carbon::parse($submission->created_at)->format('d F Y, H:i') }}</td>
                                             <td data-label="Aksi" class="actions-cell">
                                                 <div class="action-buttons-group">
-                                                    {{-- You might want a 'view' action for the full message --}}
-                                                    {{-- For now, let's just add a delete button --}}
                                                     <form action="{{ route('admin.contact.destroy', $submission->id) }}" method="POST" style="display:inline-block;">
                                                         @csrf
                                                         @method('DELETE')
@@ -300,22 +309,80 @@
 
     /* Table Specific Styles */
     .table-container {
-        overflow-x: auto; /* Ensures table is scrollable on small screens */
+        overflow-x: auto;
         background: #fff;
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         padding: 20px;
     }
 
+    /* Search Controls */
+    .table-actions-controls {
+        margin-bottom: 25px;
+    }
+
+    .search-form {
+        display: flex;
+        justify-content: flex-start;
+        max-width: 350px;
+    }
+
+    .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 50px 12px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #ddd;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-button {
+        position: absolute;
+        right: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        color: #666;
+        transition: color 0.3s ease;
+        border-radius: 8px;
+    }
+
+    .search-button:hover {
+        color: #333;
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .search-button i {
+        font-size: 1rem;
+    }
+
     .modern-table {
         width: 100%;
-        border-collapse: separate; /* Use separate to allow border-radius on cells */
-        border-spacing: 0 10px; /* Space between rows */
+        border-collapse: separate;
+        border-spacing: 0 10px;
         margin-bottom: 20px;
     }
 
     .modern-table thead th {
-        background: linear-gradient(135deg, #e0e7ff 0%, #c3dafe 100%); /* Light blue gradient for header */
+        background: linear-gradient(135deg, #e0e7ff 0%, #c3dafe 100%);
         color: #1e3c72;
         padding: 15px 20px;
         font-weight: 700;
@@ -340,10 +407,10 @@
     }
 
     .modern-table tbody tr {
-        background: #fdfefe; /* Slightly off-white for rows */
+        background: #fdfefe;
         border-radius: 12px;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Subtle shadow for each row */
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     .modern-table tbody tr:hover {
@@ -354,13 +421,13 @@
     .modern-table tbody td {
         padding: 15px 20px;
         vertical-align: middle;
-        border-top: none; /* Remove default table borders */
+        border-top: none;
         font-size: 0.9rem;
         color: #333;
     }
 
     .modern-table tbody tr:first-child td {
-        border-top: none; /* No top border for the first row's cells */
+        border-top: none;
     }
 
     .modern-table tbody td:first-child {
@@ -372,63 +439,23 @@
         border-bottom-right-radius: 12px;
         border-top-right-radius: 12px;
     }
-    
-    /* Badges */
-    .badge-primary-custom {
-        background-color: #667eea;
-        color: white;
-        padding: 6px 10px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.8em;
-    }
-    .badge-info-custom {
-        background-color: #4facfe; /* A light blue for info status */
-        color: white;
-        padding: 6px 10px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.8em;
-    }
-    .badge-danger-custom {
-        background-color: #ff416c;
-        color: white;
-        padding: 6px 10px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.8em;
-    }
-    .badge-success-custom {
-        background-color: #38ef7d;
-        color: white;
-        padding: 6px 10px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.8em;
-    }
-    .badge-secondary-custom {
-        background-color: #6c757d;
-        color: white;
-        padding: 6px 10px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.8em;
-    }
 
     /* Action Buttons */
     .actions-cell {
-        white-space: nowrap; /* Keep buttons on one line */
+        white-space: nowrap;
     }
+    
     .action-buttons-group {
         display: flex;
-        flex-wrap: wrap; /* Allow buttons to wrap if too many */
-        gap: 8px; /* Space between buttons */
-        justify-content: center; /* Center buttons horizontally */
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
     }
+    
     .btn-action {
-        min-width: 75px; /* Minimum width for action buttons */
+        min-width: 75px;
         height: 38px;
-        padding: 0 10px; /* Adjust padding for text and icon */
+        padding: 0 10px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -436,37 +463,28 @@
         font-size: 0.9rem;
         transition: all 0.2s ease;
         text-decoration: none;
-        color: white; /* Default white for icons and text */
+        color: white;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         border: none;
         cursor: pointer;
     }
+    
     .btn-action:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-        color: white; /* Ensure color stays white on hover */
+        color: white;
         text-decoration: none;
     }
 
-    /* Specific Button Colors */
-    .btn-action.delete { background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%); }
-    .btn-action.view { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-    .btn-action.success { background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%); }
-
+    .btn-action.delete { 
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%); 
+    }
 
     .btn-action i {
-        margin-right: 5px; /* Space between icon and text for buttons with text */
+        margin-right: 5px;
     }
 
-    /* Responsive Design for Tables */
-    @media (max-width: 992px) {
-        .modern-table thead th,
-        .modern-table tbody td {
-            padding: 12px 15px;
-            font-size: 0.85rem;
-        }
-    }
-
+    /* Responsive Design */
     @media (max-width: 768px) {
         .booking-page-wrapper {
             padding: 20px 0;
@@ -497,10 +515,14 @@
             padding: 10px;
         }
 
+        .search-form {
+            max-width: 100%;
+        }
+
         .modern-table {
-            display: block; /* Make table scrollable horizontally */
+            display: block;
             width: 100%;
-            white-space: nowrap; /* Prevent text wrapping in cells by default */
+            white-space: nowrap;
         }
 
         .modern-table thead, .modern-table tbody, .modern-table th, .modern-table td, .modern-table tr {
@@ -521,14 +543,14 @@
         .modern-table td {
             border: none;
             position: relative;
-            padding-left: 50%; /* Space for the label */
+            padding-left: 50%;
             text-align: right;
             border-bottom: 1px solid #eee;
             font-size: 0.9rem;
         }
 
         .modern-table td:before {
-            content: attr(data-label); /* Use data-label for content */
+            content: attr(data-label);
             position: absolute;
             left: 0;
             width: 45%;
@@ -539,7 +561,6 @@
             font-size: 0.85rem;
         }
 
-        /* Specific labels for mobile */
         .modern-table td:nth-of-type(1):before { content: "S.N:"; }
         .modern-table td:nth-of-type(2):before { content: "Nama:"; }
         .modern-table td:nth-of-type(3):before { content: "Email:"; }
@@ -549,11 +570,11 @@
         .modern-table td:nth-of-type(7):before { content: "Aksi:"; }
         
         .modern-table tbody td:last-child {
-            border-bottom: none; /* Remove border for last cell in row */
+            border-bottom: none;
         }
 
         .action-buttons-group {
-            justify-content: flex-end; /* Align buttons to the right on mobile */
+            justify-content: flex-end;
         }
     }
 
@@ -562,6 +583,7 @@
             padding-left: 15px;
             padding-right: 15px;
         }
+        
         .booking-content {
             padding: 25px 15px;
         }

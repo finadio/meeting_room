@@ -62,7 +62,16 @@
                         @endif
 
                         <div class="table-container">
-                            <div class="table-actions-top">
+                            <div class="table-actions-controls">
+                                <form action="{{ route('admin.users.index') }}" method="GET" class="search-form">
+                                    <div class="search-input-wrapper">
+                                        <input type="text" name="search" class="form-control-enhanced search-input" placeholder="Cari pengguna..." value="{{ request('search') }}">
+                                        <button type="submit" class="search-button">
+                                            <i class="bx bx-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                                
                                 <a href="{{ route('admin.users.create') }}" class="btn-submit">
                                     <div class="btn-content">
                                         <i class="bx bx-user-plus"></i>
@@ -163,7 +172,13 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="12" class="text-center">Tidak ada data pengguna.</td>
+                                            <td colspan="12" class="text-center">
+                                                @if(request('search'))
+                                                    Tidak ada pengguna yang ditemukan untuk pencarian: "{{ request('search') }}"
+                                                @else
+                                                    Tidak ada data pengguna.
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -372,27 +387,84 @@
 
     /* Table Specific Styles */
     .table-container {
-        overflow-x: auto; /* Ensures table is scrollable on small screens */
+        overflow-x: auto;
         background: #fff;
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         padding: 20px;
     }
 
-    .table-actions-top {
+    .table-actions-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 25px;
-        text-align: right; /* Aligns the "Add User" button to the right */
+        gap: 20px;
+    }
+
+    /* Search Form */
+    .search-form {
+        flex: 0 0 auto;
+    }
+
+    .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-width: 280px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 45px 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: #fff;
+        transition: all 0.3s ease;
+        color: #2d3748;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .search-input::placeholder {
+        color: #a0aec0;
+    }
+
+    .search-button {
+        position: absolute;
+        right: 8px;
+        background: none;
+        border: none;
+        padding: 8px;
+        cursor: pointer;
+        color: #a0aec0;
+        transition: color 0.3s ease;
+        border-radius: 6px;
+    }
+
+    .search-button:hover {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+    }
+
+    .search-button i {
+        font-size: 1.1rem;
     }
 
     .modern-table {
         width: 100%;
-        border-collapse: separate; /* Use separate to allow border-radius on cells */
-        border-spacing: 0 10px; /* Space between rows */
+        border-collapse: separate;
+        border-spacing: 0 10px;
         margin-bottom: 20px;
     }
 
     .modern-table thead th {
-        background: linear-gradient(135deg, #e0e7ff 0%, #c3dafe 100%); /* Light blue gradient for header */
+        background: linear-gradient(135deg, #e0e7ff 0%, #c3dafe 100%);
         color: #1e3c72;
         padding: 15px 20px;
         font-weight: 700;
@@ -417,10 +489,10 @@
     }
 
     .modern-table tbody tr {
-        background: #fdfefe; /* Slightly off-white for rows */
+        background: #fdfefe;
         border-radius: 12px;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Subtle shadow for each row */
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     .modern-table tbody tr:hover {
@@ -431,13 +503,9 @@
     .modern-table tbody td {
         padding: 15px 20px;
         vertical-align: middle;
-        border-top: none; /* Remove default table borders */
+        border-top: none;
         font-size: 0.9rem;
         color: #333;
-    }
-
-    .modern-table tbody tr:first-child td {
-        border-top: none; /* No top border for the first row's cells */
     }
 
     .modern-table tbody td:first-child {
@@ -487,11 +555,11 @@
 
     /* Action Buttons */
     .actions-cell {
-        white-space: nowrap; /* Keep buttons on one line */
+        white-space: nowrap;
     }
     .action-buttons-group {
         display: flex;
-        gap: 8px; /* Space between buttons */
+        gap: 8px;
     }
     .btn-action {
         width: 38px;
@@ -503,13 +571,13 @@
         font-size: 1rem;
         transition: all 0.2s ease;
         text-decoration: none;
-        color: white; /* Default white for icons */
+        color: white;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     .btn-action:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-        color: white; /* Ensure color stays white on hover */
+        color: white;
     }
 
     .btn-action.view { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
@@ -517,12 +585,12 @@
     .btn-action.unban { background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%); }
     .btn-action.ban { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
 
-    /* Submit Button (for Add User) */
+    /* Submit Button */
     .btn-submit {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #667eea 0%;
         border: none;
         border-radius: 16px;
-        padding: 14px 28px; /* Slightly smaller padding for top button */
+        padding: 14px 28px;
         color: white;
         font-weight: 600;
         font-size: 1rem;
@@ -531,20 +599,18 @@
         overflow: hidden;
         transition: all 0.3s ease;
         box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        display: inline-flex; /* To align icon and text */
+        display: inline-flex;
         align-items: center;
         justify-content: center;
+        text-decoration: none;
+        flex-shrink: 0;
     }
 
     .btn-submit:hover {
         transform: translateY(-3px);
         box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
-        color: white; /* Ensure text color remains white on hover */
-        text-decoration: none; /* Remove underline on hover */
-    }
-
-    .btn-submit:active {
-        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
     }
 
     .btn-submit .btn-content {
@@ -556,7 +622,7 @@
     }
 
     .btn-submit .btn-content i {
-        margin-right: 8px; /* Space between icon and text */
+        margin-right: 8px;
         font-size: 1.1rem;
     }
 
@@ -572,12 +638,7 @@
         transition: width 0.3s ease, height 0.3s ease;
     }
 
-    .btn-submit:active .btn-ripple {
-        width: 200px; /* Adjust size based on button size */
-        height: 200px;
-    }
-
-    /* Pagination Styling */
+    /* Pagination */
     .pagination-wrapper {
         margin-top: 30px;
         display: flex;
@@ -604,32 +665,27 @@
         color: #1e3c72;
     }
     .pagination .page-item.active .page-link {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background:#667eea 0%;
         color: white;
         box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
-    }
-    .pagination .page-item.disabled .page-link {
-        color: #b0b8c6;
-        background-color: #f8f9fa;
-        cursor: not-allowed;
     }
 
     /* Responsive Design */
     @media (max-width: 992px) {
+        .table-actions-controls {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+        
+        .search-input-wrapper {
+            min-width: 100%;
+        }
+        
         .modern-table thead th,
         .modern-table tbody td {
             padding: 12px 15px;
             font-size: 0.85rem;
-        }
-
-        .table-profile-img {
-            width: 35px;
-            height: 35px;
-        }
-
-        .btn-submit {
-            padding: 12px 20px;
-            font-size: 0.9rem;
         }
     }
 
@@ -650,23 +706,19 @@
             font-size: 1.5rem;
         }
 
-        .header-icon {
-            width: 60px;
-            height: 60px;
+        .search-input-wrapper {
+            min-width: 100%;
         }
 
-        .header-icon i {
-            font-size: 1.5rem;
-        }
-
-        .table-container {
-            padding: 10px;
+        .search-input {
+            padding: 10px 40px 10px 12px;
+            font-size: 0.9rem;
         }
 
         .modern-table {
-            display: block; /* Make table scrollable horizontally */
+            display: block;
             width: 100%;
-            white-space: nowrap; /* Prevent text wrapping in cells by default */
+            white-space: nowrap;
         }
 
         .modern-table thead, .modern-table tbody, .modern-table th, .modern-table td, .modern-table tr {
@@ -687,14 +739,14 @@
         .modern-table td {
             border: none;
             position: relative;
-            padding-left: 50%; /* Space for the label */
+            padding-left: 50%;
             text-align: right;
             border-bottom: 1px solid #eee;
             font-size: 0.9rem;
         }
 
         .modern-table td:before {
-            content: attr(data-label); /* Use data-label for content */
+            content: attr(data-label);
             position: absolute;
             left: 0;
             width: 45%;
@@ -705,10 +757,9 @@
             font-size: 0.85rem;
         }
 
-        /* Adjust specific labels for mobile */
         .modern-table td:nth-of-type(1):before { content: "S.N:"; }
         .modern-table td:nth-of-type(2):before { content: "ID Pengguna:"; }
-        .modern-table td:nth-of-type(3):before { content: "Gambar:"; text-align: center; } /* Center image label */
+        .modern-table td:nth-of-type(3):before { content: "Gambar:"; }
         .modern-table td:nth-of-type(4):before { content: "Nama:"; }
         .modern-table td:nth-of-type(5):before { content: "Email:"; }
         .modern-table td:nth-of-type(6):before { content: "Tipe:"; }
@@ -718,14 +769,6 @@
         .modern-table td:nth-of-type(10):before { content: "Terdaftar:"; }
         .modern-table td:nth-of-type(11):before { content: "Tipe Daftar:"; }
         .modern-table td:nth-of-type(12):before { content: "Aksi:"; }
-        
-        .modern-table tbody td:last-child {
-            border-bottom: none; /* Remove border for last cell in row */
-        }
-
-        .action-buttons-group {
-            justify-content: flex-end; /* Align buttons to the right on mobile */
-        }
     }
 </style>
 @endsection
