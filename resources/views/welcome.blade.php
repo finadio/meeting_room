@@ -45,29 +45,38 @@
             margin-left: auto;
             margin-right: auto;
         }
-        .hero-cta-group {
+        .hero-cta-group, .login-btn-group {
             display: flex;
             justify-content: center;
-            gap: 1.1rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
             margin-bottom: 0.5rem;
         }
-        .hero-cta-group .btn {
-            background: var(--background-white);
-            color: var(--primary-color);
-            font-weight: 600;
-            border-radius: 10px;
-            padding: 1.1rem 2.5rem;
-            font-size: 1.1rem;
+        .hero-cta-group .btn, .login-btn-group .btn {
+            background: var(--primary-color);
+            color: #fff;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 0.85rem 2.1rem;
+            font-size: 1.08rem;
             border: none;
             transition: all 0.18s;
             box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 140px;
+            text-decoration: none;
         }
-        .hero-cta-group .btn:hover {
+        .hero-cta-group .btn:hover, .login-btn-group .btn:hover {
             background: var(--primary-dark);
-            color: white;
+            color: #fff;
             transform: translateY(-2px) scale(1.04);
             box-shadow: 0 6px 24px rgba(30,64,175,0.13);
+        }
+        .login-btn-group .btn:last-child {
+            background: var(--primary-dark);
         }
         .features-landing {
             display: flex;
@@ -129,10 +138,8 @@
             .feature-card {
                 padding: 1.1rem 0.7rem;
             }
-            .hero-cta-group .btn {
-                width: 100%;
-                padding: 1rem 0;
-            }
+            .hero-cta-group, .login-btn-group { flex-direction: column; gap: 0.5rem; }
+            .hero-cta-group .btn, .login-btn-group .btn { width: 100%; min-width: 0; }
         }
         footer {
             background: var(--primary-dark);
@@ -150,19 +157,33 @@
 <section class="hero-landing">
     <img src="{{ asset('img/shaka_utama.png') }}" alt="logo" class="hero-logo">
     <div class="hero-title">Booking Meeting Room System</div>
+    <div class="hero-bprmsa-info" style="font-size: 1.01rem; color: #e0e7ef; margin-bottom: 0.5rem; font-weight: 500; letter-spacing: 0.1px;">
+        <i class="fas fa-building" style="margin-right: 5px;"></i>Powered by <b>BPR MSA</b>
+    </div>
     <div class="hero-desc">Pesan ruang rapat favorit Anda dengan mudah, cepat, dan nyaman. Reservasi meeting room profesional untuk kebutuhan bisnis, komunitas, maupun acara penting Anda.</div>
     <div class="hero-cta-group">
         <a href="{{ route('register') }}" class="btn">Sign Up Now</a>
         <a href="{{ route('login') }}" class="btn">Login</a>
     </div>
     @if(auth()->check())
-        <div class="info-alert" style="max-width: 420px; margin: 1.5rem auto 0 auto; background: #f3f6fd; color: var(--primary-dark); border-radius: 10px; border: 1.5px solid var(--primary-color); display: flex; align-items: center; gap: 0.8rem; padding: 0.95rem 1.2rem; box-shadow: 0 4px 18px rgba(30,64,175,0.10);">
-            <i class="fas fa-info-circle" style="font-size: 1.3rem; color: var(--primary-dark);"></i>
-            <span style="flex:1; font-size: 1.01rem; font-weight: 500;">Anda sudah login. <span style='display:none;'>Logout untuk ganti akun.</span></span>
-            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn" style="background: var(--primary-dark); color: white; font-size: 0.97rem; padding: 0.5rem 1.1rem; border-radius: 7px; font-weight: 600; margin-left: 0.5rem; transition: background 0.18s;">Logout</a>
-            <form id="logout-form" action="{{ route('logout') }}" method="GET" style="display: none;">
-                @csrf
-            </form>
+        <div class="info-alert" style="max-width: 420px; margin: 1.5rem auto 0 auto; background: #f3f6fd; color: var(--primary-dark); border-radius: 12px; border: 1.5px solid var(--primary-color); box-shadow: 0 4px 18px rgba(30,64,175,0.10); padding: 1.1rem 1.2rem; text-align: center;">
+            <div style="font-size: 1.01rem; font-weight: 500; margin-bottom: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="fas fa-info-circle" style="font-size: 1.2rem; color: var(--primary-dark);"></i>
+                <span>Anda sudah login.</span>
+            </div>
+            <div class="login-btn-group">
+                @if(auth()->user()->user_type === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="btn" style="background: var(--primary-color); color: white; font-size: 0.97rem; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(30,64,175,0.08); display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('user.dashboard') }}" class="btn" style="background: var(--primary-color); color: white; font-size: 0.97rem; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(30,64,175,0.08); display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                @endif
+                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn" style="background: var(--primary-dark); color: white; font-size: 0.97rem; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <form id="logout-form" action="{{ route('logout') }}" method="GET" style="display: none;">@csrf</form>
+            </div>
         </div>
     @endif
 </section>
