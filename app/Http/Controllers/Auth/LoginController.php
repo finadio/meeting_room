@@ -10,6 +10,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeMail;
+// use App\Models\Booking; // Tidak perlu lagi jika checkBookingStatus dihapus
 
 class LoginController extends Controller
 {
@@ -35,28 +36,25 @@ class LoginController extends Controller
                     Auth::logout();
                     return back()->withErrors(['email' => 'Your account is banned. Please contact the admin for assistance.'])->withInput();
                 }
-                
+
                 $authUser = Auth::user(); // Dapatkan pengguna yang terautentikasi
 
-            // Cek tipe pengguna dan arahkan sesuai
+                // Cek tipe pengguna dan arahkan sesuai
                 if ($authUser->user_type == 'admin' || $authUser->user_type == 'futsal_manager') {
-                // Perbarui last_check_status untuk admin atau manager futsal
-                $authUser->last_check_status = now();
-                $authUser->save(); // Simpan perubahan
+                    // Perbarui last_check_status untuk admin atau manager futsal
+                    // Ini masih bisa dipertahankan jika Anda ingin melacak kapan admin terakhir login
+                    // Tetapi tidak lagi terkait dengan pemanggilan checkBookingStatus
+                    $authUser->last_check_status = now();
+                    $authUser->save();
 
-                // Panggil fungsi checkBookingStatus untuk memperbarui status booking
-                app('App\Http\Controllers\Admin\BookingsController')->checkBookingStatus();
-
-                \Log::info("Last check status diupdate untuk admin: " . $authUser->id);
+                    \Log::info("Admin or futsal manager logged in: " . $authUser->id);
 
                     return redirect()->route('admin.dashboard');
                 } elseif (Auth::user()->user_type == 'user') {
                     return redirect()->route('user.dashboard');
                 }
             }
-            
-            // \Log::info("Updated last_check_status for admin: " . $user->id);
-            // \Log::info("Last check status diupdate untuk pengguna: " . $user->id);
+
             // Authentication failed
             return back()->withErrors(['email' => 'Invalid email or password'])->withInput();
         } catch (\Exception $e) {
@@ -127,30 +125,31 @@ class LoginController extends Controller
         return redirect()->route('login')->with('success', 'Logout successful.');
     }
 
-    public function authenticated(Request $request, $user)
-    {
-        // Pastikan user adalah admin
-        if ($user->isAdmin()) {
-            // Cek apakah hari ini sudah dijalankan
-            if (!$user->last_check_status || $user->last_check_status < now()->toDateString()) {
-                // Panggil fungsi checkBookingStatus
-                $this->checkBookingStatus();
+    // Metode authenticated dan checkBookingStatus dihapus dari sini
+    // Karena otomatisasi status booking akan ditangani oleh cron job
 
-                // Update tanggal terakhir menjalankan fungsi
-                $user->last_check_status = now()->toDateString();
-                $user->save();
-            }
-        }
+    // public function authenticated(Request $request, $user)
+    // {
+    //     // Pastikan user adalah admin
+    //     if ($user->isAdmin()) {
+    //         // Cek apakah hari ini sudah dijalankan
+    //         if (!$user->last_check_status || $user->last_check_status < now()->toDateString()) {
+    //             // Panggil fungsi checkBookingStatus
+    //             $this->checkBookingStatus();
 
-        return redirect()->intended($this->redirectPath());
-    }
+    //             // Update tanggal terakhir menjalankan fungsi
+    //             $user->last_check_status = now()->toDateString();
+    //             $user->save();
+    //         }
+    //     }
+    //     return redirect()->intended($this->redirectPath());
+    // }
 
-    protected function checkBookingStatus()
-    {
-        // Logika untuk mengecek dan mengupdate status booking
-        Booking::where('booking_date', '<', now())
-            ->where('status', '!=', 'Disetujui')
-            ->update(['status' => 'selesai']);
-    }
-
+    // protected function checkBookingStatus()
+    // {
+    //     // Logika untuk mengecek dan mengupdate status booking
+    //     Booking::where('booking_date', '<', now())
+    //         ->where('status', '!=', 'Disetujui')
+    //         ->update(['status' => 'selesai']);
+    // }
 }

@@ -2,6 +2,15 @@
 @section('title', 'Facilities')
 
 @section('content')
+<form action="{{ route('admin.facilities.index') }}" method="GET" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Cari fasilitas..." value="{{ $searchQuery ?? '' }}">
+        <button class="btn btn-primary" type="submit">Cari</button>
+        @if($searchQuery)
+            <a href="{{ route('admin.facilities.index') }}" class="btn btn-secondary">Reset</a>
+        @endif
+    </div>
+</form>
 <div class="booking-page-wrapper">
     <div class="container-fluid px-4">
         <div class="row justify-content-center">
@@ -830,6 +839,7 @@
     }
 </style>
 @endsection
+
 
 @section('scripts')
 <script>

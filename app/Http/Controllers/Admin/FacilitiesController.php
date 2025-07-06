@@ -11,12 +11,25 @@ use Illuminate\Http\Request;
 
 class FacilitiesController extends Controller
 {
-    public function index()
+    public function index(Request $request) // Tambahkan Request $request
     {
-        $facilities = Facility::all();
-        $facilities = Facility::paginate(10);
+        $searchQuery = $request->input('search'); // Ambil input pencarian
+
+        $facilities = Facility::query() // Gunakan query() untuk memulai builder
+            ->when($searchQuery, function ($query, $searchQuery) {
+                // Terapkan filter pencarian jika ada searchQuery
+                $query->where('name', 'like', '%' . $searchQuery . '%')
+                      ->orWhere('description', 'like', '%' . $searchQuery . '%')
+                      ->orWhere('location', 'like', '%' . $searchQuery . '%')
+                      ->orWhere('facility_type', 'like', '%' . $searchQuery . '%')
+                      ->orWhere('contact_person', 'like', '%' . $searchQuery . '%')
+                      ->orWhere('contact_email', 'like', '%' . $searchQuery . '%')
+                      ->orWhere('contact_phone', 'like', '%' . $searchQuery . '%');
+            })
+            ->paginate(10); // Lanjutkan dengan paginasi
+
         $unreadNotificationCount = Notification::where('is_read', false)->count();
-        return view('admin.facilities.index', compact('facilities', 'unreadNotificationCount'));
+        return view('admin.facilities.index', compact('facilities', 'unreadNotificationCount', 'searchQuery')); // Teruskan searchQuery ke view
     }
 
     public function create()
@@ -42,13 +55,10 @@ class FacilitiesController extends Controller
                 'contact_phone' => 'nullable|string|max:255',
             ]);
 
-            // Create a new Facility instance
             $facilityData = $request->except('image');
 
-            // Check if an image file is uploaded
             if ($request->hasFile('image')) {
                 $imagePath = $request->file('image')->store('facility_images', 'public');
-                // $facilityData['image_path'] = 'storage/app/public/' . $imagePath;
                 $facilityData['image_path'] = 'storage/' . $imagePath;
             }
 
@@ -58,7 +68,6 @@ class FacilitiesController extends Controller
 
             return redirect()->route('admin.facilities.index')->with('success', 'Facility Added Successfully.');
         } catch (QueryException $e) {
-            // Handle the exception, log it, or return an error response
             return redirect()->back()->with('error', 'Error creating facility: ' . $e->getMessage());
         }
     }
@@ -80,10 +89,7 @@ class FacilitiesController extends Controller
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'location' => 'nullable|string|max:255',
-                // 'map_coordinates' => 'nullable|string|max:255',
                 'image_path' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                // 'price_per_hour' => 'nullable|numeric|min:0',
-                // 'facility_type' => 'nullable|string|max:255',
                 'opening_time' => 'nullable|string|max:255',
                 'closing_time' => 'nullable|string|max:255',
                 'contact_person' => 'nullable|string|max:255',
@@ -91,26 +97,17 @@ class FacilitiesController extends Controller
                 'contact_phone' => 'nullable|string|max:255',
             ]);
 
-            // Find the Facility by ID
             $facility = Facility::findOrFail($id);
-
-            // Update the Facility instance with new data
             $facilityData = $request->except('image');
 
-            // Check if an image file is uploaded
             if ($request->hasFile('image')) {
-                // Delete the old image file if it exists
-                if (!is_null($facility->image_path) && Storage::disk('public')->exists($facility->image_path)) {
-                    Storage::disk('public')->delete($facility->image_path);
+                if (!is_null($facility->image_path) && Storage::disk('public')->exists(str_replace('storage/', '', $facility->image_path))) {
+                    Storage::disk('public')->delete(str_replace('storage/', '', $facility->image_path));
                 }
-
-                // Store the new image file
                 $imagePath = $request->file('image')->store('facility_images', 'public');
-                // $facilityData['image_path'] = 'storage/app/public/' . $imagePath;
-                $facilityData['image_path'] = 'storage/app/public/' . $imagePath;
+                $facilityData['image_path'] = 'storage/' . $imagePath; // Perbaikan path
             }
 
-            // Update the facility
             $facility->update($facilityData);
 
             return redirect()->route('admin.facilities.index')->with('success', 'Facility Updated Successfully.');
@@ -121,6 +118,11 @@ class FacilitiesController extends Controller
 
     public function destroy(Facility $facility)
     {
+        // Hapus juga gambar terkait jika ada
+        if (!is_null($facility->image_path) && Storage::disk('public')->exists(str_replace('storage/', '', $facility->image_path))) {
+            Storage::disk('public')->delete(str_replace('storage/', '', $facility->image_path));
+        }
+
         $facility->delete();
 
         return redirect()->route('admin.facilities.index')->with('success', 'Facility Deleted Successfully.');

@@ -125,105 +125,151 @@
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                height: 'auto',
-                aspectRatio: 1.35,
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,listWeek'
-                },
-                buttonText: {
-                    today: 'Hari Ini',
-                    month: 'Bulan',
-                    week: 'Minggu',
-                    list: 'Daftar'
-                },
-                locale: 'id',
-                events: @json($bookedDates),
-                eventDisplay: 'block',
-                eventColor: '#1E40AF',
-                eventTextColor: '#ffffff',
-                eventRender: function(info) {
-                    if (info.event.extendedProps.status === 'booked') {
-                        info.el.classList.add('booking-event');
+        const bookingSearch = document.getElementById('bookingSearch');
+        const facilityFilter = document.getElementById('facilityFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const bookingList = document.getElementById('bookingList');
+        const noResults = document.getElementById('noResults');
+
+        // Fungsi untuk memformat tanggal ke YYYY-MM-DD
+        function formatDate(date) {
+            const d = new Date(date);
+            let month = '' + (d.getMonth() + 1);
+            let day = '' + d.getDate();
+            const year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        function filterBookings() {
+            const search = bookingSearch.value.toLowerCase();
+            const facility = facilityFilter.value;
+            const dateType = dateFilter.value;
+            let found = 0;
+
+            const today = new Date();
+            // Setujui tanggal ke awal hari untuk perbandingan yang akurat
+            today.setHours(0, 0, 0, 0);
+
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay()); // Minggu dimulai dari Minggu (0)
+            startOfWeek.setHours(0, 0, 0, 0);
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            endOfWeek.setHours(23, 59, 59, 999);
+
+            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            startOfMonth.setHours(0, 0, 0, 0);
+
+            const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            endOfMonth.setHours(23, 59, 59, 999);
+
+            // Daftar nama bulan (lowercase) untuk pencarian
+            const monthNames = [
+                "januari", "februari", "maret", "april", "mei", "juni",
+                "juli", "agustus", "september", "oktober", "november", "desember",
+                "january", "february", "march", "april", "may", "june",
+                "july", "august", "september", "october", "november", "december"
+            ];
+
+            Array.from(bookingList.getElementsByClassName('booking-item')).forEach(function(item) {
+                const facilityName = item.getAttribute('data-facility').toLowerCase();
+                const userName = item.getAttribute('data-user-name') ? item.getAttribute('data-user-name').toLowerCase() : '';
+                const email = item.getAttribute('data-email') ? item.getAttribute('data-email').toLowerCase() : '';
+                const contactNumber = item.getAttribute('data-contact-number') ? item.getAttribute('data-contact-number').toLowerCase() : '';
+                const status = item.getAttribute('data-status') ? item.getAttribute('data-status').toLowerCase() : '';
+                const meetingTitle = item.getAttribute('data-meeting-title') ? item.getAttribute('data-meeting-title').toLowerCase() : '';
+                const groupName = item.getAttribute('data-group-name') ? item.getAttribute('data-group-name').toLowerCase() : '';
+
+                const bookingDateString = item.getAttribute('data-date'); // e.g., "2025-07-02"
+                const bookingTimeString = item.getAttribute('data-time'); // e.g., "10:00 - 11:00"
+                const bookingDate = new Date(bookingDateString);
+                bookingDate.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+
+                let show = true;
+
+                // Logika Pencarian Umum (berlaku untuk semua input teks)
+                if (search) {
+                    let isMatch = false;
+
+                    // Cek di kolom-kolom yang relevan
+                    if (facilityName.includes(search) ||
+                        userName.includes(search) ||
+                        email.includes(search) ||
+                        contactNumber.includes(search) ||
+                        status.includes(search) ||
+                        meetingTitle.includes(search) ||
+                        groupName.includes(search) ||
+                        bookingDateString.includes(search) || // Mencari di string tanggal (misal "2025-07-02" cocok dengan "07")
+                        bookingTimeString.includes(search)
+                    ) {
+                        isMatch = true;
                     }
-                },
-                dayMaxEvents: true,
-                moreLinkClick: 'popover',
-                eventClick: function(info) {
-                    // Handle event click
-                    console.log('Event clicked:', info.event.title);
+
+                    // Cek apakah search adalah nama bulan
+                    const monthIndex = bookingDate.getMonth(); // 0 for Jan, 1 for Feb, etc.
+                    if (monthNames[monthIndex] === search || monthNames[monthIndex + 12] === search) { // Cek id dan nama
+                        isMatch = true;
+                    }
+                    // Anda juga bisa menambahkan logika untuk nomor bulan
+                    if (parseInt(search) === (monthIndex + 1)) { // Jika search adalah nomor bulan (misal "7" untuk July)
+                        isMatch = true;
+                    }
+
+
+                    if (!isMatch) {
+                        show = false;
+                    }
+                }
+
+                // Filter Fasilitas
+                if (facility && facility !== item.getAttribute('data-facility')) {
+                    show = false;
+                }
+
+                // Filter Tanggal
+                if (dateType) {
+                    if (dateType === 'today') {
+                        if (bookingDate.toDateString() !== today.toDateString()) show = false;
+                    } else if (dateType === 'week') {
+                        if (bookingDate < startOfWeek || bookingDate > endOfWeek) show = false;
+                    } else if (dateType === 'month') {
+                        if (bookingDate < startOfMonth || bookingDate > endOfMonth) show = false;
+                    }
+                    // Jika dateType adalah tanggal spesifik (dari datepicker atau input tanggal lainnya)
+                    else {
+                        const filterDate = new Date(dateType);
+                        filterDate.setHours(0, 0, 0, 0);
+                        if (bookingDate.toDateString() !== filterDate.toDateString()) show = false;
+                    }
+                }
+
+                if (show) {
+                    item.style.display = '';
+                    found++;
+                } else {
+                    item.style.display = 'none';
                 }
             });
-            calendar.render();
 
-            // Search & Filter Logic
-            const bookingSearch = document.getElementById('bookingSearch');
-            const facilityFilter = document.getElementById('facilityFilter');
-            const dateFilter = document.getElementById('dateFilter');
-            const bookingList = document.getElementById('bookingList');
-            const noResults = document.getElementById('noResults');
-
-            function filterBookings() {
-                const search = bookingSearch.value.toLowerCase();
-                const facility = facilityFilter.value;
-                const dateType = dateFilter.value;
-                let found = 0;
-                const today = new Date();
-                const startOfWeek = new Date(today);
-                startOfWeek.setDate(today.getDate() - today.getDay());
-                const endOfWeek = new Date(startOfWeek);
-                endOfWeek.setDate(startOfWeek.getDate() + 6);
-                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-                Array.from(bookingList.getElementsByClassName('booking-item')).forEach(function(item) {
-                    const facilityName = item.getAttribute('data-facility').toLowerCase();
-                    const bookingDate = item.getAttribute('data-date');
-                    const bookingTime = item.getAttribute('data-time');
-                    let show = true;
-
-                    // Search
-                    if (search && !(facilityName.includes(search) || bookingDate.includes(search) || bookingTime.includes(search))) {
-                        show = false;
-                    }
-                    // Facility filter
-                    if (facility && facility !== item.getAttribute('data-facility')) {
-                        show = false;
-                    }
-                    // Date filter
-                    if (dateType) {
-                        const dateObj = new Date(bookingDate);
-                        if (dateType === 'today') {
-                            if (dateObj.toDateString() !== today.toDateString()) show = false;
-                        } else if (dateType === 'week') {
-                            if (dateObj < startOfWeek || dateObj > endOfWeek) show = false;
-                        } else if (dateType === 'month') {
-                            if (dateObj < startOfMonth || dateObj > endOfMonth) show = false;
-                        }
-                    }
-                    if (show) {
-                        item.style.display = '';
-                        found++;
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-                if (found === 0) {
-                    noResults.style.display = '';
-                } else {
-                    noResults.style.display = 'none';
-                }
+            if (found === 0) {
+                noResults.style.display = '';
+            } else {
+                noResults.style.display = 'none';
             }
+        }
 
-            bookingSearch.addEventListener('input', filterBookings);
-            facilityFilter.addEventListener('change', filterBookings);
-            dateFilter.addEventListener('change', filterBookings);
-        });
+        // Panggil filterBookings saat input berubah
+        bookingSearch.addEventListener('keyup', filterBookings);
+        facilityFilter.addEventListener('change', filterBookings);
+        dateFilter.addEventListener('change', filterBookings);
+
+        // Panggil filterBookings saat halaman dimuat untuk menerapkan filter awal
+        document.addEventListener('DOMContentLoaded', filterBookings);
     </script>
 @endsection
 
