@@ -765,3 +765,76 @@ body {
         font-size: 1.4rem;
     }
 }
+
+/* Perbaikan responsivitas summary-card statistik dashboard admin */
+
+@media (max-width: 1199.98px) {
+    .summary-card {
+        min-width: 0;
+        padding: 1.2rem 0.7rem;
+    }
+    .card-title {
+        font-size: 1.1rem;
+    }
+    .card-value {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .summary-card {
+        margin-bottom: 1.2rem;
+        padding: 1rem 0.5rem;
+    }
+    .card-title {
+        font-size: 1rem;
+    }
+    .card-value {
+        font-size: 1.5rem;
+    }
+    .card-icon {
+        font-size: 2rem;
+        width: 48px;
+        height: 48px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .summary-card {
+        margin-bottom: 1rem;
+        padding: 0.7rem 0.2rem;
+    }
+    .card-title {
+        font-size: 0.95rem;
+    }
+    .card-value {
+        font-size: 1.2rem;
+    }
+    .card-icon {
+        font-size: 1.5rem;
+        width: 36px;
+        height: 36px;
+    }
+    .row.mb-5 > [class^='col-'] {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .summary-card {
+        margin-bottom: 0.7rem;
+        padding: 0.5rem 0.1rem;
+    }
+    .card-title {
+        font-size: 0.9rem;
+    }
+    .card-value {
+        font-size: 1rem;
+    }
+    .card-icon {
+        font-size: 1.1rem;
+        width: 28px;
+        height: 28px;
+    }
+}

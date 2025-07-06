@@ -486,55 +486,122 @@ main {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 991.98px) {
     .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.1rem;
-    }
-    
-    .section-title {
         font-size: 2rem;
     }
-    
-    .process-card,
-    .facility-card {
+    .hero-content {
+        padding: 1rem 0.5rem;
+    }
+    .hero-image {
+        height: 45vh !important;
+        min-height: 220px !important;
+    }
+    .process-card, .facility-card {
+        margin-bottom: 1.2rem;
+        padding: 1.2rem 0.8rem;
+    }
+    .facility-image {
+        height: 160px;
+    }
+    .facility-content {
+        padding: 1rem 0.5rem;
+    }
+    .section-title {
+        font-size: 1.5rem;
+    }
+    .section-header {
         margin-bottom: 1.5rem;
     }
-    
-    .hero-cta {
-        padding: 0.875rem 1.5rem;
+    .view-all-btn {
+        padding: 0.7rem 1.2rem;
         font-size: 1rem;
-    }
-    
-    .hero-image {
-        height: 60vh !important; /* sedikit lebih kecil di mobile */
-        min-height: 400px !important;
     }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 767.98px) {
+    .hero-section {
+        margin-bottom: 2rem;
+    }
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.3rem;
     }
-    
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
     .hero-content {
-        width: 95%;
+        max-width: 98vw;
+        padding: 0.5rem 0.2rem;
     }
-    
-    .process-card {
-        padding: 2rem 1.5rem;
+    .process-card, .facility-card {
+        padding: 0.8rem 0.3rem;
+        margin-bottom: 1rem;
     }
-    
-    .facility-content {
-        padding: 1.25rem;
+    .facility-image {
+        height: 110px;
     }
-    
+    .facility-title {
+        font-size: 1rem;
+    }
+    .facility-location {
+        font-size: 0.85rem;
+    }
+    .booking-btn, .view-all-btn {
+        font-size: 0.95rem;
+        padding: 0.6rem 1rem;
+    }
+    .section-title {
+        font-size: 1.2rem;
+    }
+    .section-header {
+        margin-bottom: 1rem;
+    }
+    .empty-state h3 {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-title {
+        font-size: 1.1rem;
+    }
+    .hero-content {
+        padding: 0.2rem 0.1rem;
+    }
     .hero-image {
-        height: 50vh !important; /* lebih kecil lagi di layar sangat kecil */
-        min-height: 300px !important;
+        height: 30vh !important;
+        min-height: 120px !important;
+    }
+    .process-card, .facility-card {
+        padding: 0.5rem 0.1rem;
+        margin-bottom: 0.7rem;
+    }
+    .facility-image {
+        height: 70px;
+    }
+    .facility-title {
+        font-size: 0.95rem;
+    }
+    .facility-location {
+        font-size: 0.75rem;
+    }
+    .booking-btn, .view-all-btn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.7rem;
+    }
+    .section-title {
+        font-size: 1rem;
+    }
+    .section-header {
+        margin-bottom: 0.5rem;
+    }
+    .empty-state h3 {
+        font-size: 1rem;
+    }
+    .process-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
     }
 }
 
