@@ -71,7 +71,8 @@ body {
     background: var(--sidebar-bg-blue);
 }
 #sidebar.hide {
-    width: 90px;
+    width: 70px !important; /* Lebar minimal sidebar collapse, tidak auto-expand */
+    transition: width .3s ease;
 }
 #sidebar .brand {
     font-size: 24px;
@@ -210,7 +211,7 @@ body {
     left: 0;
     z-index: 1000;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-ref);
 }
 #content nav::before {
     content: none;
@@ -303,12 +304,10 @@ body {
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--text-dark-ref);
-    /* margin-right: auto; HAPUS BARIS INI */
     margin-left: 15px;
 }
-/* Kemudian, tambahkan margin-left: auto; ke .dropdown */
 #content nav .dropdown {
-    margin-left: auto; /* Pindahkan ikon profil ke paling kanan */
+    margin-left: auto;
 }
 
 .dropdown {
@@ -354,24 +353,24 @@ body {
 /* --- Gaya untuk Dashboard Admin yang Total Menarik & Profesional (sesuai Referensi) --- */
 
 .dashboard-content {
-    padding: 30px 60px; /* Padding utama konten dashboard */
+    padding: 30px 60px;
     background-color: var(--bg-page-ref);
     min-height: calc(100vh - 60px);
 }
 
 /* Welcome Section */
 .dashboard-header-main {
-    background-color: var(--bg-card-ref); /* Latar belakang putih */
+    background-color: var(--bg-card-ref);
     border: 1px solid var(--border-ref);
     border-radius: 12px;
     padding: 25px;
-    box-shadow: var(--shadow-ref-soft); /* Bayangan halus */
+    box-shadow: var(--shadow-ref-soft);
     margin-bottom: 40px;
-    text-align: left; /* Teks rata kiri */
+    text-align: left;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start; /* Konten rata kiri */
+    align-items: flex-start;
     position: relative;
     overflow: hidden;
 }
@@ -389,7 +388,6 @@ body {
     color: var(--text-muted-ref);
 }
 
-
 /* Section Headings */
 .section-heading {
     font-size: 1.5rem;
@@ -402,7 +400,6 @@ body {
     animation: fadeInRight 0.8s ease-out forwards;
     opacity: 0;
 }
-/* Untuk heading di dalam kolom (grafik/kalender/jadwal) */
 .section-heading-in-column {
     font-size: 1.1rem;
     font-weight: 600;
@@ -415,7 +412,6 @@ body {
     text-align: left;
     text-transform: uppercase;
 }
-
 
 @keyframes fadeInDown {
     from {
@@ -454,9 +450,8 @@ body {
 .alert-info { border-color: var(--primary-ref-blue); background-color: #EBF7FD; }
 .alert-success { border-color: var(--primary-green); background-color: #EBFDF4; }
 
-
 /* Kartu Statistik */
-.dashboard-stats-row .col-lg-3 { /* Asumsi 4 kartu di desktop */
+.dashboard-stats-row .col-lg-3 {
     animation: fadeInUp 0.8s ease-out forwards;
     opacity: 0;
 }
@@ -465,7 +460,6 @@ body {
 .dashboard-stats-row .col-lg-3:nth-child(2) { animation-delay: 0.2s; }
 .dashboard-stats-row .col-lg-3:nth-child(3) { animation-delay: 0.3s; }
 .dashboard-stats-row .col-lg-3:nth-child(4) { animation-delay: 0.4s; }
-
 
 @keyframes fadeInUp {
     from {
@@ -493,90 +487,83 @@ body {
     background: var(--bg-card-ref);
     position: relative;
     z-index: 1;
-    min-height: 140px; /* Tinggi minimum kartu */
+    min-height: 140px;
     transition: all 0.3s ease-in-out;
     display: flex;
-    flex-direction: column; /* Konten bertumpuk */
-    justify-content: space-between; /* Spasi antar konten */
-    align-items: flex-start; /* Konten rata kiri */
-    padding: 20px 25px; /* Padding kartu */
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px 25px;
 }
 
-/* Gaya ikon wrapper dan ikon stat card (sesuai referensi TailAdmin) */
-/* Struktur ini disesuaikan untuk ikon di kanan atas, angka di kiri bawah */
 .dashboard-card-item .card-body {
-    padding: 0; /* Hapus padding default Bootstrap card-body */
+    padding: 0;
     width: 100%;
     display: flex;
     flex-direction: column;
     height: 100%;
-    justify-content: space-between; /* Spasi antara ikon dan teks/angka */
-    align-items: flex-start; /* Rata kiri */
-    position: relative; /* Agar ikon bisa absolute di dalamnya */
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
 }
 
 .stat-icon-wrapper {
     position: absolute;
-    top: 20px; /* Jarak dari atas */
-    right: 20px; /* Jarak dari kanan */
+    top: 20px;
+    right: 20px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.5rem; /* Ukuran ikon */
-    color: var(--text-light-ref); /* Warna ikon */
-    background-color: var(--primary-ref-blue); /* Background ikon (default) */
-    opacity: 0.7; /* Transparansi ikon */
+    font-size: 1.5rem;
+    color: var(--text-light-ref);
+    background-color: var(--primary-ref-blue);
+    opacity: 0.7;
 }
 
-/* Warna background icon wrapper spesifik per tipe kartu */
 .dashboard-card-item.card-type-users .stat-icon-wrapper { background-color: var(--primary-ref-blue); }
 .dashboard-card-item.card-type-bookings .stat-icon-wrapper { background-color: var(--accent-ref-red); }
 .dashboard-card-item.card-type-facilities .stat-icon-wrapper { background-color: var(--accent-ref-green); }
-.dashboard-card-item.card-type-new-users .stat-icon-wrapper { background-color: var(--secondary-ref-blue); } /* Biru muda */
+.dashboard-card-item.card-type-new-users .stat-icon-wrapper { background-color: var(--secondary-ref-blue); }
 .dashboard-card-item.card-type-revenue .stat-icon-wrapper { background-color: var(--accent-ref-orange); }
-
 
 .stat-label {
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--text-muted-ref);
     text-transform: uppercase;
-    margin-bottom: 5px; /* Spasi bawah label */
-    line-height: 1.2;
-    position: relative; /* Agar di atas ikon watermark */
-    z-index: 1;
-}
-
-.stat-value {
-    font-size: 2.2rem; /* Ukuran angka besar */
-    font-weight: 700;
-    color: var(--text-dark-ref);
-    margin-top: 0; /* Hapus margin atas */
-    margin-bottom: 0; /* Hapus margin bawah */
+    margin-bottom: 5px;
     line-height: 1.2;
     position: relative;
     z-index: 1;
 }
 
-/* Warna teks angka spesifik per kartu */
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-dark-ref);
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.2;
+    position: relative;
+    z-index: 1;
+}
+
 .dashboard-card-item.card-type-users .stat-value { color: var(--primary-ref-blue); }
 .dashboard-card-item.card-type-bookings .stat-value { color: var(--accent-ref-red); }
 .dashboard-card-item.card-type-facilities .stat-value { color: var(--accent-ref-green); }
 .dashboard-card-item.card-type-new-users .stat-value { color: var(--secondary-ref-blue); }
 .dashboard-card-item.card-type-revenue .stat-value { color: var(--accent-ref-orange); }
 
-
 .dashboard-stat-card:hover .dashboard-card-item {
     transform: translateY(-5px);
     box-shadow: var(--shadow-medium) !important;
 }
 .dashboard-stat-card:hover .stat-icon-wrapper {
-    opacity: 1; /* Ikon lebih terlihat saat hover */
+    opacity: 1;
 }
-
 
 /* Gaya untuk Jadwal / Schedule Widget */
 .dashboard-schedule-card {
@@ -636,7 +623,6 @@ body {
     color: var(--secondary-ref-blue);
 }
 
-
 /* Gaya untuk grafik dan kalender */
 .dashboard-chart-card, .dashboard-calendar-card {
     border: 1px solid var(--border-ref);
@@ -673,12 +659,10 @@ body {
     color: white;
     font-weight: 500;
 }
-/* Kelas kustom untuk event kalender berdasarkan status */
 .fc-event-approved { background-color: var(--primary-ref-blue) !important; border-color: var(--primary-ref-blue) !important; }
 .fc-event-pending { background-color: var(--accent-orange) !important; border-color: var(--accent-orange) !important; }
 .fc-event-rejected { background-color: var(--accent-red) !important; border-color: var(--accent-red) !important; }
 .fc-event-completed { background-color: var(--accent-green) !important; border-color: var(--accent-green) !important; }
-
 
 .fc-dayGridMonth-button, .fc-timeGridWeek-button, .fc-timeGridDay-button, .fc-prev-button, .fc-next-button, .fc-today-button {
     background-color: var(--primary-ref-blue) !important;

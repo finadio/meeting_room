@@ -316,6 +316,12 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js'></script>
 <script>
+    // Debug: cek data booking dari backend
+    console.log('bookedDates:', typeof bookedDates !== 'undefined' ? bookedDates : 'bookedDates belum didefinisikan');
+
+    // Global variables
+    let filteredBookedDates = [];
+    
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var bookedDates = @json($bookedDates);
@@ -323,7 +329,7 @@
         // Filter bookedDates based on search query
         const urlParams = new URLSearchParams(window.location.search);
         const searchQuery = urlParams.get('search');
-        let filteredBookedDates = bookedDates;
+        filteredBookedDates = bookedDates;
 
         if (searchQuery) {
             const lowerCaseSearchQuery = searchQuery.toLowerCase();
@@ -447,13 +453,132 @@
     }
 
     function exportCalendar() {
-        // Implement calendar export functionality
-        alert('Fitur export akan segera tersedia!');
+        // Generate CSV content from booking data
+        const csvContent = generateCSV();
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `calendar_export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Generate CSV content
+    function generateCSV() {
+        const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
+        const rows = filteredBookedDates.map(booking => [
+            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
+            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
+            booking.facilityName,
+            booking.userName,
+            booking.bookingStatus,
+            booking.bookingHours,
+            booking.bookingAmount || 0
+        ]);
+        
+        return [headers, ...rows].map(row => row.join(',')).join('\n');
     }
 
     function printCalendar() {
-        // Implement calendar print functionality
-        window.print();
+        // Create a new window for printing booking data
+        const printWindow = window.open('', '_blank');
+        
+        // Generate table HTML for printing
+        const tableHTML = generatePrintTable();
+        
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Data Pemesanan Ruang Meeting</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            margin: 20px;
+                            font-size: 12px;
+                        }
+                        table { 
+                            width: 100%; 
+                            border-collapse: collapse; 
+                            margin-top: 20px;
+                        }
+                        th, td { 
+                            border: 1px solid #ddd; 
+                            padding: 8px; 
+                            text-align: left; 
+                        }
+                        th { 
+                            background-color: #f2f2f2; 
+                            font-weight: bold;
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                        .header h1 {
+                            margin: 0;
+                            color: #333;
+                        }
+                        .header p {
+                            margin: 5px 0;
+                            color: #666;
+                        }
+                        @media print {
+                            body { margin: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Data Pemesanan Ruang Meeting</h1>
+                        <p>Tanggal Export: ${new Date().toLocaleDateString('id-ID')}</p>
+                        <p>Total Data: ${filteredBookedDates.length} pemesanan</p>
+                    </div>
+                    ${tableHTML}
+                </body>
+            </html>
+        `);
+        
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    // Generate table HTML for printing
+    function generatePrintTable() {
+        if (!filteredBookedDates || filteredBookedDates.length === 0) {
+            return '<p>Tidak ada data pemesanan yang ditemukan.</p>';
+        }
+
+        const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
+        const rows = filteredBookedDates.map((booking, index) => [
+            index + 1,
+            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
+            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
+            booking.facilityName,
+            booking.userName,
+            booking.bookingStatus,
+            booking.bookingHours,
+            `Rp ${(booking.bookingAmount || 0).toLocaleString('id-ID')}`
+        ]);
+
+        const tableRows = rows.map(row => 
+            '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>'
+        ).join('');
+
+        return `
+            <table>
+                <thead>
+                    <tr>
+                        ${headers.map(header => '<th>' + header + '</th>').join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+        `;
     }
 
     function refreshList() {
@@ -477,14 +602,14 @@
         initializeCalendar();
         initializeFilters();
         updateBookingList(); // PASTIKAN SELALU DIPANGGIL SAAT LOAD
-        console.log('Data booking:', filteredBookings);
+        console.log('Data booking:', filteredBookedDates);
     });
 
     function performSearch() {
         const searchQuery = document.getElementById('searchInput').value;
         const statusFilter = document.getElementById('statusFilter').value;
         
-        let filtered = [...allBookings];
+        let filtered = [...bookedDates];
 
         // Apply search filter
         if (searchQuery) {
@@ -510,11 +635,11 @@
             return dateA - dateB;
         });
 
-        filteredBookings = filtered;
+        filteredBookedDates = filtered;
         currentBookingPage = 1; // Reset ke halaman 1 setiap filter/search
         updateCalendar();
         updateBookingList();
-        console.log('Data booking setelah filter:', filteredBookings);
+        console.log('Data booking setelah filter:', filteredBookedDates);
     }
 
     function clearSearch() {
@@ -522,11 +647,11 @@
         document.getElementById('statusFilter').value = '';
         document.getElementById('clearSearchBtn').style.display = 'none';
         
-        filteredBookings = [...allBookings];
+        filteredBookedDates = [...bookedDates];
         currentBookingPage = 1;
         updateCalendar();
         updateBookingList();
-        console.log('Data booking setelah clear:', filteredBookings);
+        console.log('Data booking setelah clear:', filteredBookedDates);
     }
 
     function updateBookingList() {
@@ -534,7 +659,7 @@
         const bookingPagination = document.getElementById('bookingPagination');
         if (!bookingListContent) return;
 
-        if (!filteredBookings || filteredBookings.length === 0) {
+        if (!filteredBookedDates || filteredBookedDates.length === 0) {
             bookingListContent.innerHTML = `
                 <div class="empty-state">
                     <i class="bx bx-calendar-x"></i>
@@ -546,11 +671,11 @@
         }
 
         // PAGINATION LOGIC
-        const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
+        const totalPages = Math.ceil(filteredBookedDates.length / bookingsPerPage);
         if (currentBookingPage > totalPages) currentBookingPage = 1;
         const startIdx = (currentBookingPage - 1) * bookingsPerPage;
         const endIdx = startIdx + bookingsPerPage;
-        const pageBookings = filteredBookings.slice(startIdx, endIdx);
+        const pageBookings = filteredBookedDates.slice(startIdx, endIdx);
 
         const bookingItemsHTML = pageBookings.map((booking, index) => {
             const globalIndex = startIdx + index;
