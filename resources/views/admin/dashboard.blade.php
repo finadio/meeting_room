@@ -46,8 +46,8 @@
                             </div>
                         @endif
 
-                        <div class="row mb-4 dashboard-stats-row"> {{-- Tambahkan kelas untuk target CSS --}}
-                            <div class="col-xl-3 col-md-6 col-sm-12 mb-4"> {{-- Pastikan col-sm-12 untuk mobile --}}
+                        <div class="row mb-5">
+                            <div class="col-xl-3 col-md-6 mb-4">
                                 <a href="{{ route('admin.users.index') }}" class="summary-card-link">
                                     <div class="summary-card primary-summary">
                                         <div class="card-icon">
@@ -62,7 +62,7 @@
                                 </a>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 col-sm-12 mb-4"> {{-- Pastikan col-sm-12 untuk mobile --}}
+                            <div class="col-xl-3 col-md-6 mb-4">
                                 <a href="{{ route('admin.bookings.index') }}" class="summary-card-link">
                                     <div class="summary-card success-summary">
                                         <div class="card-icon">
@@ -77,7 +77,7 @@
                                 </a>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 col-sm-12 mb-4"> {{-- Pastikan col-sm-12 untuk mobile --}}
+                            <div class="col-xl-3 col-md-6 mb-4">
                                 <a href="{{ route('admin.facilities.index') }}" class="summary-card-link">
                                     <div class="summary-card info-summary">
                                         <div class="card-icon">
@@ -92,7 +92,7 @@
                                 </a>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 col-sm-12 mb-4"> {{-- Pastikan col-sm-12 untuk mobile --}}
+                            <div class="col-xl-3 col-md-6 mb-4">
                                 <a href="{{ route('admin.bookings.index', ['status' => 'Menunggu Konfirmasi']) }}" class="summary-card-link">
                                     <div class="summary-card warning-summary">
                                         <div class="card-icon">
@@ -540,6 +540,360 @@
         background: #fdfefe;
         border-radius: 12px;
         box-shadow: inset 0 0 5px rgba(0,0,0,0.05); /* Inner shadow for depth */
+        position: relative;
+        width: 100%;
+        min-height: 300px;
+        max-height: 400px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Chart responsive improvements */
+    .chart-container canvas {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block;
+    }
+    
+    /* Sub-card containing chart */
+    .sub-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(30,64,175,0.07);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+    
+    .sub-card-header {
+        padding: 20px 25px 15px 25px;
+        border-bottom: 1px solid #e2e8f0;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+    
+    .sub-card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px 25px 25px 25px;
+    }
+    
+    .sub-card-body .chart-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px;
+    }
+    
+    /* Ensure chart maintains aspect ratio */
+    .chart-container canvas {
+        aspect-ratio: 1;
+        max-width: 100%;
+        max-height: 100%;
+    }
+    
+    /* Desktop optimizations */
+    @media (min-width: 1200px) {
+        .chart-container {
+            min-height: 350px;
+            max-height: 450px;
+        }
+        
+        .chart-container canvas {
+            max-width: 85% !important;
+            max-height: 85% !important;
+        }
+    }
+    
+    /* Medium desktop landscape */
+    @media (min-width: 1200px) and (max-width: 1400px) and (orientation: landscape) {
+        .chart-container {
+            min-height: 380px;
+            max-height: 480px;
+        }
+        
+        .chart-container canvas {
+            max-width: 82% !important;
+            max-height: 82% !important;
+        }
+    }
+    
+    /* Medium desktop portrait */
+    @media (min-width: 1200px) and (max-width: 1400px) and (orientation: portrait) {
+        .chart-container {
+            min-height: 420px;
+            max-height: 520px;
+        }
+        
+        .chart-container canvas {
+            max-width: 88% !important;
+            max-height: 88% !important;
+        }
+    }
+    
+    /* Large desktop optimizations */
+    @media (min-width: 1400px) {
+        .chart-container {
+            min-height: 400px;
+            max-height: 500px;
+        }
+        
+        .chart-container canvas {
+            max-width: 80% !important;
+            max-height: 80% !important;
+        }
+    }
+    
+    /* Large desktop landscape */
+    @media (min-width: 1400px) and (max-width: 1920px) and (orientation: landscape) {
+        .chart-container {
+            min-height: 430px;
+            max-height: 530px;
+        }
+        
+        .chart-container canvas {
+            max-width: 78% !important;
+            max-height: 78% !important;
+        }
+    }
+    
+    /* Large desktop portrait */
+    @media (min-width: 1400px) and (max-width: 1920px) and (orientation: portrait) {
+        .chart-container {
+            min-height: 480px;
+            max-height: 580px;
+        }
+        
+        .chart-container canvas {
+            max-width: 85% !important;
+            max-height: 85% !important;
+        }
+    }
+    
+    /* 4K and ultra-wide screens */
+    @media (min-width: 1920px) {
+        .chart-container {
+            min-height: 450px;
+            max-height: 550px;
+        }
+        
+        .chart-container canvas {
+            max-width: 75% !important;
+            max-height: 75% !important;
+        }
+    }
+    
+    /* 4K landscape mode */
+    @media (min-width: 1920px) and (orientation: landscape) {
+        .chart-container {
+            min-height: 500px;
+            max-height: 600px;
+        }
+        
+        .chart-container canvas {
+            max-width: 72% !important;
+            max-height: 72% !important;
+        }
+    }
+    
+    /* 4K portrait mode */
+    @media (min-width: 1920px) and (orientation: portrait) {
+        .chart-container {
+            min-height: 550px;
+            max-height: 650px;
+        }
+        
+        .chart-container canvas {
+            max-width: 78% !important;
+            max-height: 78% !important;
+        }
+    }
+    
+    /* Ultra-wide screens */
+    @media (min-width: 2560px) {
+        .chart-container {
+            min-height: 600px;
+            max-height: 700px;
+        }
+        
+        .chart-container canvas {
+            max-width: 70% !important;
+            max-height: 70% !important;
+        }
+    }
+    
+    /* Ultra-wide landscape mode */
+    @media (min-width: 2560px) and (orientation: landscape) {
+        .chart-container {
+            min-height: 650px;
+            max-height: 750px;
+        }
+        
+        .chart-container canvas {
+            max-width: 68% !important;
+            max-height: 68% !important;
+        }
+    }
+    
+    /* Ultra-wide portrait mode */
+    @media (min-width: 2560px) and (orientation: portrait) {
+        .chart-container {
+            min-height: 700px;
+            max-height: 800px;
+        }
+        
+        .chart-container canvas {
+            max-width: 75% !important;
+            max-height: 75% !important;
+        }
+    }
+    
+    /* 5K screens */
+    @media (min-width: 5120px) {
+        .chart-container {
+            min-height: 800px;
+            max-height: 900px;
+        }
+        
+        .chart-container canvas {
+            max-width: 65% !important;
+            max-height: 65% !important;
+        }
+    }
+    
+    /* 5K landscape mode */
+    @media (min-width: 5120px) and (orientation: landscape) {
+        .chart-container {
+            min-height: 850px;
+            max-height: 950px;
+        }
+        
+        .chart-container canvas {
+            max-width: 62% !important;
+            max-height: 62% !important;
+        }
+    }
+    
+    /* 5K portrait mode */
+    @media (min-width: 5120px) and (orientation: portrait) {
+        .chart-container {
+            min-height: 900px;
+            max-height: 1000px;
+        }
+        
+        .chart-container canvas {
+            max-width: 70% !important;
+            max-height: 70% !important;
+        }
+    }
+    
+    /* 8K screens */
+    @media (min-width: 7680px) {
+        .chart-container {
+            min-height: 1000px;
+            max-height: 1100px;
+        }
+        
+        .chart-container canvas {
+            max-width: 60% !important;
+            max-height: 60% !important;
+        }
+    }
+    
+    /* 8K landscape mode */
+    @media (min-width: 7680px) and (orientation: landscape) {
+        .chart-container {
+            min-height: 1100px;
+            max-height: 1200px;
+        }
+        
+        .chart-container canvas {
+            max-width: 58% !important;
+            max-height: 58% !important;
+        }
+    }
+    
+    /* 8K portrait mode */
+    @media (min-width: 7680px) and (orientation: portrait) {
+        .chart-container {
+            min-height: 1200px;
+            max-height: 1300px;
+        }
+        
+        .chart-container canvas {
+            max-width: 65% !important;
+            max-height: 65% !important;
+        }
+    }
+    
+    /* 10K screens */
+    @media (min-width: 10240px) {
+        .chart-container {
+            min-height: 1300px;
+            max-height: 1400px;
+        }
+        
+        .chart-container canvas {
+            max-width: 55% !important;
+            max-height: 55% !important;
+        }
+    }
+    
+    /* 10K landscape mode */
+    @media (min-width: 10240px) and (orientation: landscape) {
+        .chart-container {
+            min-height: 1400px;
+            max-height: 1500px;
+        }
+        
+        .chart-container canvas {
+            max-width: 52% !important;
+            max-height: 52% !important;
+        }
+    }
+    
+    /* 10K portrait mode */
+    @media (min-width: 10240px) and (orientation: portrait) {
+        .chart-container {
+            min-height: 1500px;
+            max-height: 1600px;
+        }
+        
+        .chart-container canvas {
+            max-width: 60% !important;
+            max-height: 60% !important;
+        }
+    }
+    
+    /* 12K screens */
+    @media (min-width: 12288px) {
+        .chart-container {
+            min-height: 1600px;
+            max-height: 1700px;
+        }
+        
+        .chart-container canvas {
+            max-width: 50% !important;
+            max-height: 50% !important;
+        }
+    }
+    
+    /* 12K landscape mode */
+    @media (min-width: 12288px) and (orientation: landscape) {
+        .chart-container {
+            min-height: 1700px;
+            max-height: 1800px;
+        }
+        
+        .chart-container canvas {
+            max-width: 48% !important;
+            max-height: 48% !important;
+        }
     }
     
     /* Badges (re-used from other files) */
@@ -686,6 +1040,99 @@
             flex: 0 0 100%;
             max-width: 100%;
         }
+        
+        /* Ensure chart cards stack properly on tablets */
+        .row > .col-lg-6 {
+            margin-bottom: 20px;
+        }
+        
+        .sub-card {
+            height: auto;
+            min-height: 400px;
+        }
+        
+        /* Improve chart container on tablets */
+        .chart-container {
+            min-height: 280px;
+            max-height: 350px;
+        }
+        
+        .chart-container canvas {
+            max-width: 90% !important;
+            max-height: 90% !important;
+        }
+        
+        /* Tablet landscape mode */
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+            .chart-container {
+                height: 320px !important;
+                min-height: 300px;
+            }
+            
+            .chart-container canvas {
+                max-height: 300px !important;
+            }
+        }
+        
+        /* Tablet portrait mode */
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+            .chart-container {
+                height: 380px !important;
+                min-height: 350px;
+            }
+            
+            .chart-container canvas {
+                max-height: 360px !important;
+            }
+        }
+        
+        /* Large tablet landscape mode */
+        @media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+            .chart-container {
+                height: 400px !important;
+                min-height: 380px;
+            }
+            
+            .chart-container canvas {
+                max-height: 380px !important;
+            }
+        }
+        
+        /* Large tablet portrait mode */
+        @media (min-width: 1024px) and (max-width: 1366px) and (orientation: portrait) {
+            .chart-container {
+                height: 450px !important;
+                min-height: 420px;
+            }
+            
+            .chart-container canvas {
+                max-height: 430px !important;
+            }
+        }
+        
+        /* Small tablet landscape mode */
+        @media (min-width: 600px) and (max-width: 767px) and (orientation: landscape) {
+            .chart-container {
+                height: 300px !important;
+                min-height: 280px;
+            }
+            
+            .chart-container canvas {
+                max-height: 280px !important;
+            }
+        }
+        
+        /* Small tablet portrait mode */
+        @media (min-width: 600px) and (max-width: 767px) and (orientation: portrait) {
+            .chart-container {
+                height: 350px !important;
+                min-height: 320px;
+            }
+            
+            .chart-container canvas {
+                max-height: 330px !important;
+            }
+        }
     }
 
     @media (max-width: 767.98px) { /* md breakpoint in Bootstrap 5, for phones and small tablets */
@@ -718,7 +1165,7 @@
             font-size: 1.1rem;
         }
         .chart-container {
-            height: 250px !important; /* Sesuaikan tinggi chart di mobile */
+            height: 300px !important;
         }
         .recent-bookings-list {
             max-height: 250px; /* Sesuaikan tinggi daftar recent bookings */
@@ -747,6 +1194,216 @@
         .header-title {
             font-size: 1.2rem;
         }
+        
+        .chart-container {
+            height: 250px !important;
+            min-height: 200px;
+            padding: 10px;
+        }
+        
+        .chart-container canvas {
+            max-height: 230px !important;
+        }
+        
+        /* Make chart legend smaller on mobile */
+        .chart-container .chartjs-legend {
+            font-size: 10px !important;
+        }
+        
+        /* Ensure sub-cards stack properly on mobile */
+        .sub-card {
+            margin-bottom: 20px;
+        }
+        
+        /* Improve chart responsiveness on very small screens */
+        .chart-container {
+            aspect-ratio: auto;
+        }
+        
+        .chart-container canvas {
+            aspect-ratio: auto;
+            width: 100% !important;
+            height: auto !important;
+        }
+        
+        /* Landscape mode on mobile */
+        @media (max-width: 576px) and (orientation: landscape) {
+            .chart-container {
+                height: 200px !important;
+                min-height: 180px;
+            }
+            
+            .chart-container canvas {
+                max-height: 180px !important;
+            }
+        }
+        
+        /* Landscape mode on small mobile */
+        @media (max-width: 480px) and (orientation: landscape) {
+            .chart-container {
+                height: 160px !important;
+                min-height: 140px;
+            }
+            
+            .chart-container canvas {
+                max-height: 140px !important;
+            }
+        }
+        
+        /* Adjust sub-card padding on mobile */
+        .sub-card-header {
+            padding: 15px 20px 10px 20px;
+        }
+        
+        .sub-card-body {
+            padding: 15px 20px 20px 20px;
+        }
+        
+        /* Portrait mode on mobile */
+        @media (max-width: 576px) and (orientation: portrait) {
+            .chart-container {
+                height: 280px !important;
+                min-height: 250px;
+            }
+            
+            .chart-container canvas {
+                max-height: 260px !important;
+            }
+        }
+        
+        /* Portrait mode on small mobile */
+        @media (max-width: 480px) and (orientation: portrait) {
+            .chart-container {
+                height: 240px !important;
+                min-height: 220px;
+            }
+            
+            .chart-container canvas {
+                max-height: 220px !important;
+            }
+        }
+        
+        /* Landscape mode on medium mobile */
+        @media (min-width: 481px) and (max-width: 576px) and (orientation: landscape) {
+            .chart-container {
+                height: 220px !important;
+                min-height: 200px;
+            }
+            
+            .chart-container canvas {
+                max-height: 200px !important;
+            }
+        }
+        
+        /* Portrait mode on medium mobile */
+        @media (min-width: 481px) and (max-width: 576px) and (orientation: portrait) {
+            .chart-container {
+                height: 300px !important;
+                min-height: 280px;
+            }
+            
+            .chart-container canvas {
+                max-height: 280px !important;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 375px) {
+            .chart-container {
+                height: 220px !important;
+                min-height: 200px;
+                padding: 10px;
+            }
+            
+            .chart-container canvas {
+                max-height: 200px !important;
+            }
+            
+            .sub-card-header {
+                padding: 10px 15px 8px 15px;
+            }
+            
+            .sub-card-body {
+                padding: 10px 15px 15px 15px;
+            }
+        }
+        
+        /* Extra small screens */
+        @media (max-width: 320px) {
+            .chart-container {
+                height: 180px !important;
+                min-height: 160px;
+                padding: 8px;
+            }
+            
+            .chart-container canvas {
+                max-height: 160px !important;
+            }
+            
+            .sub-card-header {
+                padding: 8px 12px 6px 12px;
+            }
+            
+            .sub-card-body {
+                padding: 8px 12px 12px 12px;
+            }
+        }
+        
+        /* Extra small screens landscape */
+        @media (max-width: 320px) and (orientation: landscape) {
+            .chart-container {
+                height: 120px !important;
+                min-height: 100px;
+                padding: 6px;
+            }
+            
+            .chart-container canvas {
+                max-height: 100px !important;
+            }
+        }
+        
+        /* Extra small screens portrait */
+        @media (max-width: 320px) and (orientation: portrait) {
+            .chart-container {
+                height: 160px !important;
+                min-height: 140px;
+                padding: 8px;
+            }
+            
+            .chart-container canvas {
+                max-height: 140px !important;
+            }
+        }
+    }
+
+    .dashboard-stats-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    .dashboard-stats-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        width: 100%;
+        justify-content: center;
+    }
+    .dashboard-stats-cards .summary-card-link {
+        flex: 1 1 220px;
+        max-width: 320px;
+        min-width: 220px;
+        margin: 0;
+    }
+    @media (max-width: 992px) {
+        .dashboard-stats-cards {
+            flex-direction: column;
+            gap: 18px;
+            align-items: stretch;
+        }
+        .dashboard-stats-cards .summary-card-link {
+            max-width: 100%;
+            min-width: 0;
+        }
     }
 </style>
 @endsection
@@ -769,7 +1426,7 @@
             // Pastikan variabel userCounts diteruskan dari controller
             var userCounts = @json($userCounts);
 
-            new Chart(ctx, {
+            var userChart = new Chart(ctx, {
                 type: 'doughnut', // Atau 'pie' atau 'bar'
                 data: {
                     labels: ['Admin', 'Pengguna'], // Sesuaikan label sesuai user_type Anda
@@ -798,7 +1455,10 @@
                                 color: '#4a5568',
                                 font: {
                                     size: 14
-                                }
+                                },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
                             }
                         },
                         tooltip: {
@@ -830,6 +1490,22 @@
                         }
                     }
                 }
+            });
+            
+            // Handle window resize for better responsiveness
+            window.addEventListener('resize', function() {
+                if (userChart) {
+                    userChart.resize();
+                }
+            });
+            
+            // Handle orientation change on mobile
+            window.addEventListener('orientationchange', function() {
+                setTimeout(function() {
+                    if (userChart) {
+                        userChart.resize();
+                    }
+                }, 100);
             });
         }
     });
