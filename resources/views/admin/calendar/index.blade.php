@@ -169,6 +169,21 @@
         overflow: hidden;
         z-index: 10;
     }
+    .custom-page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.10) 0%, transparent 70%);
+        animation: rotate 8s linear infinite;
+        z-index: 0;
+    }
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
     .header-icon-wrapper {
         width: 90px;
         height: 90px;
@@ -185,12 +200,21 @@
         font-size: 2.8rem;
     }
     .header-title-main {
-        color: #fff;
-        font-size: 2.3rem;
+        color: white;
+        font-size: 1.8rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
+        margin: 0;
+        position: relative;
+        z-index: 2;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         letter-spacing: 1px;
-        text-shadow: 0 2px 8px rgba(44,62,80,0.10);
+        transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
+        cursor: pointer;
+    }
+    .header-title-main:hover {
+        color: #1ecbff;
+        transform: scale(1.04);
+        text-shadow: 0 4px 16px rgba(30,203,255,0.18);
     }
     .header-underline {
         width: 80px;
@@ -326,31 +350,15 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js'></script>
 <script>
-<<<<<<< HEAD
-    // Global variables
-    let calendar;
-    let allBookings = @json($bookedDates);
-    let filteredBookings = [...allBookings]; // Inisialisasi awal
-
-    // Pagination untuk daftar booking
-    let bookingsPerPage = 5;
-    let currentBookingPage = 1;
-
-=======
     // Debug: cek data booking dari backend
     console.log('bookedDates:', typeof bookedDates !== 'undefined' ? bookedDates : 'bookedDates belum didefinisikan');
 
     // Global variables
     let filteredBookedDates = [];
     
->>>>>>> d1ecf80c1a80c2aaa5db39e29a3d395153869eab
     document.addEventListener('DOMContentLoaded', function() {
         // Ambil search dan status dari URL saat load awal untuk apply filter default
         const urlParams = new URLSearchParams(window.location.search);
-<<<<<<< HEAD
-        const initialSearchQuery = urlParams.get('search') || '';
-        const initialStatusFilter = urlParams.get('status') || '';
-=======
         const searchQuery = urlParams.get('search');
         filteredBookedDates = bookedDates;
 >>>>>>> d1ecf80c1a80c2aaa5db39e29a3d395153869eab
@@ -453,7 +461,6 @@
             statusFilter.addEventListener('change', performSearch); // Panggil performSearch saat filter status berubah
         }
 
-<<<<<<< HEAD
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', clearSearch);
         }
@@ -466,169 +473,13 @@
 
         filteredBookings = [...allBookings]; // Reset dari data mentah
 =======
-    function exportCalendar() {
-        // Generate CSV content from booking data
-        const csvContent = generateCSV();
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `calendar_export_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // Generate CSV content
-    function generateCSV() {
-        const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-        const rows = filteredBookedDates.map(booking => [
-            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
-            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
-            booking.facilityName,
-            booking.userName,
-            booking.bookingStatus,
-            booking.bookingHours,
-            booking.bookingAmount || 0
-        ]);
-        
-        return [headers, ...rows].map(row => row.join(',')).join('\n');
-    }
-
-    function printCalendar() {
-        // Create a new window for printing booking data
-        const printWindow = window.open('', '_blank');
-        
-        // Generate table HTML for printing
-        const tableHTML = generatePrintTable();
-        
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Data Pemesanan Ruang Meeting</title>
-                    <style>
-                        body { 
-                            font-family: Arial, sans-serif; 
-                            margin: 20px;
-                            font-size: 12px;
-                        }
-                        table { 
-                            width: 100%; 
-                            border-collapse: collapse; 
-                            margin-top: 20px;
-                        }
-                        th, td { 
-                            border: 1px solid #ddd; 
-                            padding: 8px; 
-                            text-align: left; 
-                        }
-                        th { 
-                            background-color: #f2f2f2; 
-                            font-weight: bold;
-                        }
-                        .header {
-                            text-align: center;
-                            margin-bottom: 20px;
-                        }
-                        .header h1 {
-                            margin: 0;
-                            color: #333;
-                        }
-                        .header p {
-                            margin: 5px 0;
-                            color: #666;
-                        }
-                        @media print {
-                            body { margin: 0; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>Data Pemesanan Ruang Meeting</h1>
-                        <p>Tanggal Export: ${new Date().toLocaleDateString('id-ID')}</p>
-                        <p>Total Data: ${filteredBookedDates.length} pemesanan</p>
-                    </div>
-                    ${tableHTML}
-                </body>
-            </html>
-        `);
-        
-        printWindow.document.close();
-        printWindow.print();
-    }
-
-    // Generate table HTML for printing
-    function generatePrintTable() {
-        if (!filteredBookedDates || filteredBookedDates.length === 0) {
-            return '<p>Tidak ada data pemesanan yang ditemukan.</p>';
-        }
-
-        const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-        const rows = filteredBookedDates.map((booking, index) => [
-            index + 1,
-            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
-            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
-            booking.facilityName,
-            booking.userName,
-            booking.bookingStatus,
-            booking.bookingHours,
-            `Rp ${(booking.bookingAmount || 0).toLocaleString('id-ID')}`
-        ]);
-
-        const tableRows = rows.map(row => 
-            '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>'
-        ).join('');
-
-        return `
-            <table>
-                <thead>
-                    <tr>
-                        ${headers.map(header => '<th>' + header + '</th>').join('')}
-                    </tr>
-                </thead>
-                <tbody>
-                    ${tableRows}
-                </tbody>
-            </table>
-        `;
-    }
-
-    function refreshList() {
-        // Implement refresh functionality
-        location.reload();
-    }
-
-    function viewBooking(index) {
-        // Implement view booking functionality
-        const bookingItems = document.querySelectorAll('.booking-item');
-        if (bookingItems[index]) {
-            // You can implement a modal or redirect to booking detail page
-            alert('Fitur detail booking akan segera tersedia!');
-        }
-    }
-
-    let bookingsPerPage = 5;
-    let currentBookingPage = 1;
-
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeCalendar();
-        initializeFilters();
-        updateBookingList(); // PASTIKAN SELALU DIPANGGIL SAAT LOAD
-        console.log('Data booking:', filteredBookedDates);
-    });
-
-    function performSearch() {
-        const searchQuery = document.getElementById('searchInput').value;
-        const statusFilter = document.getElementById('statusFilter').value;
-        
-        let filtered = [...bookedDates];
+        const statusFilter = urlParams.get('status');
+        filteredBookedDates = bookedDates;
 >>>>>>> d1ecf80c1a80c2aaa5db39e29a3d395153869eab
 
         // Apply search filter
         if (searchQuery) {
-            filteredBookings = filteredBookings.filter(booking => {
+            filteredBookedDates = filteredBookedDates.filter(booking => {
                 return (
                     (booking.userName && booking.userName.toLowerCase().includes(searchQuery)) ||
                     (booking.facilityName && booking.facilityName.toLowerCase().includes(searchQuery)) ||
@@ -641,27 +492,20 @@
 
         // Apply status filter
         if (statusFilterValue) {
-            filteredBookings = filteredBookings.filter(booking => booking.bookingStatus === statusFilterValue);
+            filteredBookedDates = filteredBookedDates.filter(booking => booking.bookingStatus === statusFilterValue);
         }
 
         // Sort by date and time
-        filteredBookings.sort((a, b) => {
+        filteredBookedDates.sort((a, b) => {
             const dateA = new Date(a.bookingDate + 'T' + a.bookingTime);
             const dateB = new Date(b.bookingDate + 'T' + b.bookingTime);
             return dateA - dateB;
         });
 
-<<<<<<< HEAD
         currentBookingPage = 1; // Reset ke halaman 1 setiap kali filter/search berubah
-        updateCalendarEvents(); // Update event kalender
-        updateBookingList();
-=======
-        filteredBookedDates = filtered;
-        currentBookingPage = 1; // Reset ke halaman 1 setiap filter/search
         updateCalendar();
         updateBookingList();
         console.log('Data booking setelah filter:', filteredBookedDates);
->>>>>>> d1ecf80c1a80c2aaa5db39e29a3d395153869eab
     }
 
     // Clear search
@@ -670,26 +514,19 @@
         document.getElementById('statusFilter').value = '';
         document.getElementById('clearSearchBtn').style.display = 'none';
         
-<<<<<<< HEAD
-        filteredBookings = [...allBookings]; // Reset ke data asli
-=======
         filteredBookedDates = [...bookedDates];
->>>>>>> d1ecf80c1a80c2aaa5db39e29a3d395153869eab
         currentBookingPage = 1;
-        updateCalendarEvents(); // Update event kalender
+        updateCalendar();
         updateBookingList();
-<<<<<<< HEAD
-=======
         console.log('Data booking setelah clear:', filteredBookedDates);
->>>>>>> d1ecf80c1a80c2aaa5db39e29a3d395153869eab
     }
 
     // Update calendar events with filtered data
-    function updateCalendarEvents() { // Fungsi ini yang akan dipanggil saat filter berubah
+    function updateCalendar() { // Fungsi ini yang akan dipanggil saat filter berubah
         if (calendar) {
             calendar.removeAllEvents(); // Hapus semua event yang ada
             
-            const eventsToAdd = filteredBookings.map(booking => {
+            const eventsToAdd = filteredBookedDates.map(booking => {
                 const startTime = booking.bookingDate + 'T' + booking.bookingTime;
                 const endTime = booking.booking_end ? booking.bookingDate + 'T' + booking.booking_end : new Date(new Date(startTime).getTime() + (booking.bookingHours * 60 * 60 * 1000)).toISOString().slice(0, 19);
 
@@ -722,11 +559,7 @@
         const bookingPagination = document.getElementById('bookingPagination');
         if (!bookingListContent) return;
 
-<<<<<<< HEAD
-        if (filteredBookings.length === 0) {
-=======
         if (!filteredBookedDates || filteredBookedDates.length === 0) {
->>>>>>> d1ecf80c1a80c2aaa5db39e29a3d395153869eab
             bookingListContent.innerHTML = `
                 <div class="empty-state">
                     <i class="bx bx-calendar-x"></i>
@@ -738,14 +571,8 @@
         }
 
         // PAGINATION LOGIC
-<<<<<<< HEAD
-        const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
-        if (currentBookingPage > totalPages && totalPages > 0) currentBookingPage = totalPages;
-        if (currentBookingPage < 1 && totalPages > 0) currentBookingPage = 1;
-=======
         const totalPages = Math.ceil(filteredBookedDates.length / bookingsPerPage);
         if (currentBookingPage > totalPages) currentBookingPage = 1;
->>>>>>> d1ecf80c1a80c2aaa5db39e29a3d395153869eab
         const startIdx = (currentBookingPage - 1) * bookingsPerPage;
         const endIdx = startIdx + bookingsPerPage;
         const pageBookings = filteredBookedDates.slice(startIdx, endIdx);
@@ -878,7 +705,7 @@
 
     // Fungsi untuk ganti halaman booking
     function changeBookingPage(page) {
-        if (page < 1 || page > Math.ceil(filteredBookings.length / bookingsPerPage)) return;
+        if (page < 1 || page > Math.ceil(filteredBookedDates.length / bookingsPerPage)) return;
         currentBookingPage = page;
         updateBookingList();
     }
@@ -910,7 +737,7 @@
     // Generate CSV content
     function generateCSV() {
         const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-        const rows = filteredBookings.map(booking => [
+        const rows = filteredBookedDates.map(booking => [
             new Date(booking.bookingDate).toLocaleDateString('id-ID'),
             new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
             booking.facilityName,
