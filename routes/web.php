@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\FacilitiesController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\TournamentMatchController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\RoomStatusController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -270,4 +271,7 @@ Route::middleware(['auth', 'log.last.active'])->group(function () {
 // User Events
 Route::middleware(['auth', 'log.last.active'])->group(function () {
     Route::get('user/events', [EventController::class, 'show_event'])->name('user.events.show');
+});
+Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin')->group(function () {
+    Route::get('/room-status', [StatusController::class, 'showRoomStatus'])->name('admin.room.status');
 });
