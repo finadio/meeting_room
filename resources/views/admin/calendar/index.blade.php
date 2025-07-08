@@ -13,7 +13,7 @@
     <div class="container-fluid px-4">
         <div class="row g-4">
             <!-- Kalender -->
-            <div class="col-lg-8 col-md-12 mb-4">
+            <div class="col-lg-8 col-md-12 mb-4" id="calendar-col">
                 <div class="calendar-main-card shadow-sm">
                     <div class="calendar-header-section d-flex align-items-center justify-content-between">
                         <div class="header-content d-flex align-items-center gap-3">
@@ -56,7 +56,7 @@
                 </div>
             </div>
             <!-- Sidebar Statistik & Daftar Booking -->
-            <div class="col-lg-4 col-md-12">
+            <div class="col-lg-4 col-md-12" id="sidebar-col">
                 <div class="stats-card mb-4 shadow-sm">
                     <div class="stats-header bg-gradient bg-primary text-white rounded-top p-3">
                         <h5 class="mb-0"><i class="bx bx-bar-chart-alt-2"></i> Statistik Hari Ini</h5>
@@ -127,6 +127,10 @@
             </div>
         </div>
     </div>
+</div>
+<!-- Tombol Toggle Sidebar -->
+<div class="text-end my-2">
+    <button class="btn btn-secondary btn-sm" id="toggleSidebarBtn" onclick="toggleSidebarAuto()">Tampilkan/Sembunyikan Sidebar</button>
 </div>
 <!-- Modal Detail Booking -->
 <div class="modal fade" id="bookingDetailModal" tabindex="-1" aria-labelledby="bookingDetailModalLabel" aria-hidden="true">
@@ -569,9 +573,21 @@
             document.body.removeChild(link);
         }
 
+        function toggleSidebarAuto() {
+            const sidebar = document.getElementById('sidebar-col');
+            const calendarCol = document.getElementById('calendar-col');
+            if (sidebar.style.display === 'none') {
+                sidebar.style.display = '';
+                calendarCol.classList.remove('col-lg-12');
+                calendarCol.classList.add('col-lg-8');
+            } else {
+                sidebar.style.display = 'none';
+                calendarCol.classList.remove('col-lg-8');
+                calendarCol.classList.add('col-lg-12');
+            }
+        }
+
         function printCalendar() {
-            const printWindow = window.open('', '_blank');
-            // Generate table HTML untuk daftar booking
             const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
             const rows = filteredBookedDates.map((booking, idx) => [
                 idx + 1,
@@ -583,28 +599,17 @@
                 booking.bookingHours,
                 booking.bookingAmount || 0
             ]);
-            const tableRows = rows.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('');
-            const tableHTML = `
-                <table border="1" cellpadding="4" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
-                    <thead><tr>${headers.map(h => '<th>' + h + '</th>').join('')}</tr></thead>
-                    <tbody>${tableRows}</tbody>
-                </table>
-            `;
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Cetak Kalender</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h2 { text-align: center; margin-bottom: 20px; }
-                        </style>
-                    </head>
-                    <body>
-                        <h2>Data Pemesanan Ruang Meeting</h2>
-                        ${tableHTML}
-                    </body>
-                </html>
-            `);
+            let html = '<table border="1" style="width:100%;border-collapse:collapse"><thead><tr>';
+            headers.forEach(h => html += `<th>${h}</th>`);
+            html += '</tr></thead><tbody>';
+            rows.forEach(row => {
+                html += '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+            });
+            html += '</tbody></table>';
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Print Calendar</title></head><body>');
+            printWindow.document.write(html);
+            printWindow.document.write('</body></html>');
             printWindow.document.close();
             printWindow.print();
         }

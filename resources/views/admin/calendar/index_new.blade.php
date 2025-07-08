@@ -6,7 +6,7 @@
     <div class="container-fluid px-4">
         <div class="row">
             <!-- Main Calendar Section -->
-            <div class="col-lg-8 col-md-12 mb-4">
+            <div class="col-lg-8 col-md-12 mb-4" id="calendar-col">
                 <div class="calendar-main-card">
                     <div class="calendar-header-section">
                         <div class="header-content">
@@ -53,7 +53,7 @@
             </div>
             
             <!-- Sidebar Section -->
-            <div class="col-lg-4 col-md-12">
+            <div class="col-lg-4 col-md-12" id="sidebar-col">
                 <!-- Quick Stats -->
                 <div class="stats-card mb-4">
                     <div class="stats-header">
@@ -133,6 +133,10 @@
             </div>
         </div>
     </div>
+</div>
+<!-- Tombol Toggle Sidebar -->
+<div class="text-end my-2">
+    <button class="btn btn-secondary btn-sm" id="toggleSidebarBtn" onclick="toggleSidebarAuto()">Tampilkan/Sembunyikan Sidebar</button>
 </div>
 
 <!-- Booking Detail Modal -->
@@ -843,26 +847,28 @@
 
     // Print calendar
     function printCalendar() {
+        const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
+        const rows = filteredBookings.map((booking, idx) => [
+            idx + 1,
+            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
+            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
+            booking.facilityName,
+            booking.userName,
+            booking.bookingStatus,
+            booking.bookingHours,
+            booking.bookingAmount || 0
+        ]);
+        let html = '<table border="1" style="width:100%;border-collapse:collapse"><thead><tr>';
+        headers.forEach(h => html += `<th>${h}</th>`);
+        html += '</tr></thead><tbody>';
+        rows.forEach(row => {
+            html += '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+        });
+        html += '</tbody></table>';
         const printWindow = window.open('', '_blank');
-        const calendarElement = document.getElementById('calendar');
-        
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Calendar Print</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; }
-                        .fc { font-size: 12px; }
-                        .fc-event { font-size: 10px; }
-                    </style>
-                </head>
-                <body>
-                    <h2>Manajemen Kalender - ${new Date().toLocaleDateString('id-ID')}</h2>
-                    ${calendarElement.outerHTML}
-                </body>
-            </html>
-        `);
-        
+        printWindow.document.write('<html><head><title>Print Calendar</title></head><body>');
+        printWindow.document.write(html);
+        printWindow.document.write('</body></html>');
         printWindow.document.close();
         printWindow.print();
     }
@@ -891,6 +897,31 @@
             };
             
             showBookingDetail(mockEvent);
+        }
+    }
+
+    function toggleSidebar(show) {
+        const calendarCol = document.getElementById('calendar-col');
+        if (show) {
+            calendarCol.classList.remove('col-lg-12');
+            calendarCol.classList.add('col-lg-8');
+        } else {
+            calendarCol.classList.remove('col-lg-8');
+            calendarCol.classList.add('col-lg-12');
+        }
+    }
+
+    function toggleSidebarAuto() {
+        const sidebar = document.getElementById('sidebar-col');
+        const calendarCol = document.getElementById('calendar-col');
+        if (sidebar.style.display === 'none') {
+            sidebar.style.display = '';
+            calendarCol.classList.remove('col-lg-12');
+            calendarCol.classList.add('col-lg-8');
+        } else {
+            sidebar.style.display = 'none';
+            calendarCol.classList.remove('col-lg-8');
+            calendarCol.classList.add('col-lg-12');
         }
     }
 </script>

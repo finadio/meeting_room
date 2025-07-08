@@ -312,11 +312,42 @@
         .calendar-header-section { padding: 1rem 1rem 0.8rem 1rem; }
         .stats-content, .booking-list-content { padding: 1rem; }
     }
+    @media (max-width: 991px) {
+        .row {
+            flex-direction: column !important;
+        }
+        .col-lg-8, .col-lg-4, .col-md-12 {
+            max-width: 100% !important;
+            flex: 0 0 100% !important;
+        }
+    }
     @media (max-width: 768px) {
         .calendar-header-section { flex-direction: column; gap: 1rem; text-align: center; }
         .header-actions { width: 100%; justify-content: center; }
         .booking-list-card { max-height: 500px; }
         .calendar-main-card, .stats-card, .booking-list-card { margin-bottom: 1.2rem; }
+        .calendar-content, .stats-content, .booking-list-content, .search-filter-section {
+            padding: 0.5rem !important;
+        }
+        .calendar-container {
+            width: 100% !important;
+            overflow-x: auto;
+        }
+        #calendar {
+            min-width: 320px;
+        }
+    }
+    @media (max-width: 500px) {
+        .custom-page-header { padding: 18px 0 10px 0; }
+        .header-title-main { font-size: 1.2rem; }
+        .calendar-header-section, .calendar-content { padding: 0.5rem !important; }
+    }
+    @media print {
+        body * { visibility: hidden; }
+        .calendar-main-card, .calendar-main-card * { visibility: visible; }
+        .calendar-main-card { position: absolute; left: 0; top: 0; width: 100vw; background: #fff; box-shadow: none; }
+        .header-actions, .stats-card, .booking-list-card, .custom-page-header, .admin-calendar-wrapper > .container-fluid > .row > .col-lg-4 { display: none !important; }
+        .calendar-content { padding: 0 !important; }
     }
 </style>
 @endsection
@@ -457,12 +488,32 @@
     }
 
     function exportCalendar() {
-        // Implement calendar export functionality
-        alert('Fitur export akan segera tersedia!');
+        // Export all events in FullCalendar to CSV
+        var calendarApi = FullCalendar.getCalendar ? FullCalendar.getCalendar('calendar') : null;
+        var events = [];
+        if (calendarApi && calendarApi.getEvents) {
+            events = calendarApi.getEvents();
+        } else if (window.calendar && window.calendar.getEvents) {
+            events = window.calendar.getEvents();
+        } else if (typeof eventsForCalendar !== 'undefined') {
+            events = eventsForCalendar;
+        }
+        let csv = 'Facility,User,Status,Date,Time,Duration\n';
+        (events.length ? events : eventsForCalendar).forEach(ev => {
+            let props = ev.extendedProps || ev;
+            csv += `"${props.facilityName}","${props.userName}","${props.bookingStatus}","${props.bookingDate}","${props.bookingTime}","${props.bookingHours} jam"\n`;
+        });
+        var blob = new Blob([csv], { type: 'text/csv' });
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'calendar-bookings.csv';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     function printCalendar() {
-        // Implement calendar print functionality
+        // Print only the calendar area
         window.print();
     }
 
