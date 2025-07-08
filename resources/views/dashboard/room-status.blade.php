@@ -4,142 +4,190 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Status Ruangan</title>
-    <!-- Favicon utama -->
     <link rel="icon" href="{{ asset('bookmeet.png') }}" type="image/x-icon">
 
-    <!-- Favicon untuk layar retina (misalnya 32x32, 64x64) -->
     <link rel="icon" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
     <link rel="icon" sizes="64x64" href="{{ asset('favicon-64x64.png') }}">
 
-    <!-- Ikon untuk aplikasi web (Web App) -->
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}"> <!-- Link ke CSS Anda -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc; /* Latar belakang senada dengan admin dashboard */
+            text-align: center;
+            padding: 20px;
+        }
+
+        .status-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+        }
+
+        .status-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradient-flow 3s ease infinite;
+        }
+
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .status-box h3 {
+            color: #1e3c72; /* Dark blue for title */
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .facility-card-wrapper {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+            height: calc(100% - 20px); /* Adjust height to fill column */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .facility-card-wrapper h5 {
+            color: #2a5298; /* Medium blue for facility name */
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .facility-card-wrapper p {
+            color: #6c757d; /* Gray for date */
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 5px; /* Reduced spacing */
+            margin-bottom: 0;
+            font-size: 0.85rem; /* Slightly smaller font */
+        }
+
+        .modern-table thead th {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c3dafe 100%);
+            color: #1e3c72;
+            padding: 10px 8px; /* Reduced padding */
+            font-weight: 700;
+            text-align: left;
+            border-bottom: none;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 0.8em; /* Smaller font for headers */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 6px; /* Smaller border radius for table headers */
+        }
+
+        .modern-table tbody tr {
+            background: #fdfefe;
+            border-radius: 8px; /* Smaller border radius for rows */
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05); /* Lighter shadow */
+        }
+
+        .modern-table tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .modern-table tbody td {
+            padding: 10px 8px; /* Reduced padding */
+            vertical-align: middle;
+            border-top: none;
+            font-size: 0.85em; /* Match header font size */
+            color: #333;
+            border-radius: 6px; /* Apply border radius to cells */
+        }
+        
+        /* Specific row colors */
+        .table-secondary { background-color: #e9ecef !important; color: #495057 !important; } /* Selesai */
+        .table-success { background-color: #d4edda !important; color: #155724 !important; } /* On Progress */
+        .table-warning { background-color: #fff3cd !important; color: #856404 !important; } /* Extend */
+        
+        .table-success .fw-bold { /* Override for 'On Progress' status text */
+            color: #155724 !important; /* Ensure readable dark green */
+        }
+        .table-warning .fw-bold { /* Override for 'Extend' status text */
+            color: #856404 !important; /* Ensure readable dark yellow */
+        }
+        .table-secondary .fw-bold { /* Override for 'Selesai' status text */
+            color: #495057 !important; /* Ensure readable dark gray */
+        }
+
+        .fw-bold {
+            font-weight: 700 !important;
+        }
+
+        .legend-section {
+            margin-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
             text-align: center;
         }
 
-        hr {
-            border: 0;
-            height: 2px;
-            background: #ddd; /* Warna abu-abu */
-            margin: 20px 0;
+        .legend-section h6 {
+            color: #1e3c72;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
         }
 
-        .facility-table {
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #f9f9f9; /* Warna latar belakang lembut */
-        }
-
-        .container {
-            padding: 20px;
-        }
-        .table {
-            margin: 0 auto;
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        
-        .text-left {
-            text-align: left;
-        }
-
-        .table thead th {
-            background-color: #001f3f;
-            color: white;
-        }
-
-        .table-secondary {
-           background-color: #d6d8db;
-           color: #212529;
-        }
-
-        .table-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .table-warning {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .legend {
-            font-size: 16px;    /* Ukuran font untuk keseluruhan legend */
-            padding: 20px;      /* Padding di sekitar legend */
-            margin-top: 20px;   /* Jarak atas */
-            max-width: 500px;   /* Maksimal lebar legend */
-            margin-left: auto;  /* Rata tengah legend */
-            margin-right: auto; /* Rata tengah legend */
+        .legend-items {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px; /* Space between legend items */
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            margin-bottom: 10px; /* Menambah jarak antara item legend */
         }
 
         .legend-color {
-            width: 20px;         /* Ukuran kotak warna */
-            height: 20px;        /* Ukuran kotak warna */
-            margin-right: 12px;  /* Jarak antara kotak warna dan teks */
-        }
-
-        .legend-success {
-            background-color: #d4edda;
-        }
-
-        .legend-secondary {
-            background-color: #d6d8db;
-        }
-        .legend-warning {
-            background-color: #fff3cd;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 8px;
             border: 1px solid #ddd;
         }
-        .legend-default {
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-        }
+
+        /* Legend specific colors (matching table row backgrounds) */
+        .legend-default { background-color: #ffffff; }
+        .legend-success { background-color: #d4edda; }
+        .legend-secondary { background-color: #e9ecef; }
+        .legend-warning { background-color: #fff3cd; }
+
         .legend-item span {
-            font-size: 10px;      /* Ukuran teks legend */
-        }
-        .text-danger {
-            color: red !important;
-            font-weight: bold;
-        }
-
-        /* Menyesuaikan desain untuk layar kecil */
-        @media (max-width: 768px) {
-            .table {
-                width: 100%;
-                font-size: 12px; /* Ukuran font lebih kecil di layar kecil */
-            }
-            .container {
-                padding: 10px;
-            }
-        }
-
-        img.maskot {
-            transition: transform 0.3s, opacity 0.3s;
-        }
-
-        img.maskot:hover {
-            transform: scale(1.1);
-            opacity: 1;
+            color: #4a5568;
+            font-size: 0.9rem;
         }
         .running-text {
             font-size: 14px;
@@ -169,151 +217,121 @@
                 transform: translateX(-100%);
             }
         }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Warna hitam transparan */
-            z-index: -1; /* Di belakang konten */
+        /* Responsive adjustments */
+        @media (max-width: 991px) {
+            .facility-card-wrapper {
+                height: auto; /* Allow height to adjust on smaller screens */
+            }
         }
 
-        .status-box {
-            border: 2px solid #333; /* Border kotak */
-            padding: 20px;
-            margin: 20px;
-            background-color: #f9f9f9; /* Warna latar belakang kotak */
-            border-radius: 10px; /* Sudut kotak melengkung */
-        }
-
-        .status-title {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .legend-box {
-            border-top: 2px solid #ddd; /* Garis pemisah di bawah judul */
-            padding-top: 10px;
-            margin-top: 20px;
-        }
-
-        .legend-box legend {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .legend-box ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .legend-box ul li {
-            margin: 5px 0;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            display: inline-block;
-            margin-right: 10px;
+        @media (max-width: 767px) {
+            .status-box {
+                padding: 20px;
+                border-radius: 12px;
+            }
+            .status-box h3 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+            }
+            .facility-card-wrapper {
+                padding: 15px;
+            }
+            .facility-card-wrapper h5 {
+                font-size: 1.1rem;
+            }
+            .facility-card-wrapper p {
+                font-size: 0.8rem;
+            }
+            .modern-table {
+                font-size: 0.75rem;
+            }
+            .modern-table thead th, .modern-table tbody td {
+                padding: 8px 5px;
+                font-size: 0.75em;
+            }
+            .legend-items {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <style>
-            body {
-                background-color: #f0f8ff; /* Ganti dengan warna favorit, misalnya biru muda */
-                /* background-image: url('/img/global.jpg'); */ /* Path gambar */
-                /* background-size: cover;
-                background-repeat: no-repeat;
-                background-position: center center; */
-            }
-
-        </style>
+    <div class="container-fluid">
         <div class="status-box">
             <h3>Jadwal Pemakaian Ruangan</h3>
-            <!-- <hr class="my-4"> -->
-            {{-- @if($bookings->isNotEmpty()) --}}
-                {{-- @foreach($bookings as $facilityId => $facilityBookings) --}}
-            @if(!empty($bookings))
-                @foreach($bookings as $facilityId => $facilityBookings)
-                    <div class="facility-table mb-5">
-                        <h5>{{ $facilityBookings->first()->facility->name }}</h5>
-                        <p>Tanggal Booking: {{ $facilityBookings->first()->booking_date->format('d-m-Y') }}</p>
-                        <div class="table-responsive">  
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Jam Mulai</th>
-                                        <th>Jam Selesai</th>
-                                        <th>Status</th>
-                                        <th>Pemakai</th>
-                                        <th>Judul Meeting</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($facilityBookings as $booking)
-                                        @php
-                                        $currentTime = now()->setTimezone('Asia/Jakarta');
-                                        
-                                        if (!empty($booking->booking_time) && !empty($booking->booking_end)) {
-                                            $bookingStartTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_time);
-                                            $bookingEndTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_end);
-                                        } else {
-                                            $bookingStartTime = null;
-                                            $bookingEndTime = null;
-                                        }
-                                        
-                                        if ($booking->check_out) {
-                                            $status = 'Selesai';
-                                        } elseif (!$booking->check_out && $bookingEndTime->isPast()) {
-                                            $status = 'Extend';
-                                        } elseif ($booking->check_in && $currentTime->lessThanOrEqualTo($bookingEndTime)) {
-                                            $status = 'On Progress';
-                                        } else {
-                                            $status = 'On Schedule';
-                                        }
+            
+            @if(!empty($bookings) && $bookings->count() > 0)
+                <div class="row">
+                    @foreach($bookings as $facilityId => $facilityBookings)
+                        <div class="col-lg-6 col-md-6 mb-4">
+                            <div class="facility-card-wrapper">
+                                <h5>{{ $facilityBookings->first()->facility->name }}</h5>
+                                <p>Tanggal Booking: {{ \Carbon\Carbon::parse($facilityBookings->first()->booking_date)->format('d F Y') }}</p>
+                                <div class="table-responsive">  
+                                    <table class="table modern-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Jam Mulai</th>
+                                                <th>Jam Selesai</th>
+                                                <th>Status</th>
+                                                <th>Pemakai</th>
+                                                <th>Judul Meeting</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($facilityBookings as $booking)
+                                                @php
+                                                $currentTime = now()->setTimezone('Asia/Jakarta');
+                                                
+                                                if (!empty($booking->booking_time) && !empty($booking->booking_end)) {
+                                                    $bookingStartTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_time);
+                                                    $bookingEndTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_end);
+                                                } else {
+                                                    $bookingStartTime = null;
+                                                    $bookingEndTime = null;
+                                                }
+                                                
+                                                $status = 'On Schedule';
+                                                $rowClass = '';
 
-                                        $rowClass = '';
-                                        if ($status == 'Extend') {
-                                            $rowClass = 'table-warning';
-                                        } elseif ($status == 'Selesai') {
-                                            $rowClass = 'table-secondary';
-                                        } elseif ($currentTime->between($bookingStartTime, $bookingEndTime)) {
-                                            $rowClass = 'table-success';
-                                        }
-                                        @endphp
-                                        
-                                        <tr class="{{ $rowClass }}">
-                                            <td>{{ \Carbon\Carbon::parse($booking->booking_time)->format('H:i') }}</td> <!-- Jam Mulai -->
-                                            <td>{{ \Carbon\Carbon::parse($booking->booking_end)->format('H:i') }}</td> <!-- Jam Selesai -->
-                                            <td><span class="{{ $status == 'On Progress' ? 'text-danger fw-bold' : '' }}">
-                                                {{ $status }}
-                                                </span>
-                                            </td>
-                                            <td>{{ $booking->group_name }}</td>
-                                            <td>{{ $booking->meeting_title }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div> 
-                    </div>  
-                    <!-- Garis Pemisah Antar Tabel -->
-                    <!-- @if (!$loop->last)
-                        <hr class="my-4">
-                    @endif -->
-                @endforeach
-                <!-- Legend for color meanings -->
-                <div class="legend text-left">
+                                                if ($booking->check_out) {
+                                                    $status = 'Selesai';
+                                                    $rowClass = 'table-secondary';
+                                                } elseif ($bookingStartTime && $bookingEndTime) {
+                                                    if ($currentTime->greaterThan($bookingEndTime) && !$booking->check_out) {
+                                                        $status = 'Extend';
+                                                        $rowClass = 'table-warning';
+                                                    } elseif ($currentTime->between($bookingStartTime, $bookingEndTime) && $booking->check_in) {
+                                                        $status = 'On Progress';
+                                                        $rowClass = 'table-success';
+                                                    }
+                                                }
+                                                @endphp
+                                                
+                                                <tr class="{{ $rowClass }}">
+                                                    <td>{{ \Carbon\Carbon::parse($booking->booking_time)->format('H:i') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($booking->booking_end)->format('H:i') }}</td>
+                                                    <td>
+                                                        <span class="{{ ($status == 'On Progress' || $status == 'Extend') ? 'fw-bold' : '' }}">
+                                                            {{ $status }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ $booking->group_name }}</td>
+                                                    <td>{{ $booking->meeting_title }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div> 
+                            </div>  
+                        </div>  
+                    @endforeach
+                </div>
+                <div class="legend-section">
                     <h6>Keterangan Warna:</h6>
-                    <!-- Legend Horizontal -->
-                    <div class="d-flex justify-content-start align-items-center mt-3">
+                    <div class="legend-items">
                         <div class="legend-item">
                             <div class="legend-color legend-default"></div>
                             <span>Putih: Belum mulai</span>
@@ -321,14 +339,11 @@
                         <div class="legend-item">
                             <div class="legend-color legend-success"></div>
                             <span>Hijau Muda: Sedang berlangsung</span>
-                            <!-- <span>Sedang berlangsung</span> -->
-                            
                         </div>
                         <div class="legend-item">
                             <div class="legend-color legend-secondary"></div>
                             <span>Abu-abu: Selesai</span>
                         </div>
-                        
                         <div class="legend-item">
                             <div class="legend-color legend-warning"></div>
                             <span>Kuning: Extend waktu</span>
@@ -339,23 +354,16 @@
                 <p>Tidak ada booking untuk hari ini.</p>
             @endif
         </div>
-            <!-- Tambahkan running text -->
         <div class="running-text">
             <span>#AndaTidakSendiri ==> BPR MSA terdaftar dan diawasi oleh OJK, serta merupakan peserta penjaminan LPS. <== #ImajinasiTakBertepi</span>
         </div>
-
-        <!-- Tambahkan maskot di sudut kanan bawah -->
-        <!-- <img src="{{ asset('img/shaka_utama.png') }}" 
-            alt="Maskot MSA" 
-            class="maskot"
-            style="position: fixed; bottom: 10px; right: 10px; width: 100px; opacity: 0.8; z-index: 999;"> -->
     </div>
     
     <script> 
-        // Fungsi untuk refresh data secara otomatis setiap 5 menit
+        // Fungsi untuk refresh data secara otomatis setiap 30 detik
          setInterval(() => {
             window.location.reload();
-         }, 30000); // 300000 ms = 5 menit
+         }, 30000); // 30000 ms = 30 detik
 
     </script>     
 </body>

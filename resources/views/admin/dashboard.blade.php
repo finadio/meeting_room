@@ -11,7 +11,6 @@
                         <div class="header-icon">
                             <i class="bx bx-home-alt"></i>
                         </div>
-                        {{-- Menggunakan variabel $user yang diteruskan dari controller --}}
                         <h3 class="header-title">Selamat Datang, {{ $user->name }}!</h3> 
                         <div class="header-decoration"></div>
                     </div>
@@ -47,8 +46,8 @@
                             </div>
                         @endif
 
-                        <div class="row mb-5">
-                            <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="row mb-4 dashboard-stats-row"> {{-- Tambahkan kelas untuk target CSS --}}
+                            <div class="col-xl-3 col-md-6 col-sm-12 mb-4"> {{-- Pastikan col-sm-12 untuk mobile --}}
                                 <a href="{{ route('admin.users.index') }}" class="summary-card-link">
                                     <div class="summary-card primary-summary">
                                         <div class="card-icon">
@@ -63,7 +62,7 @@
                                 </a>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="col-xl-3 col-md-6 col-sm-12 mb-4"> {{-- Pastikan col-sm-12 untuk mobile --}}
                                 <a href="{{ route('admin.bookings.index') }}" class="summary-card-link">
                                     <div class="summary-card success-summary">
                                         <div class="card-icon">
@@ -78,7 +77,7 @@
                                 </a>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="col-xl-3 col-md-6 col-sm-12 mb-4"> {{-- Pastikan col-sm-12 untuk mobile --}}
                                 <a href="{{ route('admin.facilities.index') }}" class="summary-card-link">
                                     <div class="summary-card info-summary">
                                         <div class="card-icon">
@@ -93,7 +92,7 @@
                                 </a>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="col-xl-3 col-md-6 col-sm-12 mb-4"> {{-- Pastikan col-sm-12 untuk mobile --}}
                                 <a href="{{ route('admin.bookings.index', ['status' => 'Menunggu Konfirmasi']) }}" class="summary-card-link">
                                     <div class="summary-card warning-summary">
                                         <div class="card-icon">
@@ -110,7 +109,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-6 mb-4">
+                            <div class="col-lg-6 col-md-12 mb-4"> {{-- Pastikan col-md-12 untuk mobile --}}
                                 <div class="sub-card">
                                     <div class="sub-card-header">
                                         <div class="header-icon">
@@ -126,7 +125,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-6 mb-4">
+                            <div class="col-lg-6 col-md-12 mb-4"> {{-- Pastikan col-md-12 untuk mobile --}}
                                 <div class="sub-card">
                                     <div class="sub-card-header">
                                         <div class="header-icon">
@@ -136,15 +135,11 @@
                                     </div>
                                     <div class="sub-card-body">
                                         @php
-                                            // Filter bookings for the last month and sort by date/time
-                                            // Pastikan $bookedDates ini sudah berisi semua booking yang dimuat dari controller
                                             $recentBookings = collect($bookedDates)->filter(function($booking) {
-                                                // Memastikan kunci 'bookingDate' ada sebelum mencoba mengurai
                                                 return isset($booking['bookingDate']) && \Carbon\Carbon::parse($booking['bookingDate'])->greaterThanOrEqualTo(\Carbon\Carbon::now()->subMonth());
                                             })->sortByDesc(function($booking) {
-                                                // Memastikan kunci 'bookingDate' dan 'bookingTime' ada untuk pengurutan
                                                 return ($booking['bookingDate'] ?? '') . ' ' . ($booking['bookingTime'] ?? '');
-                                            })->take(5); // Ambil 5 booking terbaru untuk ditampilkan
+                                            })->take(5);
                                         @endphp
 
                                         @if($recentBookings->isEmpty())
@@ -161,11 +156,10 @@
                                                             @elseif(($booking['bookingStatus'] ?? '') == 'Menunggu Konfirmasi')
                                                                 <i class='bx bx-time text-warning'></i>
                                                             @else
-                                                                <i class='bx bx-x-circle text-danger'></i>
+                                                                <i='bx bx-x-circle text-danger'></i>
                                                             @endif
                                                         </div>
                                                         <div class="note-content">
-                                                            {{-- Menggunakan 'title' yang sudah disiapkan di controller --}}
                                                             <p class="note-title">{{ $booking['title'] ?? 'N/A' }}</p>
                                                             <p class="note-meta">
                                                                 <i class='bx bx-calendar'></i> {{ isset($booking['bookingDate']) ? \Carbon\Carbon::parse($booking['bookingDate'])->format('d M Y') : 'N/A' }}
@@ -194,7 +188,8 @@
 @endsection
 
 @section('styles')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{{-- HAPUS LINK INI - BOOTSTRAP SUDAH DIMUAT DI ADMIN_DASHBOARD.BLADE.PHP --}}
+{{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
 <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 <style>
     /* Page Wrapper */
@@ -650,73 +645,107 @@
         text-decoration: underline;
     }
 
-    /* Responsive Design */
-    @media (max-width: 992px) {
+    /* Responsive Design (for dashboard specific components) */
+    @media (max-width: 1199.98px) { /* xl breakpoint in Bootstrap 5, for larger laptops/desktops */
+        .dashboard-stats-row .col-xl-3 {
+            flex: 0 0 50%; /* 2 kartu per baris */
+            max-width: 50%;
+        }
+    }
+
+    @media (max-width: 991.98px) { /* lg breakpoint in Bootstrap 5, for tablets and smaller laptops */
+        .dashboard-stats-row .col-lg-3, /* This rule is often used by Bootstrap 4 cols, so it's a good target */
+        .dashboard-stats-row .col-md-6, /* Also target md cols */
+        .dashboard-stats-row .col-xl-3 { /* Target xl cols as well for stacking */
+            flex: 0 0 100%; /* 1 kartu per baris */
+            max-width: 100%;
+        }
         .summary-card {
-            flex-direction: column;
+            flex-direction: column; /* Stack icon and details vertically */
             text-align: center;
-            padding: 20px;
+            align-items: center; /* Center content when stacked */
+            padding: 20px 15px; /* Adjust padding for mobile */
         }
-        .summary-card .card-icon { margin-bottom: 15px; }
+        .summary-card .card-icon {
+            margin-bottom: 10px; /* Space between icon and text when stacked */
+        }
         .summary-card .card-arrow {
-            position: static; /* Let it flow with content */
-            transform: none;
+            position: relative; /* Allow it to flow naturally */
+            transform: none; /* Reset transform */
             margin-top: 10px;
-            color: rgba(0,0,0,0.3);
+            color: rgba(0,0,0,0.2); /* Make it subtle */
+        }
+        .dashboard-welcome-title {
+            font-size: 2rem;
+        }
+        .dashboard-content {
+            padding: 20px; /* Kurangi padding utama */
+        }
+        /* Chart and recent bookings section */
+        .col-lg-6 { /* Pastikan kolom ini menumpuk di bawah 991px */
+            flex: 0 0 100%;
+            max-width: 100%;
         }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 767.98px) { /* md breakpoint in Bootstrap 5, for phones and small tablets */
         .booking-page-wrapper {
-            padding: 20px 0;
-        }
-        .booking-content {
-            padding: 30px 20px;
-        }
-        .booking-header {
-            padding: 25px 20px;
-        }
-        .header-title {
-            font-size: 1.5rem;
-        }
-        .header-icon {
-            width: 60px;
-            height: 60px;
-        }
-        .header-icon i {
-            font-size: 1.5rem;
-        }
-
-        .chart-container {
-            height: 300px !important;
-        }
-
-        .recent-bookings-list {
-            max-height: 300px;
-        }
-
-        .note-icon {
-            font-size: 1.5rem;
-            margin-right: 10px;
-        }
-
-        .note-title {
-            font-size: 0.9rem;
-        }
-
-        .note-meta {
-            font-size: 0.8rem;
-            gap: 5px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .container-fluid {
-            padding-left: 15px;
-            padding-right: 15px;
+            padding: 15px 0;
         }
         .booking-content {
             padding: 25px 15px;
+        }
+        .booking-header {
+            padding: 20px 15px;
+        }
+        .header-title {
+            font-size: 1.4rem;
+        }
+        .header-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+        /* Sub-cards and content inside them */
+        .sub-card-header {
+            flex-direction: column; /* Tumpuk header sub-card */
+            text-align: center;
+        }
+        .sub-card-header .header-icon {
+            margin-bottom: 10px;
+        }
+        .sub-card-title {
+            font-size: 1.1rem;
+        }
+        .chart-container {
+            height: 250px !important; /* Sesuaikan tinggi chart di mobile */
+        }
+        .recent-bookings-list {
+            max-height: 250px; /* Sesuaikan tinggi daftar recent bookings */
+        }
+        .booking-note-item {
+            flex-direction: column; /* Tumpuk item note jika terlalu kecil */
+            text-align: center;
+        }
+        .note-icon {
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+        .note-meta {
+            justify-content: center; /* Pusatkan meta info */
+        }
+    }
+
+    @media (max-width: 575.98px) { /* sm breakpoint in Bootstrap 5, for very small phones */
+        .container-fluid {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .booking-content {
+            padding: 20px 10px;
+        }
+        .header-title {
+            font-size: 1.2rem;
         }
     }
 </style>

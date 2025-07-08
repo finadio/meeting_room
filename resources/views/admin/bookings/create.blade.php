@@ -1,13 +1,12 @@
 @extends('admin.layouts.admin_dashboard')
+@section('title', 'Buat Booking Ruang')
 
 @section('content')
 <div class="booking-page-wrapper">
     <div class="container-fluid px-4">
         <div class="row justify-content-center">
             <div class="col-lg-8 col-md-10">
-                <!-- Main Booking Card -->
                 <div class="booking-card">
-                    <!-- Header Section -->
                     <div class="booking-header">
                         <div class="header-icon">
                             <i class="bx bx-calendar-plus"></i>
@@ -15,10 +14,8 @@
                         <h3 class="header-title">Buat Booking Ruang</h3>
                         <div class="header-decoration"></div>
                     </div>
-                    
-                    <!-- Content Section -->
+
                     <div class="booking-content">
-                        <!-- Alert Messages -->
                         @if (session('success'))
                             <div class="custom-alert success-alert">
                                 <div class="alert-icon">
@@ -33,7 +30,7 @@
                                 </button>
                             </div>
                         @endif
-                        
+
                         @if (session('error'))
                             <div class="custom-alert danger-alert">
                                 <div class="alert-icon">
@@ -49,11 +46,28 @@
                             </div>
                         @endif
 
-                        <!-- Booking Form -->
+                        @if ($errors->any())
+                            <div class="custom-alert danger-alert">
+                                <div class="alert-icon">
+                                    <i class="bx bx-error-circle"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <strong>Error!</strong>
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <button type="button" class="alert-close" data-bs-dismiss="alert">
+                                    <i class="bx bx-x"></i>
+                                </button>
+                            </div>
+                        @endif
+
                         <form action="{{ route('admin.bookings.store') }}" method="POST" class="booking-form">
                             @csrf
-                            
-                            <!-- Facility Selection -->
+
                             <div class="form-section">
                                 <div class="form-group-enhanced">
                                     <label for="facility_id" class="form-label-enhanced">
@@ -75,10 +89,9 @@
                                 </div>
                             </div>
 
-                            <!-- Date and Time Section -->
                             <div class="form-section">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 col-12">
                                         <div class="form-group-enhanced">
                                             <label for="date" class="form-label-enhanced">
                                                 <div class="label-icon">
@@ -93,8 +106,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <div class="col-md-3">
+
+                                    <div class="col-md-3 col-sm-6 col-12">
                                         <div class="form-group-enhanced">
                                             <label for="booking_time" class="form-label-enhanced">
                                                 <div class="label-icon">
@@ -109,8 +122,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <div class="col-md-3">
+
+                                    <div class="col-md-3 col-sm-6 col-12">
                                         <div class="form-group-enhanced">
                                             <label for="booking_end" class="form-label-enhanced">
                                                 <div class="label-icon">
@@ -128,7 +141,6 @@
                                 </div>
                             </div>
 
-                            <!-- Meeting Details Section -->
                             <div class="form-section">
                                 <div class="form-group-enhanced">
                                     <label for="meeting_title" class="form-label-enhanced">
@@ -161,7 +173,6 @@
                                 </div>
                             </div>
 
-                            <!-- Submit Button -->
                             <div class="form-section submit-section">
                                 <div class="button-group">
                                     <button type="submit" class="btn-submit">
@@ -190,7 +201,8 @@
 @endsection
 
 @section('styles')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{{-- HAPUS LINK INI SECARA TOTAL (JANGAN HANYA DIKOMENTARI) - BOOTSTRAP 4.5.0 KARENA LAYOUT INDUK MENGGUNAKAN BOOTSTRAP 5.1.3 --}}
+{{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
 <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 <style>
     /* Page Wrapper */
@@ -230,7 +242,7 @@
         left: 0;
         right: 0;
         height: 2px;
-        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
         background-size: 400% 400%;
         animation: gradient-flow 3s ease infinite;
     }
@@ -387,6 +399,12 @@
 
     .form-group-enhanced {
         position: relative;
+        margin-bottom: 20px; /* Added margin for spacing between inputs */
+        /* Flexbox for vertical alignment of label and input-wrapper */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* Align content to the start */
+        height: 100%; /* Ensure it takes full height of its grid cell */
     }
 
     .form-label-enhanced {
@@ -396,6 +414,7 @@
         font-weight: 600;
         color: #2d3748;
         font-size: 0.95rem;
+        flex-shrink: 0; /* Prevent label from shrinking */
     }
 
     .label-icon {
@@ -411,8 +430,8 @@
     }
 
     .label-icon i {
-        color: white;
         font-size: 0.9rem;
+        color: white;
     }
 
     .required-indicator {
@@ -423,6 +442,9 @@
 
     .input-wrapper {
         position: relative;
+        flex-grow: 1; /* Allow input wrapper to take remaining space */
+        display: flex; /* Use flex to align input within wrapper */
+        align-items: flex-start; /* Align input to the top */
     }
 
     .form-control-enhanced {
@@ -522,6 +544,8 @@
     .btn-back:hover {
         transform: translateY(-3px);
         box-shadow: 0 12px 35px rgba(108, 117, 125, 0.4);
+        color: white;
+        text-decoration: none;
     }
 
     .btn-back:active {
@@ -634,4 +658,15 @@
         }
     }
 </style>
+@endsection
+
+@section('scripts')
+<script>
+    // Alert close functionality
+    document.querySelectorAll('.alert-close').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('.custom-alert').style.display = 'none';
+        });
+    });
+</script>
 @endsection
