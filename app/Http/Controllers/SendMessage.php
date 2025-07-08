@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log; // Pastikan Log diimpor
 
 class SendMessage extends Controller
-
 {
-
-    public function sendMessageAttemp($no_wa, $name, $token)
+    // Tambahkan parameter $templateId dengan nilai default null
+    public function sendMessageAttemp($no_wa, $name, $token, $templateId = null)
     {
         // Mengambil ACCESS_TOKEN menggunakan config()
         $accessToken = config('app.access_token');
@@ -19,14 +18,14 @@ class SendMessage extends Controller
 
         $curl = curl_init();
 
-        
-        $templateId = getenv('NOTIF_APPROVAL_TEMPLATE_ID');
-        \Log::info("Message Template ID: " . $templateId);  // Log nilai template ID yang digunakan
+        // Gunakan templateId yang diteruskan jika ada, jika tidak, gunakan default dari .env
+        $finalTemplateId = $templateId ?? getenv('NOTIF_APPROVAL_TEMPLATE_ID');
+        \Log::info("Message Template ID (used): " . $finalTemplateId);  // Log nilai template ID yang digunakan
         
         $postData = json_encode([
             'to_number' => $no_wa,
             'to_name' => $name,
-            'message_template_id' => $templateId,  // Pastikan template ID diisi dengan benar
+            'message_template_id' => $finalTemplateId,  // Gunakan $finalTemplateId di sini
             'channel_integration_id' => getenv('CHANNEL_ID'),
             'language' => [
                 'code' => 'id'
@@ -71,5 +70,4 @@ class SendMessage extends Controller
             return $response;
         }
     }
-
 }

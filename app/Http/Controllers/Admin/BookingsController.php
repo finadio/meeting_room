@@ -10,14 +10,14 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use App\Services\WhatsAppAPIService; // <-- UBAH DARI SendMessage KE WhatsAppAPIService
+use App\Http\Controllers\SendMessage; // Pastikan ini diimpor, bukan WhatsAppAPIService
 
 class BookingsController extends Controller
 {
-    protected $sendMessage; // Properti ini akan menampung instance WhatsAppAPIService
+    protected $sendMessage;
 
-    // Perbaiki type hint di constructor
-    public function __construct(WhatsAppAPIService $sendMessage) // <-- UBAH type hint DI SINI
+    // Perbaiki type hint di constructor agar menggunakan SendMessage
+    public function __construct(SendMessage $sendMessage)
     {
         $this->sendMessage = $sendMessage;
     }
@@ -153,8 +153,11 @@ class BookingsController extends Controller
 
     public function approve(Request $request, $bookingId)
     {
-        $token = env('ACCESS_TOKEN');
         $booking = Booking::find($bookingId);
+
+        if (!$booking) {
+            return redirect()->back()->with('error', 'Booking tidak ditemukan.');
+        }
 
         $user = $booking->user;
         $no_wa = $user->contact_number;
@@ -162,14 +165,69 @@ class BookingsController extends Controller
         $booking->status = 'Disetujui';
         $booking->save();
 
-        $message = "Booking baru dari " . auth()->user()->name . " untuk ruang " . $booking->facility->name . " pada tanggal " . $booking->booking_date . " dari " . $booking->booking_time . " sampai " . $booking->booking_end . ".";
-        $response = $this->sendMessage->sendMessageAttemp($no_wa, $message, [['key' => 1, 'value' => 'app', 'value_text' => 'Booking Meeting room'],
-        ['key' => 2, 'value' => 'nama', 'value_text' => "Anda " . " untuk ruang " . $booking->facility->name . " pada tanggal " . $booking->booking_date . " dari jam " . $booking->booking_time . " WIB sampai " . $booking->booking_end . " WIB  telah disetujui."]]);
+        // Variabel ini digunakan sebagai 'to_name' di SendMessage.php.
+        $messageForToName = "Booking dari " . auth()->user()->name . " untuk ruang " . $booking->facility->name;
+        
+        // Ambil template ID persetujuan dari .env
+        $approvalTemplateId = getenv('NOTIF_APPROVAL_TEMPLATE_ID');
 
-        Log::info('Respon dari API WhatsApp: ' . json_encode($response));
+        $templateParameters = [
+            ['key' => '1', 'value' => 'app', 'value_text' => 'Booking Meeting room'],
+            ['key' => '2', 'value' => 'nama', 'value_text' => "Anda untuk ruang " . $booking->facility->name . " pada tanggal " . \Carbon\Carbon::parse($booking->booking_date)->format('d F Y') . " dari jam " . \Carbon\Carbon::parse($booking->booking_time)->format('H:i') . " WIB sampai " . \Carbon\Carbon::parse($booking->booking_end)->format('H:i') . " WIB telah disetujui."]
+        ];
 
-        return redirect()->back()->with('success', 'Booking telah disetujui.');
+        // Memanggil sendMessageAttemp dengan menambahkan template ID
+        $response = $this->sendMessage->sendMessageAttemp($no_wa, $messageForToName, $templateParameters, $approvalTemplateId);
+
+        Log::info('Respon dari API WhatsApp (Disetujui): ' . json_encode($response));
+
+        $responseData = json_decode($response, true);
+        if (isset($responseData['status']) && $responseData['status'] === 'success') {
+            return redirect()->back()->with('success', 'Booking telah disetujui dan notifikasi WhatsApp berhasil dikirim.');
+        } else {
+            return redirect()->back()->with('error', 'Booking telah disetujui, namun gagal mengirim notifikasi WhatsApp: ' . ($responseData['error']['messages'][0] ?? 'Unknown error'));
+        }
     }
+
+    // --- Tambahkan metode reject() ini di sini ---
+    public function reject(Request $request, $bookingId)
+    {
+        $booking = Booking::find($bookingId);
+
+        if (!$booking) {
+            return redirect()->back()->with('error', 'Booking tidak ditemukan.');
+        }
+
+        $user = $booking->user;
+        $no_wa = $user->contact_number; // Nomor WhatsApp penerima
+
+        $booking->status = 'Ditolak'; // Mengubah status menjadi 'Ditolak'
+        $booking->save();
+
+        // Ambil template ID penolakan dari .env (Anda harus menambahkannya)
+        $rejectionTemplateId = getenv('NOTIF_REJECT_TEMPLATE_ID'); // <-- Anda perlu menambahkan ini di .env
+
+        // Parameter untuk template WhatsApp untuk pesan penolakan
+        $templateParameters = [
+            ['key' => '1', 'value' => 'app', 'value_text' => 'Booking Meeting room'],
+            // Sesuaikan pesan penolakan ini dengan template Anda di Qontak.com
+            ['key' => '2', 'value' => 'nama', 'value_text' => "Booking Anda untuk ruang " . $booking->facility->name . " pada tanggal " . \Carbon\Carbon::parse($booking->booking_date)->format('d F Y') . " dari jam " . \Carbon\Carbon::parse($booking->booking_time)->format('H:i') . " WIB sampai " . \Carbon\Carbon::parse($booking->booking_end)->format('H:i') . " WIB telah ditolak. Silakan buat booking baru."]
+        ];
+
+        // Memanggil sendMessageAttemp dari kelas SendMessage dengan menambahkan template ID
+        $response = $this->sendMessage->sendMessageAttemp($no_wa, $user->name, $templateParameters, $rejectionTemplateId);
+
+        Log::info('Respon dari API WhatsApp (Ditolak): ' . json_encode($response));
+
+        $responseData = json_decode($response, true);
+        if (isset($responseData['status']) && $responseData['status'] === 'success') {
+            return redirect()->back()->with('success', 'Booking telah ditolak dan notifikasi WhatsApp berhasil dikirim.');
+        } else {
+            return redirect()->back()->with('error', 'Booking telah ditolak, namun gagal mengirim notifikasi WhatsApp: ' . ($responseData['error']['messages'][0] ?? 'Unknown error'));
+        }
+    }
+    // --- Akhir metode reject() ---
+
 
     public function checkBookingStatus()
     {
@@ -272,7 +330,7 @@ class BookingsController extends Controller
             Log::info('Booking retrieved: ' . json_encode($booking));
 
             $no_wa = $booking->user->contact_number;
-            $name = $booking->user->name;
+            $name = $booking->user->name; 
 
             $currentTime = now();
             $bookingDate = Carbon::parse($booking->booking_date)->format('Y-m-d');
@@ -281,17 +339,19 @@ class BookingsController extends Controller
             Log::info('Current Time: ' . $currentTime);
             Log::info('Booking End Time: ' . $bookingEndTime);
 
+            $templateId = getenv('NOTIF_APPROVAL_TEMPLATE_ID'); // Atau ID template lain jika ini untuk tujuan berbeda
+
             if ($currentTime->greaterThan($bookingEndTime)) {
                 Log::info('Waktu telah melewati booking_end');
                 $message = [
-                    ['key' => 1, 'value' => 'app', 'value_text' => 'Booking Meeting room'],
-                    ['key' => 2, 'value' => 'info', 'value_text' => 'Anda telah melewati batas pemakaian, silahkan segera Logout.']
+                    ['key' => '1', 'value' => 'app', 'value_text' => 'Booking Meeting room'],
+                    ['key' => '2', 'value' => 'info', 'value_text' => 'Anda telah melewati batas pemakaian, silahkan segera Logout.']
                 ];
             } elseif ($bookingEndTime->diffInMinutes($currentTime) <= 10) {
                 Log::info('Waktu tinggal 10 menit lagi');
                 $message = [
-                    ['key' => 1, 'value' => 'app', 'value_text' => 'Booking Meeting room'],
-                    ['key' => 2, 'value' => 'nama', 'value_text' => 'Booking Anda untuk ruang ' . $booking->facility->name . ', akan berakhir kurang dari 10 menit lagi.']
+                    ['key' => '1', 'value' => 'app', 'value_text' => 'Booking Meeting room'],
+                    ['key' => '2', 'value' => 'nama', 'value_text' => 'Booking Anda untuk ruang ' . $booking->facility->name . ', akan berakhir kurang dari 10 menit lagi.']
                 ];
             } else {
                 Log::info('Tidak ada kondisi yang terpenuhi untuk mengirim WA');
@@ -300,7 +360,8 @@ class BookingsController extends Controller
 
             Log::info('Final Message: ' . json_encode($message));
 
-            $response = $this->sendMessage->sendMessageAttemp($no_wa, $name, $message);
+            // Memanggil sendMessageAttemp dengan menambahkan template ID
+            $response = $this->sendMessage->sendMessageAttemp($no_wa, $name, $message, $templateId);
 
             $responseData = json_decode($response, true);
             Log::info('WhatsApp API Response: ' . $response);
