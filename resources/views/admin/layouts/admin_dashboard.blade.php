@@ -647,11 +647,6 @@
         <li class="{{ request()->routeIs('admin.contact.*') ? 'active' : '' }}">
             <a href="{{ route('admin.contact.index') }}" data-title="Contact Us"><i class='bx bx-envelope'></i> <span>Contact Us</span></a>
         </li>
-        <li class="{{ request()->routeIs ('admin.room.status') ? 'active' : '' }}">
-            <a href="{{ route('admin.room.status') }}" data-title="Room Status">
-            <i class='bx bx-building-house'></i> <span>Room Status</span>
-            </a>
-        </li>
         <li>
             <a href="{{ route('logout') }}" data-title="Logout"><i class='bx bxs-log-out-circle'></i> <span>Logout</span></a>
         </li>

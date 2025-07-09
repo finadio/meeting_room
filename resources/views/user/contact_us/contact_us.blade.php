@@ -108,6 +108,13 @@
 
 @section('styles')
 <style>
+    /* Critical CSS agar halaman tidak pernah polos */
+    html, body {
+        background: #f4f6fa !important;
+        color: #1E293B !important;
+        font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        min-height: 100vh;
+    }
     .contactus-hero-bg {
         background: #f4f6fa;
         min-height: 100vh;

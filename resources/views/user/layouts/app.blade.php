@@ -14,7 +14,6 @@
     <!-- Ikon untuk aplikasi web (Web App) -->
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <!-- Preload & load CSS utama lebih awal untuk mencegah FOUC -->
-    <link rel="preload" href="{{ asset('css/user_dashboard.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="stylesheet" href="{{ asset('css/user_dashboard.css') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>

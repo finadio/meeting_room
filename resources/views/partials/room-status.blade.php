@@ -4,7 +4,8 @@
             }
 
         </style>
-        <div class="status-box">
+        {{-- Partial ini hanya berisi konten utama status ruangan, tanpa layout atau section --}}
+        <div class="status-container">
             <h3>Jadwal Pemakaian Ruangan</h3>
             
             @if(!empty($bookings))
