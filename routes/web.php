@@ -136,6 +136,7 @@ Route::middleware(['auth', 'user_type:admin,manager', 'log.last.active'])->prefi
     Route::get('facilities/{facility}/edit', [FacilitiesController::class, 'edit'])->name('admin.facilities.edit');
     Route::put('facilities/{facility}', [FacilitiesController::class, 'update'])->name('admin.facilities.update');
     Route::delete('facilities/{facility}', [FacilitiesController::class, 'destroy'])->name('admin.facilities.destroy');
+    Route::patch('facilities/{facility}/toggle-status', [\App\Http\Controllers\Admin\FacilitiesController::class, 'toggleStatus'])->name('admin.facilities.toggleStatus');
 });
 
 //user Route

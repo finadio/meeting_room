@@ -139,4 +139,17 @@ class FacilitiesController extends Controller
 
         return redirect()->route('admin.facilities.index')->with('success', 'Facility Deleted Successfully.');
     }
+
+    public function toggleStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:approved,denied',
+        ]);
+        $facility = Facility::findOrFail($id);
+        $facility->status = $request->input('status');
+        $facility->save();
+        $pesan = $facility->status === 'approved' ? 'Fasilitas berhasil diaktifkan.' : 'Fasilitas berhasil dinonaktifkan.';
+        return redirect()->route('admin.facilities.show', $facility->id)
+            ->with('success', $pesan);
+    }
 }

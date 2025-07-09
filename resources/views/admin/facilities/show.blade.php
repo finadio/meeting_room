@@ -174,9 +174,11 @@
                                         <span>Status</span>
                                     </label>
                                     <p class="display-value">
-                                        <span class="badge {{ $facility->status === 'active' ? 'badge-success-custom' : 'badge-secondary-custom' }}">
-                                            {{ ucfirst($facility->status) }}
-                                        </span>
+                                        @if($facility->status === 'approved')
+                                            <span class="badge badge-success-custom">Aktif</span>
+                                        @else
+                                            <span class="badge badge-secondary-custom">Tidak Aktif</span>
+                                        @endif
                                     </p>
                                 </div>
                             @endif
@@ -217,9 +219,9 @@
                                     <div class="btn-ripple"></div>
                                 </a>
                                 
-                                @if(isset($facility->status) && $facility->status === 'active')
+                                @if(isset($facility->status) && $facility->status === 'approved')
                                     <button type="button" class="btn-action deactivate" 
-                                            onclick="toggleStatus('{{ $facility->id }}', 'inactive')">
+                                            onclick="toggleStatus('{{ $facility->id }}', 'denied')">
                                         <div class="btn-content">
                                             <i class="bx bx-pause"></i>
                                             <span>Nonaktifkan</span>
@@ -227,7 +229,7 @@
                                     </button>
                                 @else
                                     <button type="button" class="btn-action activate" 
-                                            onclick="toggleStatus('{{ $facility->id }}', 'active')">
+                                            onclick="toggleStatus('{{ $facility->id }}', 'approved')">
                                         <div class="btn-content">
                                             <i class="bx bx-play"></i>
                                             <span>Aktifkan</span>
@@ -896,6 +898,8 @@
 @endsection
 
 @section('scripts')
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         function goBack() {
@@ -903,6 +907,7 @@
         }
 
         function toggleStatus(facilityId, newStatus) {
+            console.log('toggleStatus called', facilityId, newStatus); // DEBUG
             $('#confirmModal').modal('show');
             
             $('#confirmAction').off('click').on('click', function() {
