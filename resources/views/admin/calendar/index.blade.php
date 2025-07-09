@@ -11,9 +11,9 @@
 </div>
 <div class="admin-calendar-wrapper">
     <div class="container-fluid px-4">
+        {{-- Baris utama dengan kalender dan sidebar --}}
         <div class="row g-4">
-            <!-- Kalender -->
-            <div class="col-lg-8 col-md-12 mb-4">
+            <div class="col-lg-8 col-md-12 mb-4" id="calendar-col"> {{-- ID ini PENTING --}}
                 <div class="calendar-main-card shadow-sm">
                     <div class="calendar-header-section d-flex align-items-center justify-content-between">
                         <div class="header-content d-flex align-items-center gap-3">
@@ -55,8 +55,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Sidebar Statistik & Daftar Booking -->
-            <div class="col-lg-4 col-md-12">
+            <div class="col-lg-4 col-md-12" id="sidebar-col"> {{-- ID ini PENTING --}}
                 <div class="stats-card mb-4 shadow-sm">
                     <div class="stats-header bg-gradient bg-primary text-white rounded-top p-3">
                         <h5 class="mb-0"><i class="bx bx-bar-chart-alt-2"></i> Statistik Hari Ini</h5>
@@ -101,16 +100,14 @@
                         </div>
                     </div>
                     <div class="search-filter-section p-3 border-bottom">
-                        <div class="search-form mb-2">
-                            <div class="input-group">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Cari pemesanan..." value="{{ request('search') }}">
-                                <button type="button" class="btn btn-primary" onclick="performSearch()">
-                                    <i class="bx bx-search"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="clearSearch()" id="clearSearchBtn" style="display: {{ request('search') ? 'block' : 'none' }};">
-                                    <i class="bx bx-x"></i>
-                                </button>
-                            </div>
+                        <div class="input-group mb-2">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Cari pemesanan..." value="{{ request('search') }}">
+                            <button type="button" class="btn btn-primary" onclick="performSearch()">
+                                <i class="bx bx-search"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="clearSearch()" id="clearSearchBtn" style="display: {{ request('search') ? 'block' : 'none' }};">
+                                <i class="bx bx-x"></i>
+                            </button>
                         </div>
                         <div class="filter-controls mt-2">
                             <select class="form-select form-select-sm" id="statusFilter">
@@ -125,10 +122,15 @@
                     <div class="booking-list-content p-3" id="bookingListContent"></div>
                 </div>
             </div>
-        </div>
-    </div>
+        </div> {{-- Penutup untuk row utama --}}
+    </div> {{-- Penutup untuk container-fluid --}}
+</div> {{-- Penutup untuk admin-calendar-wrapper --}}
+
+{{-- Tombol Toggle Sidebar (tetap ada di sini karena sidebar di samping) --}}
+<div class="text-end my-2">
+    <button class="btn btn-secondary btn-sm" id="toggleSidebarBtn" onclick="toggleSidebarAuto()">Tampilkan/Sembunyikan Sidebar</button>
 </div>
-<!-- Modal Detail Booking -->
+{{-- Modals tetap dipertahankan --}}
 <div class="modal fade" id="bookingDetailModal" tabindex="-1" aria-labelledby="bookingDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -136,11 +138,11 @@
                 <h5 class="modal-title" id="bookingDetailModalLabel">Detail Pemesanan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="bookingDetailContent"></div>
+            <div class="modal-body" id="bookingDetailContent">
+                </div>
         </div>
     </div>
 </div>
-{{-- Dipulihkan dari saran sebelumnya --}}
 <div class="modal fade" id="noBookingModal" tabindex="-1" aria-labelledby="noBookingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
@@ -162,6 +164,8 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+{{-- PENTING: Jika ada file 'calendar_custom.css' yang bermasalah (error 404), pastikan kontennya disalin ke sini --}}
+{{-- <link href="{{ asset('css/calendar_custom.css') }}" rel="stylesheet"> --}}
 <style>
     /* Custom Page Header (di luar wrapper utama untuk efek penuh) */
     .custom-page-header {
@@ -431,13 +435,14 @@
         flex-direction: column;
         justify-content: flex-start; /* Align content to start */
         align-items: center; /* Center horizontally */
+        box-sizing: border-box; /* Pastikan padding dan border termasuk dalam lebar/tinggi */
     }
     .fc-daygrid-day-top {
         width: 100%; /* Ensure day number takes full width */
         text-align: center; /* Center the day number */
         flex-grow: 0; /* Don't allow it to grow */
-        position: relative; /* For dot positioning if needed in other scenarios */
-        z-index: 2; /* Ensure day number is above dot */
+        position: relative;
+        z-index: 2;
     }
     .fc-daygrid-day-number {
         display: inline-block; /* Allows padding/margin */
@@ -446,6 +451,7 @@
         background-color: transparent; /* Default */
         color: #1E293B;
         font-weight: 500;
+        white-space: nowrap; /* Mencegah nomor tanggal pecah baris */
     }
     /* Style for today's date */
     .fc-day-today .fc-daygrid-day-number {
@@ -459,8 +465,8 @@
         display: flex;
         justify-content: center; /* Center the dot */
         align-items: flex-end; /* Push dot to the bottom */
-        overflow: hidden !important; /* Hide any accidental overflows from here */
-        position: relative; /* For positioning the dot */
+        overflow: hidden !important;
+        position: relative;
     }
 
     /* Responsive adjustments for smaller screens */
@@ -491,15 +497,109 @@
     /* Responsive Design for overall layout */
     @media (max-width: 991px) {
         .calendar-content { padding: 1rem 0.5rem; }
-        .calendar-header-section { flex-direction: column; gap: 1rem; text-align: center; }
-        .header-actions { width: 100%; justify-content: center; }
+        .calendar-header-section {
+            flex-direction: column; /* Tombol dan judul menumpuk */
+            gap: 1rem;
+            text-align: center;
+            align-items: center; /* Pusatkan item saat menumpuk */
+        }
+        .header-actions {
+            width: 100%;
+            justify-content: center; /* Tombol di tengah */
+            flex-wrap: wrap; /* Memungkinkan tombol pecah baris */
+        }
+        .header-actions .btn {
+            flex-shrink: 0; /* Mencegah tombol mengecil terlalu banyak */
+            margin: 0.2rem; /* Jarak antar tombol */
+        }
         .stats-content, .booking-list-content { padding: 1rem; }
     }
     @media (max-width: 768px) {
+        /* Ini adalah breakpoint Bootstrap di mana col-lg-8 dan col-lg-4 akan menjadi 100% lebar */
+        /* Pastikan elemen-elemen ini mengisi lebar penuh saat menumpuk */
+        .col-lg-8, .col-lg-4, .col-md-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
         .calendar-header-section { flex-direction: column; gap: 1rem; text-align: center; }
         .header-actions { width: 100%; justify-content: center; }
         .booking-list-card { max-height: 500px; }
         .calendar-main-card, .stats-card, .booking-list-card { margin-bottom: 1.2rem; }
+        
+        /* Toolbar kalender juga perlu disesuaikan untuk mobile */
+        .fc .fc-toolbar {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .fc .fc-toolbar-chunk {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+        .fc .fc-button-group {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .fc .fc-button {
+            margin: 0.2rem;
+        }
+    }
+
+    /* Mengatasi kalender yang terpotong dan tidak bisa digeser */
+    /* Pastikan #calendar-col mengizinkan scroll horizontal */
+    #calendar-col {
+        overflow-x: auto; /* Izinkan scroll horizontal pada kolom Bootstrap itu sendiri */
+        -webkit-overflow-scrolling: touch; /* Untuk smooth scrolling di iOS */
+        box-sizing: border-box; /* Memastikan padding termasuk dalam lebar/tinggi */
+    }
+
+    .calendar-container {
+        overflow: visible; /* Biarkan konten FullCalendar mengalir keluar jika perlu */
+        width: 100%; /* Pastikan container mengambil lebar penuh yang tersedia */
+        box-sizing: border-box; /* Memastikan padding dan border termasuk dalam lebar/tinggi */
+    }
+    
+    /* Pastikan parent tidak menyembunyikan overflow */
+    .calendar-main-card {
+        overflow: visible; /* PENTING: agar scrollbar di #calendar-col tidak terpotong oleh card */
+    }
+
+    /* Ini adalah bagian KRITIS untuk memaksa kolom menyempit */
+    .fc-daygrid-body table, /* Untuk tampilan bulan */
+    .fc-scrollgrid-sync-table { /* Untuk struktur tabel internal FullCalendar lainnya */
+        table-layout: fixed; /* Memastikan kolom memiliki lebar yang sama */
+        min-width: unset; /* Hapus min-width agar bisa menyusut semaksimal mungkin */
+        width: 100% !important; /* Menggunakan !important untuk prioritas */
+    }
+
+    /* Memaksa setiap sel kolom header dan sel hari memiliki lebar yang sama */
+    .fc-col-header-cell,
+    .fc-daygrid-day {
+        width: calc(100% / 7) !important; /* PAKSA setiap hari mengambil 1/7 dari lebar kalender */
+        box-sizing: border-box;
+    }
+
+    /* Penyesuaian font-size yang lebih agresif untuk sel hari agar bisa muat di layar kecil */
+    .fc-daygrid-day-number {
+        font-size: 0.6em !important; /* Semakin kecil font agar angka muat */
+        padding: 1px 2px !important; /* Kurangi padding di sel hari */
+    }
+
+    /* Penyesuaian min-width untuk layar ponsel yang sangat kecil */
+    @media (max-width: 575.98px) { /* Breakpoint Bootstrap untuk extra small devices */
+        .fc-daygrid-body table,
+        .fc-scrollgrid-sync-table {
+            min-width: unset !important; /* Tetap unset untuk penyusutan maksimal */
+        }
+        .fc-daygrid-day-number {
+            font-size: 0.55em !important; /* Lebih kecil lagi di ponsel sangat kecil */
+            padding: 0px 1px !important;
+        }
+        /* Penyesuaian untuk header kalender agar lebih ringkas */
+        .fc-toolbar { padding: 0.5rem !important; gap: 0.5rem; }
+        .fc-toolbar-title { font-size: 0.9em !important; }
     }
 </style>
 @endsection
@@ -509,35 +609,36 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js'></script>
 <script>
-    let calendar;
+    let calendar; // DEKLARASI GLOBAL DI SINI
     let allBookings = @json($bookedDates);
-    let filteredBookings = [...allBookings]; // Keep this to manage list and export
-    let bookingsPerPage = 5;
-    let currentBookingPage = 1;
+    let filteredBookings = [...allBookings]; // Variabel ini relevan untuk daftar booking dan filter/search
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeCalendar();
         initializeFilters();
-        updateBookingList(); // Keep this for the separate list on the side
+        updateBookingList();
+        
+        // PENTING: Panggil updateSize saat DOM dimuat untuk memastikan ukuran awal kalender benar
+        // Ini memastikan kalender memiliki ukuran yang tepat setelah semua CSS dan HTML dimuat
+        if (calendar) {
+            calendar.updateSize();
+        }
     });
 
     function initializeCalendar() {
         const calendarEl = document.getElementById('calendar');
 
-        // Prepare events for FullCalendar. We only need event data for date highlighting.
-        // The 'display: none' in CSS will hide the actual event bars.
         const eventsForCalendar = allBookings.map(booking => {
             const startTime = booking.bookingDate + 'T' + booking.bookingTime;
             const endTime = new Date(new Date(startTime).getTime() + (booking.bookingHours * 60 * 60 * 1000)).toISOString().slice(0, 19);
 
             return {
-                id: booking.id,
-                title: 'Booking', // Simple title, as it will be hidden by CSS
+                id: booking.id, // ID booking untuk referensi
+                title: `${booking.facilityName} - ${booking.userName}`,
                 start: startTime,
                 end: endTime,
-                extendedProps: booking, // Store full booking data here
-                // FullCalendar will process this as a normal event, but our CSS hides it.
-                // This is how FullCalendar knows which days 'have events' internally.
+                extendedProps: booking, // Simpan semua data booking asli
+                classNames: [`fc-event-${booking.bookingStatus.toLowerCase().replace(/\s/g, '-')}`]
             };
         });
 
@@ -552,27 +653,25 @@
             },
             height: 'auto',
             contentHeight: 'auto',
-            eventDisplay: 'block',
+            eventDisplay: 'block', // 'block' untuk memungkinkan event block (walaupun disembunyikan oleh CSS)
             eventTextColor: '#fff',
-            dayMaxEvents: true, // Crucial: This enables the "+X more" link mechanism internally
+            dayMaxEvents: true, // Memungkinkan FullCalendar menghitung event per hari
             views: {
                 dayGridMonth: {
                     titleFormat: { year: 'numeric', month: 'long' },
                     dayMaxEvents: true,
-                    dayMaxEventRows: 0, // CRITICAL: This tells FullCalendar to show 0 events directly, which helps in consistent behavior when we hide events with CSS. It will ensure that the day cells have the minimum necessary structure for our dot.
+                    dayMaxEventRows: 0, // CRITICAL: Ini memastikan event block tidak ditampilkan di dalam sel hari
                 }
             },
             fixedWeekCount: false,
 
-            // This is the key: when a date is clicked, show all bookings for that day
             dateClick: function(info) {
-                const clickedDate = info.dateStr; // Format YYYY-MM-DD
+                const clickedDate = info.dateStr;
                 const bookingsOnThisDay = allBookings.filter(booking => booking.bookingDate === clickedDate);
 
                 if (bookingsOnThisDay.length > 0) {
                     showAllBookingsForDayInModal(clickedDate, bookingsOnThisDay);
                 } else {
-                    // Show "Tidak ada booking untuk tanggal ini" pop-up
                     const noBookingModal = new bootstrap.Modal(document.getElementById('noBookingModal'));
                     document.getElementById('noBookingModalContent').innerHTML = `
                         <div class="text-center p-4">
@@ -585,22 +684,18 @@
                 }
             },
 
-            // Prevent default event click behavior, as we handle clicks on the date itself
             eventClick: function(info) {
-                info.jsEvent.preventDefault();
+                showBookingDetail(info.event);
             },
 
-            // Custom content for each day cell
             dayCellContent: function(arg) {
                 const dateStr = arg.date.toISOString().slice(0, 10);
                 const hasBookings = allBookings.some(booking => booking.bookingDate === dateStr);
 
-                // FullCalendar provides arg.dayNumberText for the day number
                 const dayNumberElement = document.createElement('span');
                 dayNumberElement.classList.add('fc-daygrid-day-number');
                 dayNumberElement.textContent = arg.dayNumberText;
 
-                // Create a container for the day number and potentially the dot
                 const container = document.createElement('div');
                 container.classList.add('fc-daygrid-day-content-wrapper');
                 container.appendChild(dayNumberElement);
@@ -611,7 +706,6 @@
                     container.appendChild(dot);
                 }
 
-                // Return the custom DOM node. FullCalendar will handle attaching click listeners to the cell.
                 return { domNodes: [container] };
             }
         });
@@ -681,8 +775,8 @@
         });
 
         filteredBookings = filtered;
-        currentBookingPage = 1;
-
+        
+        updateCalendarEvents();
         updateBookingList();
     }
 
@@ -692,8 +786,27 @@
         document.getElementById('clearSearchBtn').style.display = 'none';
 
         filteredBookings = [...allBookings];
-        currentBookingPage = 1;
+        
+        updateCalendarEvents();
         updateBookingList();
+    }
+
+    function updateCalendarEvents() {
+        calendar.removeAllEvents();
+        const eventsForCalendar = filteredBookings.map(booking => {
+            const startTime = booking.bookingDate + 'T' + booking.bookingTime;
+            const endTime = new Date(new Date(startTime).getTime() + (booking.bookingHours * 60 * 60 * 1000)).toISOString().slice(0, 19);
+            return {
+                id: booking.id,
+                title: `${booking.facilityName} - ${booking.userName}`,
+                start: startTime,
+                end: endTime,
+                extendedProps: booking,
+                classNames: [`fc-event-${booking.bookingStatus.toLowerCase().replace(/\s/g, '-')}`]
+            };
+        });
+        calendar.addEventSource(eventsForCalendar);
+        // Tidak perlu calendar.render() lagi di sini, karena updateSize akan dipanggil oleh toggleSidebarAuto
     }
 
     function updateBookingList() {
@@ -701,7 +814,15 @@
         const bookingPagination = document.getElementById('bookingPagination');
         if (!bookingListContent) return;
 
-        if (!filteredBookings || filteredBookings.length === 0) {
+        const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
+        if (currentBookingPage > totalPages && totalPages > 0) currentBookingPage = totalPages;
+        if (currentBookingPage <= 0 && filteredBookings.length > 0) currentBookingPage = 1;
+
+        const startIdx = (currentBookingPage - 1) * bookingsPerPage;
+        const endIdx = startIdx + bookingsPerPage;
+        const pageBookings = filteredBookings.slice(startIdx, endIdx);
+
+        if (!pageBookings || pageBookings.length === 0) {
             bookingListContent.innerHTML = `
                 <div class="empty-state">
                     <i class="bx bx-calendar-x"></i>
@@ -711,13 +832,7 @@
             if (bookingPagination) bookingPagination.innerHTML = '';
             return;
         }
-
-        const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
-        if (currentBookingPage > totalPages) currentBookingPage = 1;
-        const startIdx = (currentBookingPage - 1) * bookingsPerPage;
-        const endIdx = startIdx + bookingsPerPage;
-        const pageBookings = filteredBookings.slice(startIdx, endIdx);
-
+        
         const bookingItemsHTML = pageBookings.map((booking, index) => {
             const statusClass = getStatusClass(booking.bookingStatus);
             const formattedDate = new Date(booking.bookingDate).toLocaleDateString('id-ID', {
@@ -791,99 +906,109 @@
         }
     }
 
-    // Function to show all bookings for a clicked day in a modal
-    function showAllBookingsForDayInModal(dateStr, bookings) {
+    function showBookingDetail(event) {
+        const props = event.extendedProps;
         const modal = new bootstrap.Modal(document.getElementById('bookingDetailModal'));
-        let modalContentHTML = `<h5 class="mb-4">Pemesanan untuk ${new Date(dateStr).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</h5>`;
-
-        if (bookings.length === 0) {
-            modalContentHTML += `<p>Tidak ada pemesanan untuk tanggal ini.</p>`;
-        } else {
-            bookings.forEach(booking => {
-                const statusClass = getStatusClass(booking.bookingStatus);
-                const formattedTime = new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
-
-                modalContentHTML += `
-                    <div class="fc-popover-event mb-3 p-3 border rounded">
-                        <strong>${booking.facilityName}</strong> - ${booking.userName}<br>
-                        <small>
-                            Jam: ${formattedTime} (${booking.bookingHours} Jam) |
-                            Status: <span class="status-badge ${statusClass}">${booking.bookingStatus}</span>
-                        </small>
-                        <p class="mb-0 text-muted">${booking.meetingTitle || 'Tidak ada judul'}</p>
-                    </div>
-                `;
-            });
-        }
-
-        document.getElementById('bookingDetailContent').innerHTML = modalContentHTML;
+        const formattedDate = new Date(props.bookingDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+        const formattedTime = new Date('2000-01-01T' + props.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
+        const statusClass = getStatusClass(props.bookingStatus);
+        document.getElementById('bookingDetailContent').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6><i class="bx bx-building"></i> Informasi Fasilitas</h6>
+                    <p><strong>Nama Fasilitas:</strong> ${props.facilityName}</p>
+                    <p><strong>Status:</strong> <span class="status-badge ${statusClass}">${props.bookingStatus}</span></p>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="bx bx-user"></i> Informasi Pengguna</h6>
+                    <p><strong>Nama Pengguna:</strong> ${props.userName}</p>
+                    <p><strong>Metode Pembayaran:</strong> ${props.bookingPaymentMethod}</p>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h6><i class="bx bx-calendar"></i> Jadwal</h6>
+                    <p><strong>Tanggal:</strong> ${formattedDate}</p>
+                    <p><strong>Waktu:</strong> ${formattedTime} (${props.bookingHours} Jam)</p>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="bx bx-money"></i> Pembayaran</h6>
+                    <p><strong>Jumlah:</strong> Rp ${props.bookingAmount ? props.bookingAmount.toLocaleString('id-ID') : 'N/A'}</p>
+                </div>
+            </div>
+        `;
         modal.show();
     }
 
+    function exportCalendar() {
+        const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
+        const rows = allBookings.map(booking => [ // Menggunakan allBookings untuk export semua
+            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
+            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
+            booking.facilityName,
+            booking.userName,
+            booking.bookingStatus,
+            booking.bookingHours,
+            booking.bookingAmount || 0
+        ]);
+        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `calendar_export_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        document.body.removeChild(link);
+    }
 
-        function exportCalendar() {
-            // Export data booking yang sedang difilter ke CSV
-            const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-            const rows = filteredBookedDates.map(booking => [
-                new Date(booking.bookingDate).toLocaleDateString('id-ID'),
-                new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
-                booking.facilityName,
-                booking.userName,
-                booking.bookingStatus,
-                booking.bookingHours,
-                booking.bookingAmount || 0
-            ]);
-            const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `calendar_export_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+    function printCalendar() {
+        window.print();
+    }
 
-        function printCalendar() {
-            const printWindow = window.open('', '_blank');
-            // Generate table HTML untuk daftar booking
-            const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-            const rows = filteredBookedDates.map((booking, idx) => [
-                idx + 1,
-                new Date(booking.bookingDate).toLocaleDateString('id-ID'),
-                new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
-                booking.facilityName,
-                booking.userName,
-                booking.bookingStatus,
-                booking.bookingHours,
-                booking.bookingAmount || 0
-            ]);
-            const tableRows = rows.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('');
-            const tableHTML = `
-                <table border="1" cellpadding="4" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
-                    <thead><tr>${headers.map(h => '<th>' + h + '</th>').join('')}</tr></thead>
-                    <tbody>${tableRows}</tbody>
-                </table>
-            `;
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Cetak Kalender</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h2 { text-align: center; margin-bottom: 20px; }
-                        </style>
-                    </head>
-                    <body>
-                        <h2>Data Pemesanan Ruang Meeting</h2>
-                        ${tableHTML}
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
+    function refreshList() {
+        location.reload();
+    }
+
+    function viewBooking(index) {
+        if (filteredBookings[index]) {
+            const booking = filteredBookings[index];
+            showBookingDetail({extendedProps: booking});
         }
-    });
+    }
+
+    function toggleSidebarAuto() {
+        const sidebar = document.getElementById('sidebar-col'); // Sidebar yang Anda gunakan di blade ini
+        const calendarCol = document.getElementById('calendar-col');
+
+        if (sidebar && calendarCol) { // Pastikan elemen ditemukan
+            if (sidebar.style.display === 'none') {
+                sidebar.style.display = ''; // Tampilkan sidebar
+                calendarCol.classList.remove('col-lg-12'); // Kalender kembali ke 8 kolom
+                calendarCol.classList.add('col-lg-8');
+            } else {
+                sidebar.style.display = 'none'; // Sembunyikan sidebar
+                calendarCol.classList.remove('col-lg-8'); // Kalender menjadi 12 kolom
+                calendarCol.classList.add('col-lg-12');
+            }
+
+            // Panggil updateSize FullCalendar setelah perubahan ukuran container
+            if (calendar) {
+                setTimeout(() => { // Beri sedikit delay agar transisi CSS sidebar selesai
+                    calendar.updateSize();
+                }, 300); // Sesuaikan delay dengan durasi transisi CSS sidebar Anda
+            }
+        } else {
+            console.warn("toggleSidebarAuto: Elemen sidebar atau calendarCol tidak ditemukan.");
+        }
+    }
+
+    // PENTING: Fungsi ini akan dipanggil oleh admin_dashboard.js saat sidebar utama di-toggle.
+    window.triggerCalendarResize = function() {
+        if (calendar) {
+            setTimeout(() => { // Beri sedikit delay untuk transisi CSS sidebar utama
+                calendar.updateSize();
+            }, 350); // Sesuaikan delay ini dengan durasi transisi CSS sidebar utama Anda
+        }
+    };
 </script>
 @endsection
