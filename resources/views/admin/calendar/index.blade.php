@@ -12,8 +12,7 @@
 <div class="admin-calendar-wrapper">
     <div class="container-fluid px-4">
         <div class="row g-4">
-            <!-- Kalender -->
-            <div class="col-lg-8 col-md-12 mb-4">
+            <div class="col-lg-8 col-md-12 mb-4" id="calendar-col"> {{-- Ditambahkan id="calendar-col" --}}
                 <div class="calendar-main-card shadow-sm">
                     <div class="calendar-header-section d-flex align-items-center justify-content-between">
                         <div class="header-content d-flex align-items-center gap-3">
@@ -55,8 +54,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Sidebar Statistik & Daftar Booking -->
-            <div class="col-lg-4 col-md-12">
+            <div class="col-lg-4 col-md-12" id="sidebar-col"> {{-- Ditambahkan id="sidebar-col" --}}
                 <div class="stats-card mb-4 shadow-sm">
                     <div class="stats-header bg-gradient bg-primary text-white rounded-top p-3">
                         <h5 class="mb-0"><i class="bx bx-bar-chart-alt-2"></i> Statistik Hari Ini</h5>
@@ -128,7 +126,10 @@
         </div>
     </div>
 </div>
-<!-- Modal Detail Booking -->
+{{-- Dipulihkan dari file asli --}}
+<div class="text-end my-2">
+    <button class="btn btn-secondary btn-sm" id="toggleSidebarBtn" onclick="toggleSidebarAuto()">Tampilkan/Sembunyikan Sidebar</button>
+</div>
 <div class="modal fade" id="bookingDetailModal" tabindex="-1" aria-labelledby="bookingDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -137,6 +138,22 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="bookingDetailContent"></div>
+        </div>
+    </div>
+</div>
+{{-- Dipulihkan dari saran sebelumnya --}}
+<div class="modal fade" id="noBookingModal" tabindex="-1" aria-labelledby="noBookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="noBookingModalLabel">Informasi Kalender</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="noBookingModalContent">
+                </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
         </div>
     </div>
 </div>
@@ -324,20 +341,159 @@
     .fc-event-ditolak { background: #ef4444 !important; border: none; }
     .fc-event-selesai { background: #64748B !important; border: none; }
     .fc .fc-button { min-width: 70px; }
-    .fc-event, .fc-event-main {
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      max-width: 100% !important;
-      min-height: 22px !important;
-      font-size: 0.92em !important;
-      padding: 1px 6px !important;
-      line-height: 1.2 !important;
+
+    /*
+     * !!! CRITICAL FIXES FOR "+X MORE" FUNCTIONALITY AND DOT INDICATOR !!!
+     */
+
+    /* Hide individual events completely from day cells */
+    .fc-event, .fc-event-main, .fc-event-main-td {
+        display: none !important;
+        visibility: hidden !important;
     }
-    /* Responsive Design */
+
+    /* Style for the dot indicator */
+    .has-event-indicator {
+        display: block; /* Make it a block element to control its size and position */
+        width: 8px; /* Size of the dot */
+        height: 8px;
+        background-color: #1E40AF; /* Blue dot for any event */
+        border-radius: 50%;
+        margin-top: 5px; /* Space between date number and dot */
+        box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+
+    /* Make the entire day cell clickable and show hand cursor */
+    .fc-daygrid-day-frame, .fc-daygrid-day {
+        cursor: pointer !important;
+    }
+
+    /* Hide FullCalendar's default "+X more" link as we're handling clicks on the date itself */
+    .fc-daygrid-more-link {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Popover styling when "more" link is clicked (if applicable) - this is for when a date is clicked */
+    .fc-popover {
+        z-index: 1050 !important; /* Ensure it's above other modals */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background-color: white;
+        min-width: 280px; /* Readable width */
+    }
+    .fc-popover-header {
+        background-color: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 10px 15px;
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #1E293B;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .fc-popover-close {
+        font-size: 1.5em;
+        color: #64748B;
+        opacity: 1;
+        text-decoration: none;
+    }
+    .fc-popover-body {
+        padding: 10px 15px;
+        max-height: 300px; /* Limit popover height for scrollability */
+        overflow-y: auto !important;   /* Enable scrolling for popover body */
+        overflow-x: hidden !important; /* Hide horizontal overflow in popover */
+    }
+    .fc-popover-event {
+        display: block !important; /* Ensure events in popover stack vertically */
+        margin-bottom: 5px;
+        white-space: normal !important; /* Allow wrapping in popover events */
+        word-wrap: break-word !important; /* Force long words to break */
+        overflow-wrap: break-word !important;
+        text-overflow: clip !important; /* No ellipsis in popover */
+        overflow: visible !important; /* Show full event content in popover */
+        font-size: 0.9em !important;
+        padding: 3px 5px !important;
+        line-height: 1.3 !important;
+        background-color: #e0e7fe; /* Lighter background for popover events */
+        color: #1e3c72;
+        border-radius: 4px;
+    }
+    .fc-popover-event:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Adjust day cell layout to accommodate date number and custom dot */
+    .fc-daygrid-day-frame {
+        min-height: 70px !important; /* Keep cells a reasonable size */
+        padding: 5px !important;     /* Adjust padding */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* Align content to start */
+        align-items: center; /* Center horizontally */
+    }
+    .fc-daygrid-day-top {
+        width: 100%; /* Ensure day number takes full width */
+        text-align: center; /* Center the day number */
+        flex-grow: 0; /* Don't allow it to grow */
+        position: relative; /* For dot positioning if needed in other scenarios */
+        z-index: 2; /* Ensure day number is above dot */
+    }
+    .fc-daygrid-day-number {
+        display: inline-block; /* Allows padding/margin */
+        padding: 2px 5px;
+        border-radius: 50%;
+        background-color: transparent; /* Default */
+        color: #1E293B;
+        font-weight: 500;
+    }
+    /* Style for today's date */
+    .fc-day-today .fc-daygrid-day-number {
+        background: #1E40AF;
+        color: white;
+    }
+
+    /* This container holds the dot indicator */
+    .fc-daygrid-day-events {
+        flex-grow: 1; /* Allow it to take up remaining vertical space */
+        display: flex;
+        justify-content: center; /* Center the dot */
+        align-items: flex-end; /* Push dot to the bottom */
+        overflow: hidden !important; /* Hide any accidental overflows from here */
+        position: relative; /* For positioning the dot */
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 991px) {
+      .fc { font-size: 0.9em; }
+      .fc-daygrid-day-frame {
+          min-height: 60px !important;
+      }
+      .has-event-indicator {
+        width: 7px; height: 7px; margin-top: 3px;
+      }
+      .fc-popover { min-width: 200px; }
+      .fc-popover-event { font-size: 0.85em !important; }
+    }
+    @media (max-width: 600px) {
+      .fc { font-size: 0.8em; }
+      .fc-toolbar-title { font-size: 0.9em !important; }
+      .fc-daygrid-day-frame {
+          min-height: 50px !important;
+      }
+      .has-event-indicator {
+        width: 6px; height: 6px; margin-top: 2px;
+      }
+      .fc-popover { min-width: 180px; }
+      .fc-popover-event { font-size: 0.8em !important; }
+    }
+
+    /* Responsive Design for overall layout */
     @media (max-width: 991px) {
         .calendar-content { padding: 1rem 0.5rem; }
-        .calendar-header-section { padding: 1rem 1rem 0.8rem 1rem; }
+        .calendar-header-section { flex-direction: column; gap: 1rem; text-align: center; }
+        .header-actions { width: 100%; justify-content: center; }
         .stats-content, .booking-list-content { padding: 1rem; }
     }
     @media (max-width: 768px) {
@@ -346,37 +502,6 @@
         .booking-list-card { max-height: 500px; }
         .calendar-main-card, .stats-card, .booking-list-card { margin-bottom: 1.2rem; }
     }
-    @media (max-width: 991px) {
-      .fc { font-size: 0.92em; }
-      .fc-event, .fc-event-main {
-        font-size: 0.92em !important;
-        min-height: 22px !important;
-        padding: 1px 4px !important;
-      }
-    }
-    @media (max-width: 600px) {
-      .fc { font-size: 0.85em; }
-      .fc-event, .fc-event-main {
-        font-size: 0.85em !important;
-        min-height: 18px !important;
-        padding: 1px 2px !important;
-      }
-      .fc-toolbar-title { font-size: 1em !important; }
-    }
-    .fc-event, .fc-event-main {
-      display: flex !important;
-      align-items: center !important;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      max-width: 100% !important;
-      min-height: 26px !important;
-      font-size: 1em !important;
-      padding: 2px 8px !important;
-      line-height: 1.2 !important;
-    }
-    .fc-daygrid-day-frame { min-height: 60px !important; padding: 2px 2px 2px 2px !important; }
-    .fc-daygrid-day-events { margin: 0 !important; }
 </style>
 @endsection
 
@@ -385,52 +510,39 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js'></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var bookedDates = @json($bookedDates);
-        let filteredBookedDates = bookedDates;
+    let calendar;
+    let allBookings = @json($bookedDates);
+    let filteredBookings = [...allBookings]; // Keep this to manage list and export
+    let bookingsPerPage = 5;
+    let currentBookingPage = 1;
 
-        // Filter berdasarkan search query
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchQuery = urlParams.get('search');
-        if (searchQuery) {
-            const lowerCaseSearchQuery = searchQuery.toLowerCase();
-            filteredBookedDates = bookedDates.filter(booking => {
-                return (
-                    (booking.userName && booking.userName.toLowerCase().includes(lowerCaseSearchQuery)) ||
-                    (booking.facilityName && booking.facilityName.toLowerCase().includes(lowerCaseSearchQuery)) ||
-                    (booking.bookingStatus && booking.bookingStatus.toLowerCase().includes(lowerCaseSearchQuery))
-                );
-            });
-        }
-        // Sort
-        filteredBookedDates.sort((a, b) => {
-            const dateA = new Date(a.bookingDate + 'T' + a.bookingTime);
-            const dateB = new Date(b.bookingDate + 'T' + b.bookingTime);
-            return dateA - dateB;
-        });
-        // Transform ke event FullCalendar
-        const eventsForCalendar = filteredBookedDates.map(booking => {
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeCalendar();
+        initializeFilters();
+        updateBookingList(); // Keep this for the separate list on the side
+    });
+
+    function initializeCalendar() {
+        const calendarEl = document.getElementById('calendar');
+
+        // Prepare events for FullCalendar. We only need event data for date highlighting.
+        // The 'display: none' in CSS will hide the actual event bars.
+        const eventsForCalendar = allBookings.map(booking => {
             const startTime = booking.bookingDate + 'T' + booking.bookingTime;
             const endTime = new Date(new Date(startTime).getTime() + (booking.bookingHours * 60 * 60 * 1000)).toISOString().slice(0, 19);
-            // Format singkat: jam mulai + singkatan ruangan
-            const jam = booking.bookingTime ? booking.bookingTime.substring(0,5) : '';
-            // Ambil singkatan ruangan (2 kata pertama)
-            let singkatan = booking.facilityName.split(' ').slice(0,2).join(' ');
-            if (singkatan.length > 12) singkatan = singkatan.substring(0,12) + '.';
-            const shortTitle = `${jam} ${singkatan}`;
-            // Tooltip detail
-            const tooltip = `${booking.facilityName} - ${booking.userName}\nTanggal: ${booking.bookingDate}\nJam: ${booking.bookingTime} (${booking.bookingHours} jam)\nStatus: ${booking.bookingStatus}`;
+
             return {
-                title: shortTitle,
+                id: booking.id,
+                title: 'Booking', // Simple title, as it will be hidden by CSS
                 start: startTime,
                 end: endTime,
-                extendedProps: booking,
-                classNames: [`fc-event-${booking.bookingStatus.toLowerCase().replace(/\s/g, '-')}`],
-                description: tooltip
+                extendedProps: booking, // Store full booking data here
+                // FullCalendar will process this as a normal event, but our CSS hides it.
+                // This is how FullCalendar knows which days 'have events' internally.
             };
         });
-        var calendar = new FullCalendar.Calendar(calendarEl, {
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'id',
             events: eventsForCalendar,
@@ -443,171 +555,374 @@
             contentHeight: 'auto',
             eventDisplay: 'block',
             eventTextColor: '#fff',
-            dayMaxEvents: true,
+            dayMaxEvents: true, // Crucial: This enables the "+X more" link mechanism internally
             views: {
                 dayGridMonth: {
-                    titleFormat: { year: 'numeric', month: 'long' }
+                    titleFormat: { year: 'numeric', month: 'long' },
+                    dayMaxEvents: true,
+                    dayMaxEventRows: 0, // CRITICAL: This tells FullCalendar to show 0 events directly, which helps in consistent behavior when we hide events with CSS. It will ensure that the day cells have the minimum necessary structure for our dot.
                 }
             },
             fixedWeekCount: false,
-            eventClick: function(info) {
-                showBookingDetail(info.event);
+
+            // This is the key: when a date is clicked, show all bookings for that day
+            dateClick: function(info) {
+                const clickedDate = info.dateStr; // Format YYYY-MM-DD
+                const bookingsOnThisDay = allBookings.filter(booking => booking.bookingDate === clickedDate);
+
+                if (bookingsOnThisDay.length > 0) {
+                    showAllBookingsForDayInModal(clickedDate, bookingsOnThisDay);
+                } else {
+                    // Show "Tidak ada booking untuk tanggal ini" pop-up
+                    const noBookingModal = new bootstrap.Modal(document.getElementById('noBookingModal'));
+                    document.getElementById('noBookingModalContent').innerHTML = `
+                        <div class="text-center p-4">
+                            <i class="bx bx-info-circle text-info" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">Tidak ada booking untuk tanggal ini.</h5>
+                            <p class="text-muted">Tanggal: ${new Date(clickedDate).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        </div>
+                    `;
+                    noBookingModal.show();
+                }
             },
-            eventMouseEnter: function(info) {
-                // Tooltip custom pakai title bawaan browser
-                info.el.setAttribute('title', info.event.extendedProps.facilityName + ' - ' + info.event.extendedProps.userName + '\nTanggal: ' + info.event.extendedProps.bookingDate + '\nJam: ' + info.event.extendedProps.bookingTime + ' (' + info.event.extendedProps.bookingHours + ' jam)\nStatus: ' + info.event.extendedProps.bookingStatus);
+
+            // Prevent default event click behavior, as we handle clicks on the date itself
+            eventClick: function(info) {
+                info.jsEvent.preventDefault();
+            },
+
+            // Custom content for each day cell
+            dayCellContent: function(arg) {
+                const dateStr = arg.date.toISOString().slice(0, 10);
+                const hasBookings = allBookings.some(booking => booking.bookingDate === dateStr);
+
+                // FullCalendar provides arg.dayNumberText for the day number
+                const dayNumberElement = document.createElement('span');
+                dayNumberElement.classList.add('fc-daygrid-day-number');
+                dayNumberElement.textContent = arg.dayNumberText;
+
+                // Create a container for the day number and potentially the dot
+                const container = document.createElement('div');
+                container.classList.add('fc-daygrid-day-content-wrapper');
+                container.appendChild(dayNumberElement);
+
+                if (hasBookings) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('has-event-indicator');
+                    container.appendChild(dot);
+                }
+
+                // Return the custom DOM node. FullCalendar will handle attaching click listeners to the cell.
+                return { domNodes: [container] };
             }
         });
+
         calendar.render();
-        // Daftar booking list
+    }
+
+    function initializeFilters() {
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                if (this.value.length > 0) {
+                    clearSearchBtn.style.display = 'block';
+                } else {
+                    clearSearchBtn.style.display = 'none';
+                }
+                performSearch();
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    performSearch();
+                }
+            });
+        }
+
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function() {
+                performSearch();
+            });
+        }
+
+        if (clearSearchBtn) {
+            clearSearchBtn.addEventListener('click', clearSearch);
+        }
+    }
+
+    function performSearch() {
+        const searchQuery = document.getElementById('searchInput').value;
+        const statusFilter = document.getElementById('statusFilter').value;
+
+        let filtered = [...allBookings];
+
+        if (searchQuery) {
+            const lowerCaseSearchQuery = searchQuery.toLowerCase();
+            filtered = filtered.filter(booking => {
+                return (
+                    (booking.userName && booking.userName.toLowerCase().includes(lowerCaseSearchQuery)) ||
+                    (booking.facilityName && booking.facilityName.toLowerCase().includes(lowerCaseSearchQuery)) ||
+                    (booking.bookingStatus && booking.bookingStatus.toLowerCase().includes(lowerCaseSearchQuery))
+                );
+            });
+        }
+
+        if (statusFilter) {
+            filtered = filtered.filter(booking => booking.bookingStatus === statusFilter);
+        }
+
+        filtered.sort((a, b) => {
+            const dateA = new Date(a.bookingDate + 'T' + a.bookingTime);
+            const dateB = new Date(b.bookingDate + 'T' + b.bookingTime);
+            return dateA - dateB;
+        });
+
+        filteredBookings = filtered;
+        currentBookingPage = 1;
+
         updateBookingList();
-        // Filter dan search
-        document.getElementById('searchInput').addEventListener('input', function() {
-            performSearch();
-        });
-        document.getElementById('statusFilter').addEventListener('change', function() {
-            performSearch();
-        });
-        document.getElementById('clearSearchBtn').addEventListener('click', function() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('statusFilter').value = '';
-            performSearch();
-        });
-        function performSearch() {
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const statusVal = document.getElementById('statusFilter').value;
-            filteredBookedDates = bookedDates;
-            if (searchVal) {
-                filteredBookedDates = filteredBookedDates.filter(booking => {
-                    return (
-                        (booking.userName && booking.userName.toLowerCase().includes(searchVal)) ||
-                        (booking.facilityName && booking.facilityName.toLowerCase().includes(searchVal)) ||
-                        (booking.bookingStatus && booking.bookingStatus.toLowerCase().includes(searchVal))
-                    );
-                });
-            }
-            if (statusVal) {
-                filteredBookedDates = filteredBookedDates.filter(booking => booking.bookingStatus === statusVal);
-            }
-            // Sort
-            filteredBookedDates.sort((a, b) => {
-                const dateA = new Date(a.bookingDate + 'T' + a.bookingTime);
-                const dateB = new Date(b.bookingDate + 'T' + b.bookingTime);
-                return dateA - dateB;
-            });
-            // Update calendar dan list
-            calendar.removeAllEvents();
-            const events = filteredBookedDates.map(booking => {
-                const startTime = booking.bookingDate + 'T' + booking.bookingTime;
-                const endTime = new Date(new Date(startTime).getTime() + (booking.bookingHours * 60 * 60 * 1000)).toISOString().slice(0, 19);
-                return {
-                    title: `${booking.facilityName} - ${booking.userName}`,
-                    start: startTime,
-                    end: endTime,
-                    extendedProps: booking,
-                    classNames: [`fc-event-${booking.bookingStatus.toLowerCase().replace(/\s/g, '-')}`]
-                };
-            });
-            calendar.addEventSource(events);
-            updateBookingList();
-        }
-        function updateBookingList() {
-            const bookingListContent = document.getElementById('bookingListContent');
-            if (!bookingListContent) return;
-            if (!filteredBookedDates || filteredBookedDates.length === 0) {
-                bookingListContent.innerHTML = `<div class="empty-state"><i class="bx bx-calendar-x"></i><p>Tidak ada pemesanan yang ditemukan.</p></div>`;
-                return;
-            }
-            const bookingItemsHTML = filteredBookedDates.map((booking, index) => {
-                const statusClass = getStatusClass(booking.bookingStatus);
-                const formattedDate = new Date(booking.bookingDate).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'});
-                const formattedTime = new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
-                return `<div class="booking-item" data-status="${booking.bookingStatus}"><div class="booking-item-header"><span class="booking-number">#${index+1}</span><span class="status-badge ${statusClass}">${booking.bookingStatus}</span></div><div class="booking-item-body"><h6 class="facility-name">${booking.facilityName}</h6><p class="user-name">${booking.userName}</p><div class="booking-details"><span class="detail-item"><i class="bx bx-calendar"></i> ${formattedDate}</span><span class="detail-item"><i class="bx bx-time"></i> ${formattedTime} (${booking.bookingHours} Jam)</span></div></div></div>`;
-            }).join('');
-            bookingListContent.innerHTML = `<div class="booking-items">${bookingItemsHTML}</div>`;
-        }
-        function getStatusClass(status) {
-            switch (status) {
-                case 'Disetujui': return 'status-approved';
-                case 'Menunggu Konfirmasi': return 'status-pending';
-                case 'Ditolak': return 'status-rejected';
-                case 'Selesai': return 'status-completed';
-                default: return 'status-default';
-            }
-        }
-        function showBookingDetail(event) {
-            const props = event.extendedProps;
-            const modal = new bootstrap.Modal(document.getElementById('bookingDetailModal'));
-            const formattedDate = new Date(props.bookingDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
-            const formattedTime = new Date('2000-01-01T' + props.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
-            const statusClass = getStatusClass(props.bookingStatus);
-            document.getElementById('bookingDetailContent').innerHTML = `<div class="row"><div class="col-md-6"><h6><i class="bx bx-building"></i> Informasi Fasilitas</h6><p><strong>Nama Fasilitas:</strong> ${props.facilityName}</p><p><strong>Status:</strong> <span class="status-badge ${statusClass}">${props.bookingStatus}</span></p></div><div class="col-md-6"><h6><i class="bx bx-user"></i> Informasi Pengguna</h6><p><strong>Nama Pengguna:</strong> ${props.userName}</p><p><strong>Metode Pembayaran:</strong> ${props.bookingPaymentMethod}</p></div></div><div class="row mt-3"><div class="col-md-6"><h6><i class="bx bx-calendar"></i> Jadwal</h6><p><strong>Tanggal:</strong> ${formattedDate}</p><p><strong>Waktu:</strong> ${formattedTime} (${props.bookingHours} Jam)</p></div><div class="col-md-6"><h6><i class="bx bx-money"></i> Pembayaran</h6><p><strong>Jumlah:</strong> Rp ${props.bookingAmount ? props.bookingAmount.toLocaleString('id-ID') : 'N/A'}</p></div></div>`;
-            modal.show();
-        }
+    }
 
-        function exportCalendar() {
-            // Export data booking yang sedang difilter ke CSV
-            const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-            const rows = filteredBookedDates.map(booking => [
-                new Date(booking.bookingDate).toLocaleDateString('id-ID'),
-                new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
-                booking.facilityName,
-                booking.userName,
-                booking.bookingStatus,
-                booking.bookingHours,
-                booking.bookingAmount || 0
-            ]);
-            const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `calendar_export_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+    function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('statusFilter').value = '';
+        document.getElementById('clearSearchBtn').style.display = 'none';
 
-        function printCalendar() {
-            const printWindow = window.open('', '_blank');
-            // Generate table HTML untuk daftar booking
-            const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-            const rows = filteredBookedDates.map((booking, idx) => [
-                idx + 1,
-                new Date(booking.bookingDate).toLocaleDateString('id-ID'),
-                new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
-                booking.facilityName,
-                booking.userName,
-                booking.bookingStatus,
-                booking.bookingHours,
-                booking.bookingAmount || 0
-            ]);
-            const tableRows = rows.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('');
-            const tableHTML = `
-                <table border="1" cellpadding="4" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
-                    <thead><tr>${headers.map(h => '<th>' + h + '</th>').join('')}</tr></thead>
-                    <tbody>${tableRows}</tbody>
-                </table>
+        filteredBookings = [...allBookings];
+        currentBookingPage = 1;
+        updateBookingList();
+    }
+
+    function updateBookingList() {
+        const bookingListContent = document.getElementById('bookingListContent');
+        const bookingPagination = document.getElementById('bookingPagination');
+        if (!bookingListContent) return;
+
+        if (!filteredBookings || filteredBookings.length === 0) {
+            bookingListContent.innerHTML = `
+                <div class="empty-state">
+                    <i class="bx bx-calendar-x"></i>
+                    <p>Tidak ada pemesanan yang ditemukan.</p>
+                </div>
             `;
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Cetak Kalender</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h2 { text-align: center; margin-bottom: 20px; }
-                        </style>
-                    </head>
-                    <body>
-                        <h2>Data Pemesanan Ruang Meeting</h2>
-                        ${tableHTML}
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
+            if (bookingPagination) bookingPagination.innerHTML = '';
+            return;
         }
-    });
+
+        const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
+        if (currentBookingPage > totalPages) currentBookingPage = 1;
+        const startIdx = (currentBookingPage - 1) * bookingsPerPage;
+        const endIdx = startIdx + bookingsPerPage;
+        const pageBookings = filteredBookings.slice(startIdx, endIdx);
+
+        const bookingItemsHTML = pageBookings.map((booking, index) => {
+            const statusClass = getStatusClass(booking.bookingStatus);
+            const formattedDate = new Date(booking.bookingDate).toLocaleDateString('id-ID', {
+                day: '2-digit', month: 'short', year: 'numeric'
+            });
+            const formattedTime = new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {
+                hour: '2-digit', minute: '2-digit'
+            });
+            return `
+                <div class="booking-item" data-status="${booking.bookingStatus}" data-index="${startIdx + index}">
+                    <div class="booking-item-header">
+                        <span class="booking-number">#${startIdx + index + 1}</span>
+                        <span class="status-badge ${statusClass}">${booking.bookingStatus}</span>
+                    </div>
+                    <div class="booking-item-body">
+                        <h6 class="facility-name">${booking.facilityName}</h6>
+                        <p class="user-name">${booking.userName}</p>
+                        <div class="booking-details">
+                            <span class="detail-item">
+                                <i class="bx bx-calendar"></i>
+                                ${formattedDate}
+                            </span>
+                            <span class="detail-item">
+                                <i class="bx bx-time"></i>
+                                ${formattedTime} (${booking.bookingHours} Jam)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="booking-item-actions">
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewBooking(${startIdx + index})">
+                            <i class="bx bx-show"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        bookingListContent.innerHTML = `
+            <div class="booking-items">
+                ${bookingItemsHTML}
+            </div>
+        `;
+
+        if (bookingPagination) {
+            if (totalPages <= 1) {
+                bookingPagination.innerHTML = '';
+            } else {
+                let pagHTML = '<nav><ul class="pagination pagination-sm">';
+                for (let i = 1; i <= totalPages; i++) {
+                    pagHTML += `<li class="page-item${i === currentBookingPage ? ' active' : ''}">
+                        <button class="page-link" onclick="changeBookingPage(${i})">${i}</button></li>`;
+                }
+                pagHTML += '</ul></nav>';
+                bookingPagination.innerHTML = pagHTML;
+            }
+        }
+    }
+
+    function changeBookingPage(page) {
+        currentBookingPage = page;
+        updateBookingList();
+    }
+
+    function getStatusClass(status) {
+        switch (status) {
+            case 'Disetujui': return 'status-approved';
+            case 'Menunggu Konfirmasi': return 'status-pending';
+            case 'Ditolak': return 'status-rejected';
+            case 'Selesai': return 'status-completed';
+            default: return 'status-default';
+        }
+    }
+
+    // Function to show all bookings for a clicked day in a modal
+    function showAllBookingsForDayInModal(dateStr, bookings) {
+        const modal = new bootstrap.Modal(document.getElementById('bookingDetailModal'));
+        let modalContentHTML = `<h5 class="mb-4">Pemesanan untuk ${new Date(dateStr).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</h5>`;
+
+        if (bookings.length === 0) {
+            modalContentHTML += `<p>Tidak ada pemesanan untuk tanggal ini.</p>`;
+        } else {
+            bookings.forEach(booking => {
+                const statusClass = getStatusClass(booking.bookingStatus);
+                const formattedTime = new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
+
+                modalContentHTML += `
+                    <div class="fc-popover-event mb-3 p-3 border rounded">
+                        <strong>${booking.facilityName}</strong> - ${booking.userName}<br>
+                        <small>
+                            Jam: ${formattedTime} (${booking.bookingHours} Jam) |
+                            Status: <span class="status-badge ${statusClass}">${booking.bookingStatus}</span>
+                        </small>
+                        <p class="mb-0 text-muted">${booking.meetingTitle || 'Tidak ada judul'}</p>
+                    </div>
+                `;
+            });
+        }
+
+        document.getElementById('bookingDetailContent').innerHTML = modalContentHTML;
+        modal.show();
+    }
+
+
+    function exportCalendar() {
+        const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
+        const rows = filteredBookings.map(booking => [
+            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
+            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
+            booking.facilityName,
+            booking.userName,
+            booking.bookingStatus,
+            booking.bookingHours,
+            booking.bookingAmount || 0
+        ]);
+        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `calendar_export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function printCalendar() {
+        const printWindow = window.open('', '_blank');
+        const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
+        const rows = filteredBookings.map((booking, idx) => [
+            idx + 1,
+            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
+            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
+            booking.facilityName,
+            booking.userName,
+            booking.bookingStatus,
+            booking.bookingHours,
+            booking.bookingAmount || 0
+        ]);
+        const tableRows = rows.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('');
+        const tableHTML = `
+            <table border="1" cellpadding="4" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
+                <thead><tr>${headers.map(h => '<th>' + h + '</th>').join('')}</tr></thead>
+                <tbody>${tableRows}</tbody>
+            </table>
+        `;
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Cetak Kalender</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        h2 { text-align: center; margin-bottom: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Data Pemesanan Ruang Meeting</h2>
+                    ${tableHTML}
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    function refreshList() {
+        location.reload();
+    }
+
+    function viewBooking(index) {
+        if (filteredBookings[index]) {
+            const booking = filteredBookings[index];
+
+            const mockEvent = {
+                extendedProps: {
+                    facilityName: booking.facilityName,
+                    userName: booking.userName,
+                    bookingStatus: booking.bookingStatus,
+                    bookingAmount: booking.bookingAmount,
+                    bookingPaymentMethod: booking.bookingPaymentMethod,
+                    bookingHours: booking.bookingHours,
+                    bookingDate: booking.bookingDate,
+                    bookingTime: booking.bookingTime
+                }
+            };
+
+            showBookingDetail(mockEvent);
+        }
+    }
+
+    function toggleSidebarAuto() {
+    const sidebar = document.getElementById('sidebar-col');
+    const calendarCol = document.getElementById('calendar-col');
+    if (sidebar.style.display === 'none') {
+        sidebar.style.display = ''; // Tampilkan sidebar
+        calendarCol.classList.remove('col-lg-12');
+        calendarCol.classList.add('col-lg-8');
+        if (calendar) calendar.updateSize(); // INI PENTING!
+    } else {
+        sidebar.style.display = 'none'; // Sembunyikan sidebar
+        calendarCol.classList.remove('col-lg-8');
+        calendarCol.classList.add('col-lg-12');
+        if (calendar) calendar.updateSize(); // INI PENTING!
+    }
+}
 </script>
 @endsection
