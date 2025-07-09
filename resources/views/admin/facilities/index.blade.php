@@ -154,13 +154,12 @@
                                                     <a href="{{ route('admin.facilities.edit', $facility->id) }}" class="btn-action edit" title="Edit">
                                                         <i class='bx bx-edit'></i>
                                                     </a>
-                                                    <form action="{{ route('admin.facilities.destroy', $facility->id) }}" method="post" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn-action delete" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus fasilitas ini?')">
-                                                            <i class='bx bx-trash'></i>
-                                                        </button>
-                                                    </form>
+                                                    {{-- TOMBOL DELETE BARU --}}
+                                                    <button type="button" class="btn-action delete delete-facility-btn" title="Hapus"
+                                                            data-id="{{ $facility->id }}"
+                                                            data-name="{{ $facility->name }}">
+                                                        <i class='bx bx-trash'></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -174,6 +173,26 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmDeleteFacilityModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteFacilityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteFacilityModalLabel">Konfirmasi Hapus Fasilitas</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus fasilitas "<span id="facilityNameToDelete"></span>" ini? Tindakan ini tidak dapat dibatalkan.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteFacilityBtn">Hapus</button>
             </div>
         </div>
     </div>
@@ -838,6 +857,40 @@
     document.querySelectorAll('.alert-close').forEach(button => {
         button.addEventListener('click', function() {
             this.closest('.custom-alert').style.display = 'none';
+        });
+    });
+
+    // Handle delete button click to open modal
+    document.querySelectorAll('.delete-facility-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const facilityId = this.dataset.id;
+            const facilityName = this.dataset.name;
+            
+            document.getElementById('facilityNameToDelete').textContent = facilityName;
+            $('#confirmDeleteFacilityModal').modal('show');
+            
+            // Set the action for the confirm button in the modal
+            document.getElementById('confirmDeleteFacilityBtn').onclick = function() {
+                // Create a form dynamically and submit it
+                const form = document.createElement('form');
+                form.action = `{{ url('admin/facilities') }}/${facilityId}`;
+                form.method = 'POST'; // Use POST for form submission
+
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = '{{ csrf_token() }}';
+
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE'; // This will make Laravel treat it as DELETE
+
+                form.appendChild(csrfInput);
+                form.appendChild(methodInput);
+                document.body.appendChild(form);
+                form.submit();
+            };
         });
     });
 </script>

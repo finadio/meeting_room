@@ -553,6 +553,7 @@
         overflow-x: auto; /* Izinkan scroll horizontal pada kolom Bootstrap itu sendiri */
         -webkit-overflow-scrolling: touch; /* Untuk smooth scrolling di iOS */
         box-sizing: border-box; /* Memastikan padding termasuk dalam lebar/tinggi */
+        /* Hapus width: 100% !important; jika menyebabkan masalah, karena col-lg-8 sudah mengatur lebar */
     }
 
     .calendar-container {
@@ -643,13 +644,13 @@
         });
 
         calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
+            initialView: 'dayGridMonth', // Tampilan awal bulan
             locale: 'id',
             events: eventsForCalendar,
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,dayGridDay'
+                right: 'dayGridMonth,timeGridWeek,dayGridDay' // Opsi tampilan
             },
             height: 'auto',
             contentHeight: 'auto',
@@ -661,6 +662,18 @@
                     titleFormat: { year: 'numeric', month: 'long' },
                     dayMaxEvents: true,
                     dayMaxEventRows: 0, // CRITICAL: Ini memastikan event block tidak ditampilkan di dalam sel hari
+                },
+                timeGridWeek: { // Konfigurasi untuk tampilan Minggu
+                    titleFormat: { year: 'numeric', month: 'short', day: 'numeric' },
+                    slotMinTime: "08:00:00", // Waktu mulai slot
+                    slotMaxTime: "23:00:00", // Waktu akhir slot
+                    allDaySlot: false, // Sembunyikan slot all-day
+                },
+                dayGridDay: { // Konfigurasi untuk tampilan Hari
+                    titleFormat: { year: 'numeric', month: 'short', day: 'numeric' },
+                    slotMinTime: "08:00:00",
+                    slotMaxTime: "23:00:00",
+                    allDaySlot: false,
                 }
             },
             fixedWeekCount: false,
@@ -711,6 +724,36 @@
         });
 
         calendar.render();
+        // Panggil penyesuaian tampilan awal
+        adjustCalendarView();
+    }
+
+    // Fungsi untuk menyesuaikan tampilan kalender berdasarkan lebar container
+    function adjustCalendarView() {
+        if (!calendar) return; // Pastikan objek kalender sudah ada
+
+        const calendarCol = document.getElementById('calendar-col');
+        if (!calendarCol) return;
+
+        const currentWidth = calendarCol.offsetWidth; // Lebar aktual container kalender
+
+        if (currentWidth < 600) { // Jika lebar sangat sempit (misal di bawah 600px)
+            if (calendar.view.type !== 'dayGridDay') { // Jika belum tampilan Hari
+                calendar.changeView('dayGridDay');
+                console.log('Mengubah tampilan ke Day (lebar: ' + currentWidth + 'px)');
+            }
+        } else if (currentWidth < 900) { // Jika lebar sempit (misal di bawah 900px)
+            if (calendar.view.type !== 'timeGridWeek') { // Jika belum tampilan Minggu
+                calendar.changeView('timeGridWeek');
+                console.log('Mengubah tampilan ke Week (lebar: ' + currentWidth + 'px)');
+            }
+        } else { // Lebar cukup besar
+            if (calendar.view.type !== 'dayGridMonth') { // Jika belum tampilan Bulan
+                calendar.changeView('dayGridMonth');
+                console.log('Mengubah tampilan ke Month (lebar: ' + currentWidth + 'px)');
+            }
+        }
+        calendar.updateSize(); // Selalu update ukuran setelah perubahan view
     }
 
     function initializeFilters() {
@@ -792,6 +835,7 @@
     }
 
     function updateCalendarEvents() {
+        if (!calendar) return; // Pastikan kalender sudah diinisialisasi
         calendar.removeAllEvents();
         const eventsForCalendar = filteredBookings.map(booking => {
             const startTime = booking.bookingDate + 'T' + booking.bookingTime;
@@ -806,7 +850,7 @@
             };
         });
         calendar.addEventSource(eventsForCalendar);
-        // Tidak perlu calendar.render() lagi di sini, karena updateSize akan dipanggil oleh toggleSidebarAuto
+        calendar.updateSize(); // Panggil updateSize setiap event berubah
     }
 
     function updateBookingList() {
@@ -877,8 +921,9 @@
         `;
 
         if (bookingPagination) {
+            const paginationEl = document.getElementById('bookingPagination');
             if (totalPages <= 1) {
-                bookingPagination.innerHTML = '';
+                paginationEl.innerHTML = '';
             } else {
                 let pagHTML = '<nav><ul class="pagination pagination-sm">';
                 for (let i = 1; i <= totalPages; i++) {
@@ -886,7 +931,7 @@
                         <button class="page-link" onclick="changeBookingPage(${i})">${i}</button></li>`;
                 }
                 pagHTML += '</ul></nav>';
-                bookingPagination.innerHTML = pagHTML;
+                paginationEl.innerHTML = pagHTML;
             }
         }
     }
@@ -940,9 +985,37 @@
         modal.show();
     }
 
+    function showAllBookingsForDayInModal(dateStr, bookings) {
+        const modal = new bootstrap.Modal(document.getElementById('bookingDetailModal'));
+        let modalContentHTML = `<h5 class="mb-4">Pemesanan untuk ${new Date(dateStr).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</h5>`;
+
+        if (bookings.length === 0) {
+            modalContentHTML += `<p>Tidak ada pemesanan untuk tanggal ini.</p>`;
+        } else {
+            bookings.forEach(booking => {
+                const statusClass = getStatusClass(booking.bookingStatus);
+                const formattedTime = new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
+
+                modalContentHTML += `
+                    <div class="fc-popover-event mb-3 p-3 border rounded">
+                        <strong>${booking.facilityName}</strong> - ${booking.userName}<br>
+                        <small>
+                            Jam: ${formattedTime} (${booking.bookingHours} Jam) |
+                            Status: <span class="status-badge ${statusClass}">${booking.bookingStatus}</span>
+                        </small>
+                        <p class="mb-0 text-muted">${booking.meetingTitle || 'Tidak ada judul'}</p>
+                    </div>
+                `;
+            });
+        }
+
+        document.getElementById('bookingDetailContent').innerHTML = modalContentHTML;
+        modal.show();
+    }
+
     function exportCalendar() {
         const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-        const rows = allBookings.map(booking => [ // Menggunakan allBookings untuk export semua
+        const rows = allBookings.map(booking => [
             new Date(booking.bookingDate).toLocaleDateString('id-ID'),
             new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
             booking.facilityName,
@@ -958,6 +1031,7 @@
         link.setAttribute('href', url);
         link.setAttribute('download', `calendar_export_${new Date().toISOString().split('T')[0]}.csv`);
         document.body.appendChild(link);
+        link.click();
         document.body.removeChild(link);
     }
 
@@ -976,11 +1050,12 @@
         }
     }
 
+    // Fungsi untuk mengontrol sidebar internal kalender (statistik/daftar booking)
     function toggleSidebarAuto() {
-        const sidebar = document.getElementById('sidebar-col'); // Sidebar yang Anda gunakan di blade ini
+        const sidebar = document.getElementById('sidebar-col');
         const calendarCol = document.getElementById('calendar-col');
 
-        if (sidebar && calendarCol) { // Pastikan elemen ditemukan
+        if (sidebar && calendarCol) {
             if (sidebar.style.display === 'none') {
                 sidebar.style.display = ''; // Tampilkan sidebar
                 calendarCol.classList.remove('col-lg-12'); // Kalender kembali ke 8 kolom
@@ -995,10 +1070,11 @@
             if (calendar) {
                 setTimeout(() => { // Beri sedikit delay agar transisi CSS sidebar selesai
                     calendar.updateSize();
-                }, 300); // Sesuaikan delay dengan durasi transisi CSS sidebar Anda
+                    adjustCalendarView(); // Panggil juga penyesuaian tampilan setelah ukuran berubah
+                }, 300);
             }
         } else {
-            console.warn("toggleSidebarAuto: Elemen sidebar atau calendarCol tidak ditemukan.");
+            console.warn("toggleSidebarAuto: Elemen sidebar-col atau calendar-col tidak ditemukan.");
         }
     }
 
@@ -1007,8 +1083,17 @@
         if (calendar) {
             setTimeout(() => { // Beri sedikit delay untuk transisi CSS sidebar utama
                 calendar.updateSize();
-            }, 350); // Sesuaikan delay ini dengan durasi transisi CSS sidebar utama Anda
+                adjustCalendarView(); // Panggil juga penyesuaian tampilan setelah ukuran berubah
+            }, 350);
         }
     };
+
+    // Panggil adjustCalendarView saat ukuran jendela browser berubah (untuk desktop/tablet)
+    window.addEventListener('resize', function() {
+        if (calendar) {
+            adjustCalendarView(); // Cukup panggil adjustCalendarView, karena dia akan memanggil updateSize jika perlu
+        }
+    });
+
 </script>
 @endsection
