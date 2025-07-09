@@ -12,7 +12,8 @@
 <div class="admin-calendar-wrapper">
     <div class="container-fluid px-4">
         <div class="row g-4">
-            <div class="col-lg-8 col-md-12 mb-4" id="calendar-col"> {{-- Ditambahkan id="calendar-col" --}}
+            <!-- Kalender -->
+            <div class="col-lg-8 col-md-12 mb-4">
                 <div class="calendar-main-card shadow-sm">
                     <div class="calendar-header-section d-flex align-items-center justify-content-between">
                         <div class="header-content d-flex align-items-center gap-3">
@@ -54,7 +55,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-12" id="sidebar-col"> {{-- Ditambahkan id="sidebar-col" --}}
+            <!-- Sidebar Statistik & Daftar Booking -->
+            <div class="col-lg-4 col-md-12">
                 <div class="stats-card mb-4 shadow-sm">
                     <div class="stats-header bg-gradient bg-primary text-white rounded-top p-3">
                         <h5 class="mb-0"><i class="bx bx-bar-chart-alt-2"></i> Statistik Hari Ini</h5>
@@ -126,10 +128,7 @@
         </div>
     </div>
 </div>
-{{-- Dipulihkan dari file asli --}}
-<div class="text-end my-2">
-    <button class="btn btn-secondary btn-sm" id="toggleSidebarBtn" onclick="toggleSidebarAuto()">Tampilkan/Sembunyikan Sidebar</button>
-</div>
+<!-- Modal Detail Booking -->
 <div class="modal fade" id="bookingDetailModal" tabindex="-1" aria-labelledby="bookingDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -822,107 +821,69 @@
     }
 
 
-    function exportCalendar() {
-        const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-        const rows = filteredBookings.map(booking => [
-            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
-            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
-            booking.facilityName,
-            booking.userName,
-            booking.bookingStatus,
-            booking.bookingHours,
-            booking.bookingAmount || 0
-        ]);
-        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `calendar_export_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    function printCalendar() {
-        const printWindow = window.open('', '_blank');
-        const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-        const rows = filteredBookings.map((booking, idx) => [
-            idx + 1,
-            new Date(booking.bookingDate).toLocaleDateString('id-ID'),
-            new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
-            booking.facilityName,
-            booking.userName,
-            booking.bookingStatus,
-            booking.bookingHours,
-            booking.bookingAmount || 0
-        ]);
-        const tableRows = rows.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('');
-        const tableHTML = `
-            <table border="1" cellpadding="4" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
-                <thead><tr>${headers.map(h => '<th>' + h + '</th>').join('')}</tr></thead>
-                <tbody>${tableRows}</tbody>
-            </table>
-        `;
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Cetak Kalender</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        h2 { text-align: center; margin-bottom: 20px; }
-                    </style>
-                </head>
-                <body>
-                    <h2>Data Pemesanan Ruang Meeting</h2>
-                    ${tableHTML}
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-    }
-
-    function refreshList() {
-        location.reload();
-    }
-
-    function viewBooking(index) {
-        if (filteredBookings[index]) {
-            const booking = filteredBookings[index];
-
-            const mockEvent = {
-                extendedProps: {
-                    facilityName: booking.facilityName,
-                    userName: booking.userName,
-                    bookingStatus: booking.bookingStatus,
-                    bookingAmount: booking.bookingAmount,
-                    bookingPaymentMethod: booking.bookingPaymentMethod,
-                    bookingHours: booking.bookingHours,
-                    bookingDate: booking.bookingDate,
-                    bookingTime: booking.bookingTime
-                }
-            };
-
-            showBookingDetail(mockEvent);
+        function exportCalendar() {
+            // Export data booking yang sedang difilter ke CSV
+            const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
+            const rows = filteredBookedDates.map(booking => [
+                new Date(booking.bookingDate).toLocaleDateString('id-ID'),
+                new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
+                booking.facilityName,
+                booking.userName,
+                booking.bookingStatus,
+                booking.bookingHours,
+                booking.bookingAmount || 0
+            ]);
+            const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `calendar_export_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
-    }
 
-    function toggleSidebarAuto() {
-    const sidebar = document.getElementById('sidebar-col');
-    const calendarCol = document.getElementById('calendar-col');
-    if (sidebar.style.display === 'none') {
-        sidebar.style.display = ''; // Tampilkan sidebar
-        calendarCol.classList.remove('col-lg-12');
-        calendarCol.classList.add('col-lg-8');
-        if (calendar) calendar.updateSize(); // INI PENTING!
-    } else {
-        sidebar.style.display = 'none'; // Sembunyikan sidebar
-        calendarCol.classList.remove('col-lg-8');
-        calendarCol.classList.add('col-lg-12');
-        if (calendar) calendar.updateSize(); // INI PENTING!
-    }
-}
+        function printCalendar() {
+            const printWindow = window.open('', '_blank');
+            // Generate table HTML untuk daftar booking
+            const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
+            const rows = filteredBookedDates.map((booking, idx) => [
+                idx + 1,
+                new Date(booking.bookingDate).toLocaleDateString('id-ID'),
+                new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
+                booking.facilityName,
+                booking.userName,
+                booking.bookingStatus,
+                booking.bookingHours,
+                booking.bookingAmount || 0
+            ]);
+            const tableRows = rows.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('');
+            const tableHTML = `
+                <table border="1" cellpadding="4" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
+                    <thead><tr>${headers.map(h => '<th>' + h + '</th>').join('')}</tr></thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+            `;
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Cetak Kalender</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h2 { text-align: center; margin-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>Data Pemesanan Ruang Meeting</h2>
+                        ${tableHTML}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+    });
 </script>
 @endsection

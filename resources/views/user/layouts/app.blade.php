@@ -80,6 +80,11 @@
                     <i class='bx bxs-calendar'></i> Calendar
                 </a>
             </li>
+            <li class="nav-item {{ request()->routeIs('room.status') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('room.status') }}">
+                    <i class='bx bx-door-open'></i> Room Status
+                </a>
+            </li>
             <li class="nav-item {{ request()->routeIs('about.show') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('about.show') }}">
                     <i class='bx bx-info-circle'></i> About

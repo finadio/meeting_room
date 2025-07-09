@@ -76,7 +76,7 @@
 </style>
 
 <footer class="footer" style="background: var(--primary-color); color: #fff;">
-    <div class="container">
+    <div class="container-fluid">
         <div class="footer-content">
             <div class="row">
                 <!-- Company Info -->

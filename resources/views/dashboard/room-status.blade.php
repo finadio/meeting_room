@@ -1,3 +1,8 @@
+@if(!auth()->check() || auth()->user()->user_type != 'admin')
+    @extends('user.layouts.app')
+    @section('content')
+@endif
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -282,126 +287,123 @@
     </style>
 </head>
 <body>
-    <div class="container-fluid"> {{-- Menggunakan container-fluid untuk lebar penuh --}}
-        <div class="status-container">
-            {{-- Header Baru (Logo & Judul Terintegrasi) --}}
-            <div class="status-header">
-                <img src="{{ asset('img/msa.png') }}" alt="Logo BPR MSA">
-                <h1>Status Pemakaian Ruangan</h1>
-            </div>
+    <div class="status-container"> {{-- Menggunakan container-fluid untuk lebar penuh --}}
+        <div class="status-header">
+            <img src="{{ asset('img/msa.png') }}" alt="Logo BPR MSA">
+            <h1>Status Pemakaian Ruangan</h1>
+        </div>
 
-            <div class="legend-section">
-                <h6>Keterangan Warna:</h6>
-                <div class="legend-items">
-                    <div class="legend-item">
-                        <div class="legend-color legend-default"></div>
-                        <span>Belum Mulai</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color legend-success"></div>
-                        <span>Sedang Berlangsung</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color legend-secondary"></div>
-                        <span>Selesai</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color legend-warning"></div>
-                        <span>Extend Waktu</span>
-                    </div>
+        <div class="legend-section">
+            <h6>Keterangan Warna:</h6>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color legend-default"></div>
+                    <span>Belum Mulai</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-success"></div>
+                    <span>Sedang Berlangsung</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-secondary"></div>
+                    <span>Selesai</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-warning"></div>
+                    <span>Extend Waktu</span>
                 </div>
             </div>
+        </div>
 
-            @if(!empty($bookings) && $bookings->count() > 0)
-                @php
-                    // Variabel $bookings sudah dikelompokkan berdasarkan facility_id dari controller
-                    // Jadi, $item dalam closure sort() adalah koleksi booking untuk satu fasilitas.
-                    $sortedFacilities = $bookings->sort(function ($bookingsCollectionForFacility1, $bookingsCollectionForFacility2) {
-                        // Ambil nama fasilitas dari booking pertama di setiap sub-koleksi
-                        $name1 = optional($bookingsCollectionForFacility1->first())->facility->name;
-                        $name2 = optional($bookingsCollectionForFacility2->first())->facility->name;
+        @if(!empty($bookings) && $bookings->count() > 0)
+            @php
+                // Variabel $bookings sudah dikelompokkan berdasarkan facility_id dari controller
+                // Jadi, $item dalam closure sort() adalah koleksi booking untuk satu fasilitas.
+                $sortedFacilities = $bookings->sort(function ($bookingsCollectionForFacility1, $bookingsCollectionForFacility2) {
+                    // Ambil nama fasilitas dari booking pertama di setiap sub-koleksi
+                    $name1 = optional($bookingsCollectionForFacility1->first())->facility->name;
+                    $name2 = optional($bookingsCollectionForFacility2->first())->facility->name;
 
-                        // Urutan prioritas
-                        $order = ['Ruang Meeting Lobby', 'Ruang Meeting Lantai 2'];
-                        $pos1 = array_search($name1, $order);
-                        $pos2 = array_search($name2, $order);
+                    // Urutan prioritas
+                    $order = ['Ruang Meeting Lobby', 'Ruang Meeting Lantai 2'];
+                    $pos1 = array_search($name1, $order);
+                    $pos2 = array_search($name2, $order);
 
-                        if ($pos1 !== false && $pos2 !== false) {
-                            return $pos1 - $pos2;
-                        } elseif ($pos1 !== false) {
-                            return -1; // name1 ada di order, name2 tidak
-                        } elseif ($pos2 !== false) {
-                            return 1; // name2 ada di order, name1 tidak
-                        } else {
-                            return strcmp($name1, $name2); // Urutan alfabetis untuk lainnya
-                        }
-                    });
-                @endphp
+                    if ($pos1 !== false && $pos2 !== false) {
+                        return $pos1 - $pos2;
+                    } elseif ($pos1 !== false) {
+                        return -1; // name1 ada di order, name2 tidak
+                    } elseif ($pos2 !== false) {
+                        return 1; // name2 ada di order, name1 tidak
+                    } else {
+                        return strcmp($name1, $name2); // Urutan alfabetis untuk lainnya
+                    }
+                });
+            @endphp
 
-                <div class="row facility-layout"> {{-- Menggunakan row untuk Bootstrap columns --}}
-                    @foreach($sortedFacilities as $facilityId => $facilityBookings)
-                        <div class="col-lg-6 mb-4"> {{-- Gunakan col-lg-6 untuk 2 kolom di layar besar --}}
-                            <div class="facility-card">
-                                <h5>{{ $facilityBookings->first()->facility->name }}</h5>
-                                <p>Tanggal Booking: {{ optional($facilityBookings->first())->booking_date ? \Carbon\Carbon::parse($facilityBookings->first()->booking_date)->format('d F Y') : '-' }}</p>
-                                
-                                {{-- Wrapper baru untuk tabel agar bisa di-scroll vertikal (kompromi) --}}
-                                <div class="table-wrapper"> 
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Jam Mulai</th>
-                                                <th>Jam Selesai</th>
-                                                <th>Status</th>
-                                                <th>Pemakai</th>
-                                                <th>Judul Meeting</th>
-                                                <th>Keterangan</th> {{-- Kolom keterangan --}}
+            <div class="row facility-layout"> {{-- Menggunakan row untuk Bootstrap columns --}}
+                @foreach($sortedFacilities as $facilityId => $facilityBookings)
+                    <div class="col-lg-6 mb-4"> {{-- Gunakan col-lg-6 untuk 2 kolom di layar besar --}}
+                        <div class="facility-card">
+                            <h5>{{ $facilityBookings->first()->facility->name }}</h5>
+                            <p>Tanggal Booking: {{ optional($facilityBookings->first())->booking_date ? \Carbon\Carbon::parse($facilityBookings->first()->booking_date)->format('d F Y') : '-' }}</p>
+                            
+                            {{-- Wrapper baru untuk tabel agar bisa di-scroll vertikal (kompromi) --}}
+                            <div class="table-wrapper"> 
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Jam Mulai</th>
+                                            <th>Jam Selesai</th>
+                                            <th>Status</th>
+                                            <th>Pemakai</th>
+                                            <th>Judul Meeting</th>
+                                            <th>Keterangan</th> {{-- Kolom keterangan --}}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($facilityBookings as $booking)
+                                            @php
+                                                $currentTime = now()->setTimezone('Asia/Jakarta');
+                                                $startTime = \Carbon\Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_time);
+                                                $endTime = \Carbon\Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_end);
+                                                $status = 'Belum Mulai';
+                                                $rowClass = '';
+
+                                                if ($booking->check_out) {
+                                                    $status = 'Selesai';
+                                                    $rowClass = 'table-secondary';
+                                                } elseif ($currentTime->between($startTime, $endTime) && ($booking->is_checked_in ?? false)) {
+                                                    $status = 'Sedang Berlangsung';
+                                                    $rowClass = 'table-success';
+                                                } elseif ($currentTime->greaterThan($endTime) && !($booking->check_out ?? false)) {
+                                                    $status = 'Extend Waktu';
+                                                    $rowClass = 'table-warning';
+                                                }
+                                            @endphp
+                                            <tr class="{{ $rowClass }}">
+                                                <td>{{ \Carbon\Carbon::parse($booking->booking_time)->format('H:i') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($booking->booking_end)->format('H:i') }}</td>
+                                                <td><span class="{{ ($status == 'Sedang Berlangsung' || $status == 'Extend Waktu') ? 'fw-bold' : '' }}">{{ $status }}</span></td>
+                                                <td>{{ $booking->group_name }}</td>
+                                                <td>{{ $booking->meeting_title }}</td>
+                                                <td>{{ $booking->description ?? '-' }}</td> {{-- Tampilkan keterangan jika ada --}}
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($facilityBookings as $booking)
-                                                @php
-                                                    $currentTime = now()->setTimezone('Asia/Jakarta');
-                                                    $startTime = \Carbon\Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_time);
-                                                    $endTime = \Carbon\Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_end);
-                                                    $status = 'Belum Mulai';
-                                                    $rowClass = '';
-
-                                                    if ($booking->check_out) {
-                                                        $status = 'Selesai';
-                                                        $rowClass = 'table-secondary';
-                                                    } elseif ($currentTime->between($startTime, $endTime) && ($booking->is_checked_in ?? false)) {
-                                                        $status = 'Sedang Berlangsung';
-                                                        $rowClass = 'table-success';
-                                                    } elseif ($currentTime->greaterThan($endTime) && !($booking->check_out ?? false)) {
-                                                        $status = 'Extend Waktu';
-                                                        $rowClass = 'table-warning';
-                                                    }
-                                                @endphp
-                                                <tr class="{{ $rowClass }}">
-                                                    <td>{{ \Carbon\Carbon::parse($booking->booking_time)->format('H:i') }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($booking->booking_end)->format('H:i') }}</td>
-                                                    <td><span class="{{ ($status == 'Sedang Berlangsung' || $status == 'Extend Waktu') ? 'fw-bold' : '' }}">{{ $status }}</span></td>
-                                                    <td>{{ $booking->group_name }}</td>
-                                                    <td>{{ $booking->meeting_title }}</td>
-                                                    <td>{{ $booking->description ?? '-' }}</td> {{-- Tampilkan keterangan jika ada --}}
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <p class="text-center">Tidak ada booking untuk hari ini.</p>
-            @endif
-        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-center">Tidak ada booking untuk hari ini.</p>
+        @endif
+    </div>
 
-        <div class="running-text">
-            <span>#AndaTidakSendiri ==> BPR MSA terdaftar dan diawasi oleh OJK, serta merupakan peserta penjaminan LPS. <== #ImajinasiTakBertepi</span>
-        </div>
+    <div class="running-text">
+        <span>#AndaTidakSendiri ==> BPR MSA terdaftar dan diawasi oleh OJK, serta merupakan peserta penjaminan LPS. <== #ImajinasiTakBertepi</span>
     </div>
 
     <script>
@@ -411,3 +413,9 @@
     </script>
 </body>
 </html>
+@if(!auth()->check() || auth()->user()->user_type != 'admin')
+    <style>
+        .footer { display: none !important; }
+    </style>
+    @endsection
+@endif
