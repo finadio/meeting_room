@@ -1,151 +1,111 @@
-@extends('admin.layouts.admin_dashboard')
-@section('title', 'Manajemen Kalender')
-
+@extends('user.layouts.app')
+@section('title', 'Kalender Pemesanan')
 @section('content')
-<div class="custom-page-header">
-    <div class="header-icon-wrapper">
-        <i class="bx bx-calendar"></i>
-    </div>
-    <h1 class="header-title-main">Manajemen Kalender</h1>
-    <div class="header-underline"></div>
-</div>
-<div class="admin-calendar-wrapper">
-    <div class="container-fluid px-4">
-        <div class="row">
-            <div class="col-lg-8 col-md-12 mb-4">
-                <div class="calendar-main-card">
-                    <div class="calendar-header-section">
-                        <div class="header-content">
-                            <div class="header-icon">
-                                <i class="bx bx-calendar"></i>
-                            </div>
-                            <div class="header-text">
-                                <h3 class="header-title">Manajemen Kalender</h3>
-                                <p class="header-subtitle">Kelola dan pantau semua pemesanan ruang meeting</p>
-                            </div>
-                        </div>
-                        <div class="header-actions">
-                            <button class="btn btn-primary btn-sm" onclick="exportCalendar()">
-                                <i class="bx bx-download"></i> Export
-                            </button>
-                            <button class="btn btn-outline-primary btn-sm" onclick="printCalendar()">
-                                <i class="bx bx-printer"></i> Print
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="calendar-content">
-                        @if(session('success'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="bx bx-check-circle me-2"></i>
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        @endif
-
-                        @if(session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <i class="bx bx-error-circle me-2"></i>
-                                {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        @endif
-
-                        <div class="calendar-container">
-                            <div id='calendar'></div>
-                        </div>
-                    </div>
-                </div>
+<!-- Hero Section -->
+<div class="hero-section mb-4">
+    <div class="container">
+        <div class="hero-content py-4 text-center">
+            <div class="hero-icon mx-auto mb-3">
+                <i class="bx bx-calendar-check"></i>
             </div>
-            
-            <div class="col-lg-4 col-md-12">
-                <div class="stats-card mb-4">
-                    <div class="stats-header">
-                        <h5><i class="bx bx-bar-chart-alt-2"></i> Statistik Hari Ini</h5>
-                    </div>
-                    <div class="stats-content">
-                        <div class="stat-item">
-                            <div class="stat-icon bg-primary">
-                                <i class="bx bx-calendar-check"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-number">{{ $todayBookings ?? 0 }}</span>
-                                <span class="stat-label">Booking Hari Ini</span>
-                            </div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon bg-success">
-                                <i class="bx bx-check-circle"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-number">{{ $approvedBookings ?? 0 }}</span>
-                                <span class="stat-label">Disetujui</span>
-                            </div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon bg-warning">
-                                <i class="bx bx-time"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-number">{{ $pendingBookings ?? 0 }}</span>
-                                <span class="stat-label">Menunggu</span>
-                            </div>
-                        </div>
+            <h1 class="hero-title mb-2">Kalender Pemesanan</h1>
+            <p class="hero-subtitle mb-4">Kelola dan pantau semua pemesanan ruang meeting Anda dengan mudah</p>
+            <div class="row justify-content-center g-3">
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <i class="bx bx-check-circle"></i>
+                        <div class="stat-number">{{ $bookedDates->where('bookingStatus', 'Disetujui')->count() }}</div>
+                        <div class="stat-label">Disetujui</div>
                     </div>
                 </div>
-
-                <div class="booking-list-card">
-                    <div class="booking-list-header">
-                        <h5><i class="bx bx-list-ul"></i> Daftar Pemesanan</h5>
-                        <div class="header-actions">
-                            <button class="btn btn-sm btn-outline-secondary" onclick="refreshList()">
-                                <i class="bx bx-refresh"></i>
-                            </button>
-                        </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <i class="bx bx-time"></i>
+                        <div class="stat-number">{{ $bookedDates->where('bookingStatus', 'Menunggu Konfirmasi')->count() }}</div>
+                        <div class="stat-label">Menunggu</div>
                     </div>
-                    
-                    <div class="search-filter-section">
-                        <div class="search-form"> {{-- Hapus action dan method dari form --}}
-                            <div class="input-group">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Cari pemesanan..." value="{{ request('search') }}">
-                                <button type="button" class="btn btn-primary" onclick="performSearch()"> {{-- Ubah type submit ke button --}}
-                                    <i class="bx bx-search"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="clearSearch()" id="clearSearchBtn" style="display: {{ request('search') ? 'block' : 'none' }};"> {{-- Tampilkan/sembunyikan reset --}}
-                                    <i class="bx bx-x"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="filter-controls mt-3">
-                            <select class="form-select form-select-sm" id="statusFilter">
-                                <option value="">Semua Status</option>
-                                <option value="Disetujui">Disetujui</option>
-                                <option value="Menunggu Konfirmasi">Menunggu Konfirmasi</option>
-                                <option value="Ditolak">Ditolak</option>
-                                <option value="Selesai">Selesai</option>
-                            </select>
-                        </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <i class="bx bx-calendar-x"></i>
+                        <div class="stat-number">{{ $bookedDates->where('bookingStatus', 'Ditolak')->count() }}</div>
+                        <div class="stat-label">Ditolak</div>
                     </div>
-
-                    <div class="booking-list-content" id="bookingListContent">
-                        </div>
-                    <div id="bookingPagination" class="booking-pagination mt-3 d-flex justify-content-center"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<div class="container mb-5">
+    <div class="row g-4">
+        <!-- Calendar Section -->
+        <div class="col-lg-8">
+            <div class="card shadow rounded-4 mb-4">
+                <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="calendar-header-icon">
+                            <i class="bx bx-calendar"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">Kalender Pemesanan</h5>
+                            <small class="text-muted">Lihat jadwal pemesanan Anda dalam format kalender</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-3">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Booking List Section -->
+        <div class="col-lg-4">
+            <div class="card shadow rounded-4 mb-4">
+                <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between rounded-top-4">
+                    <h6 class="mb-0 fw-bold"><i class="bx bx-list-ul"></i> Daftar Pemesanan</h6>
+                    <span class="badge bg-primary bg-opacity-10 text-primary">{{ $bookedDates->count() }} Pemesanan</span>
+                </div>
+                <div class="card-body pb-0">
+                    <div class="mb-3 d-flex gap-2">
+                        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari pemesanan...">
+                        <select class="form-select form-select-sm" id="statusFilter" style="max-width:140px;">
+                            <option value="">Semua Status</option>
+                            <option value="Disetujui">Disetujui</option>
+                            <option value="Menunggu Konfirmasi">Menunggu Konfirmasi</option>
+                            <option value="Ditolak">Ditolak</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                        <select class="form-select form-select-sm" id="orderFilter" style="max-width:120px;">
+                            <option value="desc">Terbaru</option>
+                            <option value="asc">Terlama</option>
+                        </select>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearSearch()" id="clearSearchBtn" style="display:none;" data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus filter pencarian">
+                            <i class="bx bx-x"></i>
+                        </button>
+                    </div>
+                    <div class="booking-list-content" id="bookingListContent"></div>
+                    <div class="d-flex justify-content-center mb-3">
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0" id="bookingPagination"></ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Detail Modal -->
 <div class="modal fade" id="bookingDetailModal" tabindex="-1" aria-labelledby="bookingDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bookingDetailModalLabel">Detail Pemesanan</h5>
+        <div class="modal-content rounded-4">
+            <div class="modal-header rounded-top-4">
+                <h5 class="modal-title" id="bookingDetailModalLabel">
+                    <i class="bx bx-calendar-check"></i> Detail Pemesanan
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="bookingDetailContent">
-                </div>
+            <div class="modal-body" id="bookingDetailContent"></div>
         </div>
     </div>
 </div>
@@ -156,139 +116,134 @@
 <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <style>
-    /* Custom Page Header (di luar wrapper utama untuk efek penuh) */
-    .custom-page-header {
-        background: linear-gradient(90deg, #234080 0%, #2952a3 100%);
-        border-radius: 40px 40px 0 0;
-        margin: 0 auto 2rem auto;
-        padding: 48px 0 32px 0;
-        text-align: center;
-        position: relative;
+    body { background: #f8fafc; }
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        border-radius: 0 0 2rem 2rem;
         box-shadow: 0 8px 32px rgba(44,62,80,0.08);
-        max-width: 98vw;
+        position: relative;
         overflow: hidden;
-        z-index: 10;
     }
-    .header-icon-wrapper {
-        width: 90px;
-        height: 90px;
-        background: linear-gradient(135deg, #1ecbff 0%, #00bfff 100%);
+    .hero-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(255,255,255,0.15);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 18px auto;
-        box-shadow: 0 4px 24px rgba(30,203,255,0.15);
-    }
-    .header-icon-wrapper i {
-        color: #fff;
-        font-size: 2.8rem;
-    }
-    .header-title-main {
-        color: #fff;
-        font-size: 2.3rem;
-        font-weight: 700;
+        font-size: 2.5rem;
         margin-bottom: 0.5rem;
-        letter-spacing: 1px;
-        text-shadow: 0 2px 8px rgba(44,62,80,0.10);
     }
-    .header-underline {
-        width: 80px;
-        height: 6px;
-        background: linear-gradient(90deg, #1ecbff 0%, #00bfff 100%);
-        border-radius: 3px;
-        margin: 0.5rem auto 0 auto;
-    }
-    /* Responsive Header */
-    @media (max-width: 600px) {
-        .custom-page-header { padding: 32px 0 20px 0; }
-        .header-icon-wrapper { width: 60px; height: 60px; }
-        .header-icon-wrapper i { font-size: 1.8rem; }
-        .header-title-main { font-size: 1.8rem; }
-        .header-underline { width: 40px; height: 4px; }
-    }
-
-
-    /* === RAPIH & CLEAN === */
-    .admin-calendar-wrapper {
-        background: #f8fafc;
-        min-height: 100vh;
-        padding: 2rem 0 3rem 0;
-        padding-top: calc(2rem + 40px);
-    }
-    /* Main Card */
-    .calendar-main-card, .stats-card, .booking-list-card {
+    .stat-card {
         background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(30,64,175,0.06);
-        border: 1px solid #e2e8f0;
-        margin-bottom: 2rem;
+        color: #667eea;
+        border-radius: 1rem;
+        box-shadow: 0 2px 12px rgba(102,126,234,0.08);
+        padding: 1.2rem 0.5rem;
+        text-align: center;
+        font-weight: 600;
+        transition: box-shadow 0.2s;
+        min-width: 110px;
     }
-    .calendar-header-section {
-        background: none;
-        color: #1E293B;
-        padding: 1.5rem 2rem 1.2rem 2rem;
-        border-bottom: 1px solid #e2e8f0;
-        border-radius: 16px 16px 0 0;
+    .stat-card i {
+        font-size: 1.5rem;
+        margin-bottom: 0.3rem;
+        display: block;
+    }
+    .stat-number {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #333;
+    }
+    .stat-label {
+        font-size: 0.9rem;
+        color: #888;
+    }
+    .calendar-header-icon {
+        width: 38px;
+        height: 38px;
+        background: #f1f5ff;
+        border-radius: 50%;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
+        justify-content: center;
+        font-size: 1.3rem;
+        color: #667eea;
+        margin-right: 0.5rem;
     }
-    .header-content { display: flex; align-items: center; gap: 1.2rem; }
-    .header-icon { background: #e0f2fe; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    .header-icon i { font-size: 1.5rem; color: #1E40AF; }
-    .header-title { margin: 0; font-size: 1.3rem; font-weight: 700; color: #1E293B; }
-    .header-subtitle { margin: 0; opacity: 0.8; font-size: 0.95rem; color: #64748B; }
-    .header-actions { display: flex; gap: 0.5rem; }
-    .header-actions .btn { font-size: 0.95rem; padding: 0.35rem 1rem; border-radius: 8px; }
-    .calendar-content { padding: 1.5rem 2rem; }
-    .calendar-container { background: #fff; border-radius: 15px; box-shadow: none; padding: 0; }
-    /* Stats Card */
-    .stats-header { background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%); color: white; padding: 1rem 1.5rem; border-radius: 16px 16px 0 0; }
-    .stats-content { padding: 1.2rem 1.5rem; }
-    .stat-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-    .stat-item:last-child { margin-bottom: 0; }
-    .stat-icon.bg-primary { background: #1E40AF !important; }
-    .stat-icon.bg-success { background: #22c55e !important; }
-    .stat-icon.bg-warning { background: #fbbf24 !important; }
-    .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; }
-    .stat-info .stat-number { color: #1E293B; font-size: 1.2rem; font-weight: 700; }
-    .stat-label { color: #64748B; font-size: 0.95rem; }
-    /* Booking List Card */
-    .booking-list-card { height: auto; display: flex; flex-direction: column; }
-    .booking-list-header { background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%); color: white; padding: 1rem 1.5rem; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
-    .booking-list-header h5 { margin: 0; font-size: 1.05rem; font-weight: 600; }
-    .search-filter-section {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #e2e8f0;
+    .card {
+        border: none;
+    }
+    .card-header {
+        background: #fff;
+        border-bottom: 1px solid #f1f5ff;
+    }
+    .booking-list-content {
+        min-height: 200px;
+        max-height: 420px;
+        overflow-y: auto;
+        padding-bottom: 1rem;
+    }
+    .booking-item {
+        background: #fff;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        padding: 1.1rem 1.2rem 0.7rem 1.2rem;
+        margin-bottom: 1.1rem;
+        transition: box-shadow 0.2s;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(102,126,234,0.04);
+    }
+    .booking-item:hover {
+        box-shadow: 0 4px 16px rgba(102,126,234,0.10);
+        border-color: #667eea;
+    }
+    .booking-item-header {
         display: flex;
-        flex-direction: column;
-        gap: 1rem;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.3rem;
     }
-    .search-filter-section .search-form {
-        width: 100%;
+    .booking-number {
+        font-weight: 600;
+        color: #667eea;
+        font-size: 0.95rem;
     }
-    .search-filter-section .filter-controls {
-        width: 100%;
+    .status-badge {
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: 12px;
+        padding: 0.2rem 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-
-    .booking-list-content { background: #fff; border-radius: 0 0 16px 16px; padding: 1.2rem 1.5rem; flex: 1; overflow-y: auto; }
-    .booking-items { display: flex; flex-direction: column; gap: 1rem; }
-    .booking-item { background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; padding: 1rem 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; transition: box-shadow 0.2s; }
-    .booking-item:hover { box-shadow: 0 2px 8px rgba(30,64,175,0.08); }
-    .booking-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem; }
-    .booking-number { font-weight: 600; color: #64748B; font-size: 0.95rem; }
-    .status-badge { font-size: 0.8rem; font-weight: 600; border-radius: 12px; padding: 0.2rem 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .status-approved { background: #bbf7d0; color: #166534; }
-    .status-pending { background: #fef08a; color: #92400e; }
-    .status-rejected { background: #fecaca; color: #991b1b; }
-    .status-completed { background: #e0e7ef; color: #334155; }
-    .facility-name { margin: 0 0 0.1rem 0; font-weight: 600; color: #1E293B; font-size: 1.05rem; }
-    .user-name { margin: 0 0 0.2rem 0; color: #64748B; font-size: 0.95rem; }
-    .booking-details { display: flex; flex-direction: row; gap: 1.2rem; font-size: 0.93rem; color: #475569; }
+    .status-approved { background: #10b981; color: #fff; }
+    .status-pending { background: #f59e0b; color: #fff; }
+    .status-rejected { background: #ef4444; color: #fff; }
+    .status-completed { background: #6b7280; color: #fff; }
+    .facility-name {
+        margin: 0 0 0.1rem 0;
+        font-weight: 600;
+        color: #1E293B;
+        font-size: 1.05rem;
+    }
+    .user-name {
+        margin: 0 0 0.2rem 0;
+        color: #64748B;
+        font-size: 0.95rem;
+    }
+    .booking-details {
+        display: flex;
+        flex-direction: row;
+        gap: 1.2rem;
+        font-size: 0.93rem;
+        color: #475569;
+        margin-bottom: 0.2rem;
+    }
     .detail-item { display: flex; align-items: center; gap: 0.4rem; }
-    .booking-item-actions { margin-top: 0.5rem; display: flex; justify-content: flex-end; }
+    .booking-item-actions { margin-top: 0.2rem; display: flex; justify-content: flex-end; }
     .booking-item-actions .btn { font-size: 0.9rem; padding: 0.2rem 0.7rem; border-radius: 8px; }
     .empty-state { color: #94A3B8; text-align: center; padding: 2.5rem 1rem; }
     .empty-state i { font-size: 2.2rem; margin-bottom: 1rem; }
@@ -296,58 +251,71 @@
     .fc { font-family: 'Poppins', sans-serif; background: #fff; border-radius: 15px; }
     .fc-toolbar { background: #f8fafc; padding: 1rem; border-radius: 10px 10px 0 0; border-bottom: 1px solid #e2e8f0; }
     .fc-toolbar-title { font-weight: 600; color: #1E293B; font-size: 1.25rem; }
-    .fc-button { background: #1E40AF !important; border-color: #1E40AF !important; font-weight: 500; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.9rem; }
-    .fc-button:hover, .fc-button-active { background: #1E3A8A !important; border-color: #1E3A8A !important; }
-    .fc-daygrid-day { border-color: #e2e8f0; }
-    .fc-daygrid-day-number { color: #1E293B; font-weight: 500; }
-    .fc-day-today { background: rgba(30, 64, 175, 0.1) !important; }
-    .fc-day-today .fc-daygrid-day-number { background: #1E40AF; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
-    .fc-event-disetujui { background: #22c55e !important; border: none; }
-    .fc-event-menunggu-konfirmasi { background: #fbbf24 !important; border: none; color: #92400e !important; }
+    .fc-button { background: #667eea !important; border-color: #667eea !important; font-weight: 500; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.9rem; color: #fff !important; }
+    .fc-button:hover, .fc-button-active { background: #5a67d8 !important; border-color: #5a67d8 !important; }
+    .fc-daygrid-day {
+        border: 1px solid #e5e7eb !important;
+        background: #f9fafb;
+    }
+    .fc-daygrid-day.fc-day-today {
+        background: #e0e7ff !important;
+    }
+    .fc-daygrid-day-number,
+    .fc .fc-daygrid-day-top {
+        border: none !important;
+        background: none !important;
+        box-shadow: none !important;
+    }
+    .fc-day-today .fc-daygrid-day-number {
+        background: #667eea;
+        color: white;
+        border-radius: 6px;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .fc-event-disetujui { background: #10b981 !important; border: none; }
+    .fc-event-menunggu-konfirmasi { background: #f59e0b !important; border: none; color: #fff !important; }
     .fc-event-ditolak { background: #ef4444 !important; border: none; }
-    .fc-event-selesai { background: #64748B !important; border: none; }
-    /* Responsive Design */
-    @media (max-width: 991px) {
-        .calendar-content { padding: 1rem 0.5rem; }
-        .calendar-header-section { padding: 1rem 1rem 0.8rem 1rem; }
-        .stats-content, .booking-list-content { padding: 1rem; }
+    .fc-event-selesai { background: #6b7280 !important; border: none; }
+    .fc-event { font-size: 0.92em; border-radius: 8px !important; box-shadow: 0 2px 6px rgba(102,126,234,0.08); }
+    .fc-daygrid-day-number,
+    .fc .fc-daygrid-day-top {
+        border: none !important;
+        background: none !important;
+        box-shadow: none !important;
+    }
+    .fc-daygrid-day-frame {
+        border: none !important;
+        background: none !important;
+        box-shadow: none !important;
+    }
+    .fc-daygrid-day-number {
+        text-decoration: none !important;
+    }
+    .fc-daygrid-day-number:hover,
+    .fc-daygrid-day-number:focus,
+    .fc .fc-daygrid-day-top a {
+        text-decoration: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+    .fc-col-header-cell a {
+        text-decoration: none !important;
+    }
+    .fc-col-header-cell a:hover,
+    .fc-col-header-cell a:focus {
+        text-decoration: none !important;
+        outline: none !important;
+        box-shadow: none !important;
     }
     @media (max-width: 991px) {
-        .row {
-            flex-direction: column !important;
-        }
-        .col-lg-8, .col-lg-4, .col-md-12 {
-            max-width: 100% !important;
-            flex: 0 0 100% !important;
-        }
+        .hero-title { font-size: 2rem; }
+        .stat-card { min-width: 90px; padding: 1rem 0.3rem; }
     }
     @media (max-width: 768px) {
-        .calendar-header-section { flex-direction: column; gap: 1rem; text-align: center; }
-        .header-actions { width: 100%; justify-content: center; }
-        .booking-list-card { max-height: 500px; }
-        .calendar-main-card, .stats-card, .booking-list-card { margin-bottom: 1.2rem; }
-        .calendar-content, .stats-content, .booking-list-content, .search-filter-section {
-            padding: 0.5rem !important;
-        }
-        .calendar-container {
-            width: 100% !important;
-            overflow-x: auto;
-        }
-        #calendar {
-            min-width: 320px;
-        }
-    }
-    @media (max-width: 500px) {
-        .custom-page-header { padding: 18px 0 10px 0; }
-        .header-title-main { font-size: 1.2rem; }
-        .calendar-header-section, .calendar-content { padding: 0.5rem !important; }
-    }
-    @media print {
-        body * { visibility: hidden; }
-        .calendar-main-card, .calendar-main-card * { visibility: visible; }
-        .calendar-main-card { position: absolute; left: 0; top: 0; width: 100vw; background: #fff; box-shadow: none; }
-        .header-actions, .stats-card, .booking-list-card, .custom-page-header, .admin-calendar-wrapper > .container-fluid > .row > .col-lg-4 { display: none !important; }
-        .calendar-content { padding: 0 !important; }
+        .hero-title { font-size: 1.5rem; }
+        .stat-card { min-width: 80px; padding: 0.8rem 0.2rem; }
+        .booking-list-content { max-height: 250px; }
     }
 </style>
 @endsection
@@ -361,51 +329,31 @@
         var calendarEl = document.getElementById('calendar');
         var bookedDates = @json($bookedDates);
 
-        // Filter bookedDates based on search query
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchQuery = urlParams.get('search');
-        let filteredBookedDates = bookedDates;
-
-        if (searchQuery) {
-            const lowerCaseSearchQuery = searchQuery.toLowerCase();
-            filteredBookedDates = bookedDates.filter(booking => {
-                return (
-                    booking.userName.toLowerCase().includes(lowerCaseSearchQuery) ||
-                    booking.facilityName.toLowerCase().includes(lowerCaseSearchQuery) ||
-                    booking.bookingStatus.toLowerCase().includes(lowerCaseSearchQuery)
-                );
-            });
-        }
-        
-        // Sort bookedDates by date and time
-        filteredBookedDates.sort((a, b) => {
-            const dateA = new Date(a.bookingDate + 'T' + a.bookingTime);
-            const dateB = new Date(b.bookingDate + 'T' + b.bookingTime);
-            return dateA - dateB;
+        // Group bookings by date
+        const bookingsByDate = {};
+        bookedDates.forEach(booking => {
+            if (!bookingsByDate[booking.bookingDate]) {
+                bookingsByDate[booking.bookingDate] = [];
+            }
+            bookingsByDate[booking.bookingDate].push(booking);
         });
 
-        // Transform bookedDates into FullCalendar events
-        const eventsForCalendar = filteredBookedDates.map(booking => {
-            const startTime = booking.bookingDate + 'T' + booking.bookingTime;
-            const endTime = new Date(new Date(startTime).getTime() + (booking.bookingHours * 60 * 60 * 1000)).toISOString().slice(0, 19);
-
+        // Generate one event per day with bookings
+        const eventsForCalendar = Object.keys(bookingsByDate).map(date => {
             return {
-                title: `${booking.facilityName} - ${booking.userName}`,
-                start: startTime,
-                end: endTime,
+                title: `${bookingsByDate[date].length} Booking`,
+                start: date,
+                allDay: true,
                 extendedProps: {
-                    facilityName: booking.facilityName,
-                    userName: booking.userName,
-                    bookingStatus: booking.bookingStatus,
-                    bookingAmount: booking.bookingAmount,
-                    bookingPaymentMethod: booking.bookingPaymentMethod,
-                    bookingHours: booking.bookingHours,
-                    bookingDate: booking.bookingDate,
-                    bookingTime: booking.bookingTime
+                    bookings: bookingsByDate[date]
                 },
-                classNames: [`fc-event-${booking.bookingStatus.toLowerCase().replace(/\s/g, '-')}`]
+                classNames: ['fc-booking-dot'],
+                color: '#10b981' // fallback warna
             };
         });
+
+        // DEBUG: log eventsForCalendar
+        console.log('eventsForCalendar:', eventsForCalendar);
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
@@ -418,7 +366,7 @@
             },
             height: 'auto',
             contentHeight: 'auto',
-            eventDisplay: 'block',
+            eventDisplay: 'auto',
             eventTextColor: '#fff',
             dayMaxEvents: true,
             views: {
@@ -426,65 +374,144 @@
                     titleFormat: { year: 'numeric', month: 'long' }
                 }
             },
-            eventClick: function(info) {
-                showBookingDetail(info.event);
+            eventContent: function(arg) {
+                if (arg.event.extendedProps.bookings && arg.event.extendedProps.bookings.length > 0) {
+                    // Tentukan warna bulatan berdasarkan tanggal
+                    const today = new Date();
+                    today.setHours(0,0,0,0);
+                    const eventDate = new Date(arg.event.start);
+                    eventDate.setHours(0,0,0,0);
+                    let bgColor = '#2563eb'; // biru polos
+                    if (eventDate < today) {
+                        bgColor = '#6b7280'; // abu-abu gelap
+                    }
+                    // Bulatan dengan warna dinamis
+                    return { html: `<div class='fc-dot-circle' style='background:${bgColor}'>${arg.event.extendedProps.bookings.length}</div>` };
+                } else {
+                    return false;
+                }
             },
-            dateClick: function(info) {
-                // Handle date click if needed
+            eventClick: function(info) {
+                // Show modal with list of bookings for that day
+                const bookings = info.event.extendedProps.bookings;
+                if (!bookings || bookings.length === 0) return;
+                let html = `<h6 class='mb-3'>Daftar Booking (${bookings.length})</h6>`;
+                html += '<ul class="list-group">';
+                bookings.forEach((b, idx) => {
+                    html += `<li class='list-group-item d-flex justify-content-between align-items-center'>
+                        <span><b>${b.facilityName}</b> <small class='text-muted'>(${b.bookingTime} - ${b.bookingHours} jam)</small></span>
+                        <span class='badge ${getStatusClass(b.bookingStatus)}'>${b.bookingStatus}</span>
+                    </li>`;
+                });
+                html += '</ul>';
+                document.getElementById('bookingDetailContent').innerHTML = html;
+                const modal = new bootstrap.Modal(document.getElementById('bookingDetailModal'));
+                modal.show();
             }
         });
 
         calendar.render();
 
+        // Initialize booking list
+        updateBookingList();
+
         // Status filter functionality
         const statusFilter = document.getElementById('statusFilter');
         statusFilter.addEventListener('change', function() {
-            const selectedStatus = this.value;
-            const bookingItems = document.querySelectorAll('.booking-item');
-            
-            bookingItems.forEach(item => {
-                const itemStatus = item.getAttribute('data-status');
-                if (!selectedStatus || itemStatus === selectedStatus) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+            performSearch();
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function() {
+            performSearch();
         });
     });
+
+    // Global variables
+    let allBookings = @json($bookedDates);
+    let filteredBookings = [...allBookings];
+    let bookingsPerPage = 5;
+    let currentBookingPage = 1;
 
     // Utility functions
     function showBookingDetail(event) {
         const props = event.extendedProps;
         const modal = new bootstrap.Modal(document.getElementById('bookingDetailModal'));
         
+        const statusClass = getStatusClass(props.bookingStatus);
+        const formattedDate = new Date(props.bookingDate).toLocaleDateString('id-ID', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        const formattedTime = new Date('2000-01-01T' + props.bookingTime).toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
         document.getElementById('bookingDetailContent').innerHTML = `
             <div class="row">
                 <div class="col-md-6">
-                    <h6>Informasi Fasilitas</h6>
+                    <div class="detail-section">
+                        <h6 class="detail-title">
+                            <i class="bx bx-building"></i> Informasi Fasilitas
+                        </h6>
+                        <div class="detail-content">
                     <p><strong>Nama Fasilitas:</strong> ${props.facilityName}</p>
-                    <p><strong>Status:</strong> <span class="badge bg-primary">${props.bookingStatus}</span></p>
+                            <p><strong>Status:</strong> <span class="badge ${statusClass}">${props.bookingStatus}</span></p>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6">
-                    <h6>Informasi Pengguna</h6>
+                    <div class="detail-section">
+                        <h6 class="detail-title">
+                            <i class="bx bx-user"></i> Informasi Pengguna
+                        </h6>
+                        <div class="detail-content">
                     <p><strong>Nama Pengguna:</strong> ${props.userName}</p>
                     <p><strong>Metode Pembayaran:</strong> ${props.bookingPaymentMethod}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-md-6">
-                    <h6>Jadwal</h6>
-                    <p><strong>Tanggal:</strong> ${new Date(props.bookingDate).toLocaleDateString('id-ID')}</p>
-                    <p><strong>Waktu:</strong> ${props.bookingTime} (${props.bookingHours} Jam)</p>
+                    <div class="detail-section">
+                        <h6 class="detail-title">
+                            <i class="bx bx-calendar"></i> Jadwal
+                        </h6>
+                        <div class="detail-content">
+                            <p><strong>Tanggal:</strong> ${formattedDate}</p>
+                            <p><strong>Waktu:</strong> ${formattedTime} (${props.bookingHours} Jam)</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6">
-                    <h6>Pembayaran</h6>
+                    <div class="detail-section">
+                        <h6 class="detail-title">
+                            <i class="bx bx-credit-card"></i> Pembayaran
+                        </h6>
+                        <div class="detail-content">
                     <p><strong>Jumlah:</strong> Rp ${props.bookingAmount?.toLocaleString() || 'N/A'}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
         
         modal.show();
+    }
+
+    function getStatusClass(status) {
+        switch(status) {
+            case 'Disetujui': return 'bg-success';
+            case 'Menunggu Konfirmasi': return 'bg-warning';
+            case 'Ditolak': return 'bg-danger';
+            case 'Selesai': return 'bg-secondary';
+            default: return 'bg-primary';
+        }
     }
 
     function exportCalendar() {
@@ -517,33 +544,11 @@
         window.print();
     }
 
-    function refreshList() {
-        // Implement refresh functionality
-        location.reload();
-    }
-
-    function viewBooking(index) {
-        // Implement view booking functionality
-        const bookingItems = document.querySelectorAll('.booking-item');
-        if (bookingItems[index]) {
-            // You can implement a modal or redirect to booking detail page
-            alert('Fitur detail booking akan segera tersedia!');
-        }
-    }
-
-    let bookingsPerPage = 5;
-    let currentBookingPage = 1;
-
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeCalendar();
-        initializeFilters();
-        updateBookingList(); // PASTIKAN SELALU DIPANGGIL SAAT LOAD
-        console.log('Data booking:', filteredBookings);
-    });
-
     function performSearch() {
         const searchQuery = document.getElementById('searchInput').value;
         const statusFilter = document.getElementById('statusFilter').value;
+        const orderFilter = document.getElementById('orderFilter').value;
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
         
         let filtered = [...allBookings];
 
@@ -568,26 +573,30 @@
         filtered.sort((a, b) => {
             const dateA = new Date(a.bookingDate + 'T' + a.bookingTime);
             const dateB = new Date(b.bookingDate + 'T' + b.bookingTime);
-            return dateA - dateB;
+            return orderFilter === 'asc' ? dateA - dateB : dateB - dateA;
         });
 
         filteredBookings = filtered;
-        currentBookingPage = 1; // Reset ke halaman 1 setiap filter/search
-        updateCalendar();
+        currentBookingPage = 1;
         updateBookingList();
-        console.log('Data booking setelah filter:', filteredBookings);
+        
+        // Show/hide clear search button
+        if (searchQuery || statusFilter) {
+            clearSearchBtn.style.display = 'inline-block';
+        } else {
+            clearSearchBtn.style.display = 'none';
+        }
     }
 
     function clearSearch() {
         document.getElementById('searchInput').value = '';
         document.getElementById('statusFilter').value = '';
+        document.getElementById('orderFilter').value = 'desc'; // Reset order filter
         document.getElementById('clearSearchBtn').style.display = 'none';
         
         filteredBookings = [...allBookings];
         currentBookingPage = 1;
-        updateCalendar();
         updateBookingList();
-        console.log('Data booking setelah clear:', filteredBookings);
     }
 
     function updateBookingList() {
@@ -600,6 +609,7 @@
                 <div class="empty-state">
                     <i class="bx bx-calendar-x"></i>
                     <p>Tidak ada pemesanan yang ditemukan.</p>
+                    <small class="text-muted">Coba ubah filter atau kata kunci pencarian Anda.</small>
                 </div>
             `;
             if (bookingPagination) bookingPagination.innerHTML = '';
@@ -641,8 +651,8 @@
                         </div>
                     </div>
                     <div class="booking-item-actions">
-                        <button class="btn btn-sm btn-outline-primary" onclick="viewBooking(${startIdx + index})">
-                            <i class="bx bx-show"></i>
+                        <button class="btn btn-sm" onclick="viewBooking(${startIdx + index})" data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat detail pemesanan">
+                            <i class="bx bx-show"></i> Detail
                         </button>
                     </div>
                 </div>
@@ -655,26 +665,229 @@
             </div>
         `;
 
-        // PAGINATION BUTTONS
+        // Pagination
         if (bookingPagination) {
             if (totalPages <= 1) {
                 bookingPagination.innerHTML = '';
             } else {
-                let pagHTML = '<nav><ul class="pagination pagination-sm">';
+                let pagHTML = '';
+                pagHTML += `<li class="page-item${currentBookingPage === 1 ? ' disabled' : ''}"><button class="page-link" onclick="changeBookingPage(${currentBookingPage - 1})">&laquo;</button></li>`;
                 for (let i = 1; i <= totalPages; i++) {
-                    pagHTML += `<li class="page-item${i === currentBookingPage ? ' active' : ''}">
-                        <button class="page-link" onclick="changeBookingPage(${i})">${i}</button></li>`;
+                    pagHTML += `<li class="page-item${i === currentBookingPage ? ' active' : ''}"><button class="page-link" onclick="changeBookingPage(${i})">${i}</button></li>`;
                 }
-                pagHTML += '</ul></nav>';
+                pagHTML += `<li class="page-item${currentBookingPage === totalPages ? ' disabled' : ''}"><button class="page-link" onclick="changeBookingPage(${currentBookingPage + 1})">&raquo;</button></li>`;
                 bookingPagination.innerHTML = pagHTML;
             }
         }
     }
 
-    // Fungsi untuk ganti halaman booking
     function changeBookingPage(page) {
+        const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
+        if (page < 1 || page > totalPages) return;
         currentBookingPage = page;
         updateBookingList();
     }
+
+    function viewBooking(index) {
+        const booking = filteredBookings[index];
+        if (booking) {
+            // Create a mock event object for the modal
+            const mockEvent = {
+                extendedProps: booking
+            };
+            showBookingDetail(mockEvent);
+        }
+    }
+
+    // === ADDITIONAL ENHANCEMENTS ===
+    
+    // Add loading state to search
+    function showLoadingState() {
+        const bookingListContent = document.getElementById('bookingListContent');
+        if (bookingListContent) {
+            bookingListContent.innerHTML = `
+                <div class="empty-state">
+                    <div class="loading-spinner"></div>
+                    <p>Mencari pemesanan...</p>
+                </div>
+            `;
+        }
+    }
+
+    // Debounce search function for better performance
+    let searchTimeout;
+    function debouncedSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            performSearch();
+        }, 300);
+    }
+
+    // Enhanced search with loading state
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                showLoadingState();
+                debouncedSearch();
+            });
+        }
+
+        // Add smooth scrolling to booking list
+        const bookingListContent = document.getElementById('bookingListContent');
+        if (bookingListContent) {
+            bookingListContent.style.scrollBehavior = 'smooth';
+        }
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('bookingDetailModal'));
+                if (modal) {
+                    modal.hide();
+                }
+            }
+        });
+
+        // Add tooltips for better UX
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Initialize tooltips after dynamic content is loaded
+        setTimeout(() => {
+            const newTooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            newTooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }, 1000);
+
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', function() {
+                currentBookingPage++;
+                updateBookingList();
+            });
+        }
+    });
+
+    // Enhanced export function with better formatting
+    function exportCalendar() {
+        const calendarApi = FullCalendar.getCalendar ? FullCalendar.getCalendar('calendar') : null;
+        let events = [];
+        
+        if (calendarApi && calendarApi.getEvents) {
+            events = calendarApi.getEvents();
+        } else if (window.calendar && window.calendar.getEvents) {
+            events = window.calendar.getEvents();
+        } else if (typeof eventsForCalendar !== 'undefined') {
+            events = eventsForCalendar;
+        }
+
+        let csv = 'Fasilitas,Pengguna,Status,Tanggal,Waktu,Durasi,Jumlah Pembayaran,Metode Pembayaran\n';
+        (events.length ? events : eventsForCalendar).forEach(ev => {
+            let props = ev.extendedProps || ev;
+            const formattedDate = new Date(props.bookingDate).toLocaleDateString('id-ID');
+            const formattedTime = new Date('2000-01-01T' + props.bookingTime).toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            csv += `"${props.facilityName}","${props.userName}","${props.bookingStatus}","${formattedDate}","${formattedTime}","${props.bookingHours} jam","Rp ${props.bookingAmount?.toLocaleString() || 'N/A'}","${props.bookingPaymentMethod}"\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `pemesanan-kalender-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success notification
+        showNotification('Data kalender berhasil di-export!', 'success');
+    }
+
+    // Add notification function
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+
+    // Enhanced print function
+    function printCalendar() {
+        showNotification('Mempersiapkan kalender untuk print...', 'info');
+        setTimeout(() => {
+            window.print();
+        }, 500);
+    }
+
+    // Tambahkan style bulatan dot
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .fc-booking-dot {
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+        .fc-booking-dot .fc-dot-circle {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            margin: 0 auto;
+            margin-top: 8px;
+            box-shadow: 0 2px 6px rgba(37,99,235,0.15);
+            cursor: pointer;
+            border: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: #fff;
+        }
+        /* Reset background, border, dan warna elemen default FullCalendar pada event bulatan, tanpa display:none */
+        .fc-booking-dot .fc-event-main,
+        .fc-booking-dot .fc-event-main-frame,
+        .fc-booking-dot .fc-event-title,
+        .fc-booking-dot .fc-event-title-container,
+        .fc-booking-dot .fc-event-time,
+        .fc-booking-dot .fc-event-dot,
+        .fc-booking-dot .fc-event-bg,
+        .fc-booking-dot .fc-event-resizer,
+        .fc-booking-dot .fc-event-draggable {
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            min-width: 0 !important;
+            min-height: 0 !important;
+            height: auto !important;
+            border-radius: 0 !important;
+        }
+    `;
+    document.head.appendChild(style);
 </script>
 @endsection

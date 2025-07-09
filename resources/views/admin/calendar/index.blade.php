@@ -121,6 +121,13 @@
                                 <option value="Selesai">Selesai</option>
                             </select>
                         </div>
+                        <!-- Tambahkan dropdown urutan -->
+                        <div class="filter-controls mt-2">
+                            <select class="form-select form-select-sm" id="sortOrder">
+                                <option value="desc">Terbaru</option>
+                                <option value="asc">Terlama</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="booking-list-content p-3" id="bookingListContent"></div>
                 </div>
@@ -511,36 +518,29 @@
 <script>
     let calendar;
     let allBookings = @json($bookedDates);
-    let filteredBookings = [...allBookings]; // Keep this to manage list and export
+    let filteredBookings = [...allBookings]; // Untuk list dan export
     let bookingsPerPage = 5;
     let currentBookingPage = 1;
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeCalendar();
         initializeFilters();
-        updateBookingList(); // Keep this for the separate list on the side
+        performSearch(); // Pastikan filter & sort langsung aktif
     });
 
     function initializeCalendar() {
         const calendarEl = document.getElementById('calendar');
-
-        // Prepare events for FullCalendar. We only need event data for date highlighting.
-        // The 'display: none' in CSS will hide the actual event bars.
         const eventsForCalendar = allBookings.map(booking => {
             const startTime = booking.bookingDate + 'T' + booking.bookingTime;
             const endTime = new Date(new Date(startTime).getTime() + (booking.bookingHours * 60 * 60 * 1000)).toISOString().slice(0, 19);
-
             return {
                 id: booking.id,
-                title: 'Booking', // Simple title, as it will be hidden by CSS
+                title: 'Booking',
                 start: startTime,
                 end: endTime,
-                extendedProps: booking, // Store full booking data here
-                // FullCalendar will process this as a normal event, but our CSS hides it.
-                // This is how FullCalendar knows which days 'have events' internally.
+                extendedProps: booking,
             };
         });
-
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'id',
@@ -554,25 +554,21 @@
             contentHeight: 'auto',
             eventDisplay: 'block',
             eventTextColor: '#fff',
-            dayMaxEvents: true, // Crucial: This enables the "+X more" link mechanism internally
+            dayMaxEvents: true,
             views: {
                 dayGridMonth: {
                     titleFormat: { year: 'numeric', month: 'long' },
                     dayMaxEvents: true,
-                    dayMaxEventRows: 0, // CRITICAL: This tells FullCalendar to show 0 events directly, which helps in consistent behavior when we hide events with CSS. It will ensure that the day cells have the minimum necessary structure for our dot.
+                    dayMaxEventRows: 0,
                 }
             },
             fixedWeekCount: false,
-
-            // This is the key: when a date is clicked, show all bookings for that day
             dateClick: function(info) {
-                const clickedDate = info.dateStr; // Format YYYY-MM-DD
+                const clickedDate = info.dateStr;
                 const bookingsOnThisDay = allBookings.filter(booking => booking.bookingDate === clickedDate);
-
                 if (bookingsOnThisDay.length > 0) {
                     showAllBookingsForDayInModal(clickedDate, bookingsOnThisDay);
                 } else {
-                    // Show "Tidak ada booking untuk tanggal ini" pop-up
                     const noBookingModal = new bootstrap.Modal(document.getElementById('noBookingModal'));
                     document.getElementById('noBookingModalContent').innerHTML = `
                         <div class="text-center p-4">
@@ -584,46 +580,34 @@
                     noBookingModal.show();
                 }
             },
-
-            // Prevent default event click behavior, as we handle clicks on the date itself
             eventClick: function(info) {
                 info.jsEvent.preventDefault();
             },
-
-            // Custom content for each day cell
             dayCellContent: function(arg) {
                 const dateStr = arg.date.toISOString().slice(0, 10);
                 const hasBookings = allBookings.some(booking => booking.bookingDate === dateStr);
-
-                // FullCalendar provides arg.dayNumberText for the day number
                 const dayNumberElement = document.createElement('span');
                 dayNumberElement.classList.add('fc-daygrid-day-number');
                 dayNumberElement.textContent = arg.dayNumberText;
-
-                // Create a container for the day number and potentially the dot
                 const container = document.createElement('div');
                 container.classList.add('fc-daygrid-day-content-wrapper');
                 container.appendChild(dayNumberElement);
-
                 if (hasBookings) {
                     const dot = document.createElement('div');
                     dot.classList.add('has-event-indicator');
                     container.appendChild(dot);
                 }
-
-                // Return the custom DOM node. FullCalendar will handle attaching click listeners to the cell.
                 return { domNodes: [container] };
             }
         });
-
         calendar.render();
     }
 
     function initializeFilters() {
         const searchInput = document.getElementById('searchInput');
         const statusFilter = document.getElementById('statusFilter');
+        const sortOrder = document.getElementById('sortOrder');
         const clearSearchBtn = document.getElementById('clearSearchBtn');
-
         if (searchInput) {
             searchInput.addEventListener('input', function() {
                 if (this.value.length > 0) {
@@ -633,7 +617,6 @@
                 }
                 performSearch();
             });
-
             searchInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -641,48 +624,59 @@
                 }
             });
         }
-
         if (statusFilter) {
             statusFilter.addEventListener('change', function() {
                 performSearch();
             });
         }
-
+        if (sortOrder) {
+            sortOrder.addEventListener('change', function() {
+                performSearch();
+            });
+        }
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', clearSearch);
         }
     }
 
     function performSearch() {
-        const searchQuery = document.getElementById('searchInput').value;
-        const statusFilter = document.getElementById('statusFilter').value;
-
+        const searchVal = document.getElementById('searchInput').value.toLowerCase();
+        const statusVal = document.getElementById('statusFilter').value;
+        const sortOrder = document.getElementById('sortOrder').value;
         let filtered = [...allBookings];
-
-        if (searchQuery) {
-            const lowerCaseSearchQuery = searchQuery.toLowerCase();
+        if (searchVal) {
             filtered = filtered.filter(booking => {
                 return (
-                    (booking.userName && booking.userName.toLowerCase().includes(lowerCaseSearchQuery)) ||
-                    (booking.facilityName && booking.facilityName.toLowerCase().includes(lowerCaseSearchQuery)) ||
-                    (booking.bookingStatus && booking.bookingStatus.toLowerCase().includes(lowerCaseSearchQuery))
+                    (booking.userName && booking.userName.toLowerCase().includes(searchVal)) ||
+                    (booking.facilityName && booking.facilityName.toLowerCase().includes(searchVal)) ||
+                    (booking.bookingStatus && booking.bookingStatus.toLowerCase().includes(searchVal))
                 );
             });
         }
-
-        if (statusFilter) {
-            filtered = filtered.filter(booking => booking.bookingStatus === statusFilter);
+        if (statusVal) {
+            filtered = filtered.filter(booking => booking.bookingStatus === statusVal);
         }
-
         filtered.sort((a, b) => {
             const dateA = new Date(a.bookingDate + 'T' + a.bookingTime);
             const dateB = new Date(b.bookingDate + 'T' + b.bookingTime);
-            return dateA - dateB;
+            return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
         });
-
         filteredBookings = filtered;
         currentBookingPage = 1;
-
+        // Update calendar event source
+        calendar.removeAllEvents();
+        const events = filteredBookings.map(booking => {
+            const startTime = booking.bookingDate + 'T' + booking.bookingTime;
+            const endTime = new Date(new Date(startTime).getTime() + (booking.bookingHours * 60 * 60 * 1000)).toISOString().slice(0, 19);
+            return {
+                title: `${booking.facilityName} - ${booking.userName}`,
+                start: startTime,
+                end: endTime,
+                extendedProps: booking,
+                classNames: [`fc-event-${booking.bookingStatus.toLowerCase().replace(/\s/g, '-')}`]
+            };
+        });
+        calendar.addEventSource(events);
         updateBookingList();
     }
 
@@ -690,17 +684,16 @@
         document.getElementById('searchInput').value = '';
         document.getElementById('statusFilter').value = '';
         document.getElementById('clearSearchBtn').style.display = 'none';
-
+        if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = 'desc';
         filteredBookings = [...allBookings];
         currentBookingPage = 1;
-        updateBookingList();
+        performSearch();
     }
 
     function updateBookingList() {
         const bookingListContent = document.getElementById('bookingListContent');
         const bookingPagination = document.getElementById('bookingPagination');
         if (!bookingListContent) return;
-
         if (!filteredBookings || filteredBookings.length === 0) {
             bookingListContent.innerHTML = `
                 <div class="empty-state">
@@ -711,13 +704,11 @@
             if (bookingPagination) bookingPagination.innerHTML = '';
             return;
         }
-
         const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
         if (currentBookingPage > totalPages) currentBookingPage = 1;
         const startIdx = (currentBookingPage - 1) * bookingsPerPage;
         const endIdx = startIdx + bookingsPerPage;
         const pageBookings = filteredBookings.slice(startIdx, endIdx);
-
         const bookingItemsHTML = pageBookings.map((booking, index) => {
             const statusClass = getStatusClass(booking.bookingStatus);
             const formattedDate = new Date(booking.bookingDate).toLocaleDateString('id-ID', {
@@ -754,21 +745,18 @@
                 </div>
             `;
         }).join('');
-
         bookingListContent.innerHTML = `
             <div class="booking-items">
                 ${bookingItemsHTML}
             </div>
         `;
-
         if (bookingPagination) {
             if (totalPages <= 1) {
                 bookingPagination.innerHTML = '';
             } else {
                 let pagHTML = '<nav><ul class="pagination pagination-sm">';
                 for (let i = 1; i <= totalPages; i++) {
-                    pagHTML += `<li class="page-item${i === currentBookingPage ? ' active' : ''}">
-                        <button class="page-link" onclick="changeBookingPage(${i})">${i}</button></li>`;
+                    pagHTML += `<li class="page-item${i === currentBookingPage ? ' active' : ''}"><button class="page-link" onclick="changeBookingPage(${i})">${i}</button></li>`;
                 }
                 pagHTML += '</ul></nav>';
                 bookingPagination.innerHTML = pagHTML;
@@ -824,7 +812,7 @@
         function exportCalendar() {
             // Export data booking yang sedang difilter ke CSV
             const headers = ['Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-            const rows = filteredBookedDates.map(booking => [
+            const rows = filteredBookings.map(booking => [
                 new Date(booking.bookingDate).toLocaleDateString('id-ID'),
                 new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
                 booking.facilityName,
@@ -849,7 +837,7 @@
             const printWindow = window.open('', '_blank');
             // Generate table HTML untuk daftar booking
             const headers = ['No', 'Tanggal', 'Waktu', 'Fasilitas', 'Pengguna', 'Status', 'Durasi (Jam)', 'Jumlah'];
-            const rows = filteredBookedDates.map((booking, idx) => [
+            const rows = filteredBookings.map((booking, idx) => [
                 idx + 1,
                 new Date(booking.bookingDate).toLocaleDateString('id-ID'),
                 new Date('2000-01-01T' + booking.bookingTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}),
