@@ -421,6 +421,12 @@
             performSearch();
         });
 
+        // Order filter functionality
+        const orderFilter = document.getElementById('orderFilter');
+        orderFilter.addEventListener('change', function() {
+            performSearch();
+        });
+
         // Search functionality
         const searchInput = document.getElementById('searchInput');
         searchInput.addEventListener('input', function() {
