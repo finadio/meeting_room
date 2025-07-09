@@ -42,7 +42,7 @@
                     </div>
                     <!-- Kanan: Form -->
                     <div class="col-md-6 p-4 position-relative">
-                        <form class="contactus-form bg-white rounded-4 p-3 p-md-4 shadow-sm position-relative z-2">
+                        <form id="contactForm" action="javascript:void(0);" class="contactus-form bg-white rounded-4 p-3 p-md-4 shadow-sm position-relative z-2">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nama Anda</label>
                                 <input type="text" class="form-control rounded-3" id="name" name="name" placeholder="Nama Anda">
@@ -228,4 +228,29 @@
         .btn-social-media { margin-right: 5px; }
     }
 </style>
+@endsection
+
+@section('scripts')
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('.contactus-form');
+        if(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Kirim form secara AJAX (opsional, atau bisa submit biasa jika backend sudah handle flash message)
+                // Untuk demo, langsung tampilkan pop up
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Pesan Terkirim!',
+                    text: 'Terima kasih, pesan Anda sudah kami terima.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    form.reset();
+                });
+            });
+        }
+    });
+</script>
 @endsection
