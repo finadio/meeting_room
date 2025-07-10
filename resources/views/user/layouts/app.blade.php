@@ -98,12 +98,12 @@
                 <a class="nav-link" href="{{ route('user.profile') }}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <div class="d-flex align-items-center">
                         @php $user = auth()->user(); @endphp
-                        @if ($user->profile_picture && file_exists(public_path('storage/profile_pictures/' . $user->profile_picture)))
+                        @if ($user && $user->profile_picture && file_exists(public_path('storage/profile_pictures/' . $user->profile_picture)))
                             <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover; margin-right: 8px;">
                         @else
                             <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Default Profile Picture" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover; margin-right: 8px;">
                         @endif
-                        <span>{{ $user->name }}</span>
+                        <span>{{ $user ? $user->name : 'Guest' }}</span>
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

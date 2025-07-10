@@ -1,7 +1,4 @@
-@if(!auth()->check() || auth()->user()->user_type != 'admin')
-    @extends('user.layouts.app')
-    @section('content')
-@endif
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -413,9 +410,3 @@
     </script>
 </body>
 </html>
-@if(!auth()->check() || auth()->user()->user_type != 'admin')
-    <style>
-        .footer { display: none !important; }
-    </style>
-    @endsection
-@endif

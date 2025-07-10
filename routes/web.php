@@ -51,10 +51,10 @@ Route::get('/room-status', [StatusController::class, 'showRoomStatus'])->name('r
 Route::get('/room-status/update', [StatusController::class, 'update'])->name('room-status.update');
 
 // Rute untuk cek-in
-Route::post('/booking/{id}/check-in', [BookingController::class, 'checkIn'])->name('checkIn');
+Route::post('/booking/{id}/check-in', [\App\Http\Controllers\User\BookingController::class, 'checkIn'])->name('checkIn');
 
 // Rute untuk cek-out
-Route::post('/booking/{id}/check-out', [BookingController::class, 'checkOut'])->name('checkOut');
+Route::post('/booking/{id}/check-out', [\App\Http\Controllers\User\BookingController::class, 'checkOut'])->name('checkOut');
 
 Route::get('/', function () {
     return view('welcome');
@@ -272,7 +272,4 @@ Route::middleware(['auth', 'log.last.active'])->group(function () {
 // User Events
 Route::middleware(['auth', 'log.last.active'])->group(function () {
     Route::get('user/events', [EventController::class, 'show_event'])->name('user.events.show');
-});
-Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin')->group(function () {
-    Route::get('/room-status', [StatusController::class, 'showRoomStatus'])->name('admin.room.status');
 });

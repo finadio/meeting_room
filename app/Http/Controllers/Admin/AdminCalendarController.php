@@ -15,8 +15,7 @@ class AdminCalendarController extends Controller
     {
         $user = auth()->user();
 
-        // Ambil SEMUA booking, tanpa filter di controller ini.
-        // Filter akan sepenuhnya ditangani di JavaScript (frontend).
+        // Ambil SEMUA booking, tanpa filter status apapun
         $bookings = Booking::with(['user', 'facility'])->get();
 
         // Menghitung statistik untuk sidebar (ini tetap di backend)
