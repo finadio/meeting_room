@@ -569,7 +569,14 @@
                 }
             },
             eventClick: function(info) {
-                showBookingDetail(info.event);
+                // Cek tipe view aktif
+                if (calendar.view.type === 'timeGridWeek' || calendar.view.type === 'timeGridDay') {
+                    // View minggu/hari: tampilkan detail booking yang diklik
+                    showBookingDetail(info.event);
+                } else {
+                    // View bulan: tampilkan daftar booking di hari itu
+                    showBookingListForDate(info.event.start);
+                }
             }
         });
 
@@ -812,6 +819,30 @@
             </div>
         `;
         
+        modal.show();
+    }
+
+    // Show booking list for a specific date
+    function showBookingListForDate(dateObj) {
+        // Ambil tanggal dalam format yyyy-mm-dd
+        const date = dateObj.toISOString().slice(0, 10);
+        // Filter booking di tanggal tersebut
+        const bookingsOnDate = filteredBookings.filter(booking => booking.bookingDate === date);
+        let html = `<h5>Daftar Booking (${bookingsOnDate.length})</h5>`;
+        if (bookingsOnDate.length === 0) {
+            html += '<p>Tidak ada booking pada tanggal ini.</p>';
+        } else {
+            html += '<ul class="list-group">';
+            bookingsOnDate.forEach(booking => {
+                html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>${booking.facilityName}</strong> (${booking.bookingTime} - ${booking.bookingHours} jam)</span>
+                    <span class="badge bg-success">${booking.bookingStatus}</span>
+                </li>`;
+            });
+            html += '</ul>';
+        }
+        document.getElementById('bookingDetailContent').innerHTML = html;
+        const modal = new bootstrap.Modal(document.getElementById('bookingDetailModal'));
         modal.show();
     }
 
