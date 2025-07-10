@@ -822,3 +822,311 @@ body {
         height: 28px;
     }
 }
+
+/* --- RESPONSIVE LAYOUT FIX FOR SIDEBAR, CALENDAR, AND PAGINATION --- */
+
+/* Layout utama agar konten menyesuaikan sidebar */
+body, html {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+#main-layout, .main-layout, .admin-calendar-wrapper > .container-fluid > .row {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    min-width: 0;
+}
+
+#sidebar {
+    flex-shrink: 0;
+    min-width: 70px;
+    max-width: 280px;
+    width: 280px;
+}
+#sidebar.hide {
+    width: 70px !important;
+    min-width: 70px !important;
+}
+
+#content, .dashboard-content, .calendar-main-card, .calendar-content, .calendar-container {
+    flex: 1 1 0%;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+/* Pagination responsif */
+.pagination-wrapper, .pagination, .pagination-sm, #bookingPagination {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    box-sizing: border-box;
+}
+
+.pagination li, .pagination .page-item {
+    flex: 0 0 auto;
+}
+
+/* Responsive: Mobile */
+@media (max-width: 900px) {
+    #sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 1000;
+        width: 70vw;
+        max-width: 320px;
+        min-width: 60px;
+        transform: translateX(-100%);
+        transition: transform 0.3s, width 0.3s;
+    }
+    #sidebar.open {
+        transform: translateX(0);
+    }
+    #content, .dashboard-content, .calendar-main-card, .calendar-content, .calendar-container {
+        width: 100vw;
+        left: 0;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .admin-calendar-wrapper > .container-fluid > .row {
+        flex-direction: column;
+    }
+}
+
+/* Jika sidebar collapse (misal class .hide) */
+#sidebar.hide {
+    width: 60px !important;
+    min-width: 60px !important;
+}
+
+/* Perbaiki agar calendar dan pagination tidak overflow di desktop */
+.calendar-container, .calendar-main-card {
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Pastikan tombol toggle sidebar tidak menumpuk konten */
+#toggleSidebarBtn {
+    z-index: 2001;
+    position: relative;
+}
+
+/* --- RESPONSIVE FIX FOR CALENDAR GRID --- */
+/* Pastikan grid kalender tidak overflow dan tidak ada garis melebihi batas */
+.calendar-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    box-sizing: border-box;
+    padding: 0 !important;
+}
+
+#calendar {
+    min-width: 600px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+/* Batasi lebar grid FullCalendar agar tidak lebih dari parent */
+.fc-view-harness, .fc-view-harness-active, .fc-view, .fc-daygrid, .fc-scrollgrid, .fc-scrollgrid-section, .fc-scrollgrid-sync-table {
+    max-width: 100vw !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+}
+
+/* Hilangkan border/gap yang melebihi parent */
+.fc-scrollgrid, .fc-scrollgrid-sync-table, .fc-daygrid-body, .fc-daygrid-day {
+    border-right: none !important;
+    border-bottom: none !important;
+}
+
+/* Pastikan cell terakhir tidak overflow */
+.fc-daygrid-day:last-child, .fc-scrollgrid-sync-table tr > *:last-child {
+    border-right: none !important;
+}
+
+/* Responsive: Mobile */
+@media (max-width: 700px) {
+    #calendar {
+        min-width: 400px;
+    }
+    .fc-view-harness, .fc-view-harness-active, .fc-view, .fc-daygrid, .fc-scrollgrid, .fc-scrollgrid-section, .fc-scrollgrid-sync-table {
+        min-width: 400px !important;
+    }
+}
+
+/* --- FIX: Kalender shrink otomatis saat sidebar dibuka --- */
+.calendar-main-card,
+.calendar-container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#calendar {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+.fc {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.fc-view-harness,
+.fc-view-harness-active,
+.fc-view,
+.fc-daygrid,
+.fc-scrollgrid,
+.fc-scrollgrid-section,
+.fc-scrollgrid-sync-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.fc-scrollgrid-sync-table {
+    table-layout: fixed !important;
+}
+
+@media (max-width: 900px) {
+    .calendar-main-card,
+    .calendar-container,
+    #calendar,
+    .fc {
+        min-width: 320px !important;
+    }
+}
+
+/* Responsive: Perkecil grid kalender & font jika ruang sempit */
+@media (max-width: 1300px) {
+  #calendar,
+  .fc, .fc-view-harness, .fc-view, .fc-daygrid, .fc-scrollgrid, .fc-scrollgrid-sync-table {
+    font-size: 0.85rem !important;
+  }
+  .fc .fc-daygrid-day-frame {
+    padding: 2px !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  #calendar,
+  .fc, .fc-view-harness, .fc-view, .fc-daygrid, .fc-scrollgrid, .fc-scrollgrid-sync-table {
+    font-size: 0.75rem !important;
+  }
+  .fc .fc-daygrid-day-frame {
+    padding: 1px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  #calendar,
+  .fc, .fc-view-harness, .fc-view, .fc-daygrid, .fc-scrollgrid, .fc-scrollgrid-sync-table {
+    font-size: 0.65rem !important;
+  }
+  .fc .fc-daygrid-day-frame {
+    padding: 0 !important;
+  }
+}
+
+/* 1. Container utama: hanya ini yang overflow-x: auto */
+.calendar-container {
+    width: 100%;
+    overflow-x: auto !important;
+    display: block;
+    box-sizing: border-box;
+    padding: 0 !important;
+}
+
+/* 2. Grid/table FullCalendar: min-width agar bisa di-scroll jika area sempit */
+#calendar,
+.fc,
+.fc-view-harness,
+.fc-view,
+.fc-daygrid,
+.fc-scrollgrid,
+.fc-scrollgrid-section,
+.fc-scrollgrid-sync-table {
+    min-width: 950px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* 3. Hapus max-width di grid/table jika ada */
+#calendar,
+.fc,
+.fc-view-harness,
+.fc-view,
+.fc-daygrid,
+.fc-scrollgrid,
+.fc-scrollgrid-section,
+.fc-scrollgrid-sync-table {
+    max-width: none !important;
+}
+
+/* 4. Jika sidebar collapse, grid fit ke layar tanpa scroll */
+#sidebar.hide ~ #content .calendar-container,
+#sidebar.hide ~ #content #calendar,
+#sidebar.hide ~ #content .fc,
+#sidebar.hide ~ #content .fc-view-harness,
+#sidebar.hide ~ #content .fc-view,
+#sidebar.hide ~ #content .fc-daygrid,
+#sidebar.hide ~ #content .fc-scrollgrid,
+#sidebar.hide ~ #content .fc-scrollgrid-section,
+#sidebar.hide ~ #content .fc-scrollgrid-sync-table {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+/* Saat sidebar collapse, pastikan body dan html tidak bisa scroll horizontal */
+body.sidebar-collapsed,
+html.sidebar-collapsed {
+    overflow-x: hidden !important;
+}
+
+body.sidebar-collapsed .admin-calendar-wrapper,
+body.sidebar-collapsed .container-fluid,
+body.sidebar-collapsed .row,
+body.sidebar-collapsed .calendar-main-card,
+body.sidebar-collapsed .calendar-content,
+body.sidebar-collapsed .calendar-container,
+body.sidebar-collapsed #calendar,
+body.sidebar-collapsed .fc,
+body.sidebar-collapsed .fc-view-harness,
+body.sidebar-collapsed .fc-view,
+body.sidebar-collapsed .fc-daygrid,
+body.sidebar-collapsed .fc-scrollgrid,
+body.sidebar-collapsed .fc-scrollgrid-section,
+body.sidebar-collapsed .fc-scrollgrid-sync-table {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}

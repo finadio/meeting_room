@@ -949,10 +949,14 @@
             sidebar.style.display = '';
             calendarCol.classList.remove('col-lg-12');
             calendarCol.classList.add('col-lg-8');
+            document.body.classList.remove('sidebar-collapsed');
+            document.documentElement.classList.remove('sidebar-collapsed');
         } else {
             sidebar.style.display = 'none';
             calendarCol.classList.remove('col-lg-8');
             calendarCol.classList.add('col-lg-12');
+            document.body.classList.add('sidebar-collapsed');
+            document.documentElement.classList.add('sidebar-collapsed');
         }
     }
 </script>

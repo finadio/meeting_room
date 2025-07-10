@@ -2,7 +2,7 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
-<div class="booking-page-wrapper">
+<div class="booking-page-wrapper"  style="display: flex; min-height: 100vh;">
     <div class="container-fluid px-4">
         <div class="row justify-content-center">
             <div class="col-lg-12">
