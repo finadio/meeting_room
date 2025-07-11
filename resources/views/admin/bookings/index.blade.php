@@ -107,18 +107,28 @@
                                     <tbody>
                                     @foreach($bookings as $booking)
                                         @php
+                                            // Dapatkan waktu saat ini dengan timezone yang benar
                                             $currentTime = now()->setTimezone('Asia/Jakarta');
-                                            $bookingDate = $booking->booking_date->format('Y-m-d');
-                                            $bookingEndTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $bookingDate . ' ' . $booking->booking_end);
-                                            $timeLeft = $currentTime->diffInMinutes($bookingEndTime->setTimezone('Asia/Jakarta'), false); // false for absolute diff
+
+                                            // Gabungkan tanggal dari booking_date dengan waktu dari booking_end untuk mendapatkan objek Carbon lengkap.
+                                            // Karena booking_date dan booking_end sudah di-cast sebagai Carbon object di model Booking,
+                                            // kita bisa langsung mengakses properti tanggal dan waktu.
+                                            $bookingEndTime = $booking->booking_date->setTime(
+                                                $booking->booking_end->hour,
+                                                $booking->booking_end->minute,
+                                                $booking->booking_end->second
+                                            )->setTimezone('Asia/Jakarta'); // Pastikan timezone konsisten
+
+                                            // Hitung selisih waktu dalam menit
+                                            $timeLeft = $currentTime->diffInMinutes($bookingEndTime, false); // false untuk mendapatkan nilai negatif jika sudah lewat
                                         @endphp
                                         <tr>
                                             <td data-label="S.N">{{ $loop->iteration }}</td>
                                             <td data-label="Pengguna" class="text-truncate" style="max-width: 120px;">{{ $booking->user->name }}</td>
                                             <td data-label="Fasilitas" class="text-truncate" style="max-width: 120px;">{{ $booking->facility->name }}</td>
                                             <td data-label="Tanggal">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d F Y') }}</td>
-                                            <td data-label="Mulai">{{ \Carbon\Carbon::parse($booking->booking_time)->format('h:i A') }}</td>
-                                            <td data-label="Selesai">{{ \Carbon\Carbon::parse($booking->booking_end)->format('h:i A') }}</td>
+                                            <td data-label="Mulai">{{ \Carbon\Carbon::parse($booking->booking_time)->format('H:i A') }}</td>
+                                            <td data-label="Selesai">{{ \Carbon\Carbon::parse($booking->booking_end)->format('H:i A') }}</td>
                                             <td data-label="Status">
                                                 @if($booking->status == 'Disetujui')
                                                     <span class="badge badge-success-custom">{{ $booking->status }}</span>
@@ -188,7 +198,7 @@
 @endsection
 
 @section('styles')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 <style>
     /* Page Wrapper */
@@ -228,7 +238,7 @@
         left: 0;
         right: 0;
         height: 2px;
-        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
         background-size: 400% 400%;
         animation: gradient-flow 3s ease infinite;
     }
@@ -812,6 +822,8 @@
 @endsection
 
 @section('scripts')
+{{-- Memastikan Bootstrap JS dimuat --}}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <script>
     // Alert close functionality
     document.querySelectorAll('.alert-close').forEach(button => {

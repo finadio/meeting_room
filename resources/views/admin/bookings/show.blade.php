@@ -118,7 +118,7 @@
                                     </div>
                                     <span>Waktu Mulai</span>
                                 </label>
-                                <p class="display-value">{{ \Carbon\Carbon::parse($booking->booking_time)->format('h:i A') }}</p>
+                                <p class="display-value">{{ \Carbon\Carbon::parse($booking->booking_time)->format('H:i A') }}</p>
                             </div>
 
                             <div class="display-group-enhanced">
@@ -128,7 +128,7 @@
                                     </div>
                                     <span>Waktu Selesai</span>
                                 </label>
-                                <p class="display-value">{{ \Carbon\Carbon::parse($booking->booking_end)->format('h:i A') }}</p>
+                                <p class="display-value">{{ \Carbon\Carbon::parse($booking->booking_end)->format('H:i A') }}</p>
                             </div>
                             
                             <div class="display-group-enhanced">
@@ -138,7 +138,27 @@
                                     </div>
                                     <span>Durasi</span>
                                 </label>
-                                <p class="display-value">{{ $booking->hours }} Jam</p>
+                                {{-- Menghitung durasi secara dinamis --}}
+                                <p class="display-value">
+                                    @php
+                                        $start = \Carbon\Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_time->format('H:i:s'));
+                                        $end = \Carbon\Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_end->format('H:i:s'));
+                                        $durationInterval = $start->diff($end);
+                                        $hours = $durationInterval->h;
+                                        $minutes = $durationInterval->i;
+                                        $durationString = '';
+                                        if ($hours > 0) {
+                                            $durationString .= $hours . ' Jam';
+                                        }
+                                        if ($minutes > 0) {
+                                            $durationString .= ($hours > 0 ? ' ' : '') . $minutes . ' Menit';
+                                        }
+                                        if (empty($durationString)) {
+                                            $durationString = '0 Menit';
+                                        }
+                                    @endphp
+                                    {{ $durationString }}
+                                </p>
                             </div>
 
                             <div class="display-group-enhanced">
@@ -191,8 +211,8 @@
                                     <span>Check-in</span>
                                 </label>
                                 <p class="display-value">
-                                    @if($booking->is_checked_in)
-                                        <i class='bx bx-check-circle text-success'></i> Ya ({{ \Carbon\Carbon::parse($booking->checked_in_at)->format('d M Y, H:i') }})
+                                    @if($booking->check_in) {{-- Menggunakan properti check_in yang sudah di-cast --}}
+                                        <i class='bx bx-check-circle text-success'></i> Ya ({{ $booking->check_in->format('d M Y, H:i') }})
                                     @else
                                         <i class='bx bx-x-circle text-danger'></i> Belum
                                     @endif
@@ -207,8 +227,8 @@
                                     <span>Check-out</span>
                                 </label>
                                 <p class="display-value">
-                                    @if($booking->is_checked_out)
-                                        <i class='bx bx-check-circle text-success'></i> Ya ({{ \Carbon\Carbon::parse($booking->checked_out_at)->format('d M Y, H:i') }})
+                                    @if($booking->check_out) {{-- Menggunakan properti check_out yang sudah di-cast --}}
+                                        <i class='bx bx-check-circle text-success'></i> Ya ({{ $booking->check_out->format('d M Y, H:i') }})
                                     @else
                                         <i class='bx bx-x-circle text-danger'></i> Belum
                                     @endif
@@ -222,17 +242,27 @@
                                     </div>
                                     <span>Dibuat Pada</span>
                                 </label>
-                                <p class="display-value">{{ \Carbon\Carbon::parse($booking->created_at)->format('d F Y, H:i A') }}</p>
+                                <p class="display-value">{{ $booking->created_at->format('d F Y, H:i A') }}</p>
                             </div>
                         </div>
 
                         <div class="form-section submit-section mt-5 pt-4 border-top">
                             <div class="button-group">
                                 @php
+                                    // Dapatkan waktu saat ini dengan timezone yang benar
                                     $currentTime = now()->setTimezone('Asia/Jakarta');
-                                    $bookingDateOnly = \Carbon\Carbon::parse($booking->booking_date)->format('Y-m-d');
-                                    $bookingEndTimeFull = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $bookingDateOnly . ' ' . $booking->booking_end);
-                                    $timeLeft = $currentTime->diffInMinutes($bookingEndTimeFull->setTimezone('Asia/Jakarta'), false);
+
+                                    // Gabungkan tanggal dari booking_date dengan waktu dari booking_end untuk mendapatkan objek Carbon lengkap.
+                                    // Karena booking_date dan booking_end sudah di-cast sebagai Carbon object di model Booking,
+                                    // kita bisa langsung mengakses properti tanggal dan waktu.
+                                    $bookingEndTimeFull = $booking->booking_date->setTime(
+                                        $booking->booking_end->hour,
+                                        $booking->booking_end->minute,
+                                        $booking->booking_end->second
+                                    )->setTimezone('Asia/Jakarta'); // Pastikan timezone konsisten
+
+                                    // Hitung selisih waktu dalam menit
+                                    $timeLeft = $currentTime->diffInMinutes($bookingEndTimeFull, false); // false untuk mendapatkan nilai negatif jika sudah lewat
                                 @endphp
 
                                 @if($booking->is_checked_in == 0 && $booking->status == 'Disetujui')
@@ -300,7 +330,7 @@
 @endsection
 
 @section('styles')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 <style>
     /* Page Wrapper */
@@ -340,7 +370,7 @@
         left: 0;
         right: 0;
         height: 2px;
-        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
         background-size: 400% 400%;
         animation: gradient-flow 3s ease infinite;
     }
@@ -635,70 +665,6 @@
         transform: translateY(-1px);
     }
 
-    /* btn-action for Checkin/Checkout/Whatsapp/Approve/Reject (if used as full buttons) */
-    .btn-action {
-        border: none;
-        border-radius: 16px;
-        padding: 18px 40px;
-        color: white;
-        font-weight: 600;
-        font-size: 1.1rem;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.1); /* General shadow for actions */
-        min-width: 180px; /* Adjusted minimum width */
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-action:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(0,0,0,0.2);
-        color: white;
-        text-decoration: none;
-    }
-    
-    .btn-action.checkin { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3); }
-    .btn-action.checkout { background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%); box-shadow: 0 8px 25px rgba(253, 126, 20, 0.3); }
-    .btn-action.whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3); }
-    .btn-action.approve { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 8px 25px rgba(17, 153, 142, 0.3); }
-    .btn-action.reject { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); box-shadow: 0 8px 25px rgba(255, 65, 108, 0.3); }
-
-    .btn-back {
-        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-        border: none;
-        border-radius: 16px;
-        padding: 18px 40px;
-        color: white;
-        font-weight: 600;
-        font-size: 1.1rem;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
-        min-width: 180px; /* Adjusted minimum width */
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-back:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(108, 117, 125, 0.4);
-        color: white;
-        text-decoration: none;
-    }
-
-    .btn-back:active {
-        transform: translateY(-1px);
-    }
-
     .btn-content {
         display: flex;
         align-items: center;
@@ -788,5 +754,14 @@
 @endsection
 
 @section('scripts')
-{{-- Tidak ada script spesifik untuk halaman ini selain yang umum --}}
+{{-- Memastikan Bootstrap JS dimuat --}}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script>
+    // Alert close functionality
+    document.querySelectorAll('.alert-close').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('.custom-alert').style.display = 'none';
+        });
+    });
+</script>
 @endsection

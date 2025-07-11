@@ -66,9 +66,14 @@ class UserController extends Controller
 
 
     public function show(User $user)
-    {
-        return view('admin.users.show', compact('user'));
-    }
+        {
+            // Opsional: Tandai notifikasi terkait sebagai sudah dibaca saat detail dilihat
+            Notification::where('notifiable_type', User::class)
+                        ->where('notifiable_id', $user->id)
+                        ->update(['is_read' => true]);
+
+            return view('admin.users.show', compact('user'));
+        }
 
     public function edit(User $user)
     {

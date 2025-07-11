@@ -2,60 +2,59 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+    use App\Models\User;
+    use App\Models\Facility;
 
-use Carbon\Carbon;
-
-
-class Booking extends Model
-{
-    protected $fillable = [
-        'user_id',
-        'facility_id',
-        'payment_method',
-        'amount',
-        'user_name',
-        'email',
-        'contact_number',
-        'status',
-        'booking_date',
-        'booking_time',
-        'ratings',
-        'reviews',
-        'hours',
-        'meeting_title',
-        'group_name',
-        'booking_end',
-        'check_in',
-        'check_out',
-        'is_check_in',
-    ];
-
-    public function user()
+    class Booking extends Model
     {
-        return $this->belongsTo(User::class);
+        use HasFactory;
+
+        protected $fillable = [
+            'user_id',
+            'facility_id',
+            'amount',
+            'user_name',
+            'email',
+            'contact_number',
+            'booking_date',
+            'booking_time',
+            'booking_end',
+            'meeting_title',
+            'group_name',
+            'status',
+            'payment_method',
+            'ratings',
+            'reviews',
+            'wa_sent',
+            'check_in',
+            'check_out',
+            'is_checked_in',
+        ];
+
+        // Tambahkan atau modifikasi bagian $casts ini
+        protected $casts = [
+            'booking_date' => 'date', // Cukup 'date' jika hanya tanggal
+            'booking_time' => 'datetime', // 'datetime' untuk waktu
+            'booking_end' => 'datetime', // 'datetime' untuk waktu
+            'check_in' => 'datetime',
+            'check_out' => 'datetime',
+        ];
+
+        public function user()
+        {
+            return $this->belongsTo(User::class);
+        }
+
+        public function facility()
+        {
+            return $this->belongsTo(Facility::class);
+        }
+
+        public function hasReviews()
+        {
+            return !is_null($this->reviews);
+        }
     }
     
-    public function facility()
-    {
-        return $this->belongsTo(Facility::class);
-    }
-
-    /**
-     * Check if the booking has reviews.
-     *
-     * @return bool
-     */
-    public function hasReviews()
-    {
-        return !empty($this->reviews);
-    }
-
-  
-
-    protected $casts = [
-        'booking_date' => 'datetime', // ini akan mengkonversi booking_date menjadi objek Carbon
-    ];
-}
-

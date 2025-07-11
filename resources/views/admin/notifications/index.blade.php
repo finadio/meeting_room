@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin_dashboard')
-@section('title', 'Notifications Management')
+@section('title', 'Manajemen Notifikasi') {{-- Menggunakan title yang lebih relevan --}}
 
 @section('content')
 <div class="booking-page-wrapper">
@@ -49,7 +49,7 @@
                         <div class="table-container">
                             @if($notifications->isEmpty())
                                 <div class="alert alert-info text-center m-4 p-4 rounded-lg shadow-sm">
-                                    Tidak ada notifikasi yang belum dibaca.
+                                    Tidak ada notifikasi.
                                 </div>
                             @else
                                 <table class="modern-table">
@@ -58,46 +58,47 @@
                                             <th>S.N</th>
                                             <th>Tipe</th>
                                             <th>Pesan</th>
-                                            <th>Terhubung Dengan</th>
-                                            <th>Dibuat Pada</th>
+                                            <th>Status</th> {{-- Kolom status notifikasi (dibaca/belum) --}}
+                                            <th>Tanggal</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($notifications as $notification)
-                                        <tr>
+                                        <tr class="{{ $notification->is_read ? 'read-notification' : 'unread-notification' }}">
                                             <td data-label="S.N">{{ $loop->iteration }}</td>
                                             <td data-label="Tipe">
-                                                <span class="badge badge-info-custom">{{ ucfirst(str_replace('_', ' ', $notification->type)) }}</span>
+                                                <div class="d-flex align-items-center">
+                                                    {{-- Menggunakan Font Awesome untuk ikon notifikasi spesifik --}}
+                                                    @if($notification->notification_details['icon'] ?? false)
+                                                        <i class="{{ $notification->notification_details['icon'] }} me-2"></i>
+                                                    @endif
+                                                    <span class="badge badge-info-custom">{{ Str::replace('_', ' ', Str::title($notification->type)) }}</span>
+                                                </div>
                                             </td>
-                                            <td data-label="Pesan" class="text-truncate" style="max-width: 250px;" title="{{ $notification->message }}">
-                                                {{ $notification->message }}
+                                            <td data-label="Pesan" class="text-truncate" style="max-width: 250px;">
+                                                <strong>{{ $notification->notification_details['title'] ?? 'Judul Tidak Tersedia' }}</strong><br>
+                                                <small>{{ $notification->notification_details['description'] ?? $notification->message }}</small>
                                             </td>
-                                            <td data-label="Terhubung Dengan">
-                                                @if($notification->facility)
-                                                    {{ $notification->facility->name }} (Fasilitas)
-                                                @elseif($notification->user)
-                                                    {{ $notification->user->name }} (Pengguna)
-                                                @else
-                                                    N/A
-                                                @endif
+                                            <td data-label="Status">
+                                                <span class="badge {{ $notification->is_read ? 'badge-secondary-custom' : 'badge-primary-custom' }}">
+                                                    {{ $notification->is_read ? 'Sudah Dibaca' : 'Belum Dibaca' }}
+                                                </span>
                                             </td>
                                             <td data-label="Dibuat Pada">{{ \Carbon\Carbon::parse($notification->created_at)->format('d F Y, H:i') }}</td>
                                             <td data-label="Aksi" class="actions-cell">
                                                 <div class="action-buttons-group">
-                                                    <form action="{{ route('admin.notifications.markAsRead', $notification) }}" method="POST" style="display:inline-block;">
-                                                        @csrf
-                                                        <button type="submit" class="btn-action success" title="Tandai Sudah Dibaca" onclick="return confirm('Apakah Anda yakin ingin menandai notifikasi ini sudah dibaca?')">
-                                                            <i class='bx bx-check'></i>
-                                                        </button>
-                                                    </form>
-                                                    {{-- Link to view associated item if any --}}
-                                                    @if($notification->type == 'new_facility_submission' && $notification->facility)
-                                                        <a href="{{ route('admin.facilities.show', $notification->facility->id) }}" class="btn-action view" title="Lihat Submission">
-                                                            <i class='bx bx-show'></i>
-                                                        </a>
-                                                    @elseif($notification->type == 'new_booking' && $notification->booking) {{-- Assuming notification has a booking relationship --}}
-                                                        <a href="{{ route('admin.bookings.show', $notification->booking->id) }}" class="btn-action view" title="Lihat Pemesanan">
+                                                    @if (!$notification->is_read)
+                                                        <form action="{{ route('admin.notifications.markAsRead', $notification->id) }}" method="POST" style="display:inline-block;">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit" class="btn-action success" title="Tandai Sudah Dibaca" onclick="return confirm('Apakah Anda yakin ingin menandai notifikasi ini sudah dibaca?')">
+                                                                <i class='bx bx-check'></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    @if($notification->notification_details['link'] ?? false)
+                                                        <a href="{{ $notification->notification_details['link'] }}" class="btn-action view" title="Lihat Detail">
                                                             <i class='bx bx-show'></i>
                                                         </a>
                                                     @endif
@@ -107,6 +108,10 @@
                                     @endforeach
                                     </tbody>
                                 </table>
+                                {{-- Paginasi --}}
+                                <div class="d-flex justify-content-center mt-4">
+                                    {{ $notifications->links() }}
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -118,8 +123,13 @@
 @endsection
 
 @section('styles')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{{-- Memastikan Bootstrap dimuat --}}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+{{-- Memastikan Boxicons dimuat --}}
 <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+{{-- Memastikan Font Awesome dimuat untuk ikon notifikasi spesifik --}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <style>
     /* Page Wrapper */
     .booking-page-wrapper {
@@ -466,6 +476,15 @@
         margin-right: 5px; /* Space between icon and text for buttons with text */
     }
 
+    /* Styling for read/unread rows */
+    .read-notification {
+        opacity: 0.7; /* Make read notifications slightly faded */
+    }
+    .unread-notification {
+        font-weight: bold; /* Make unread notifications stand out */
+    }
+
+
     /* Responsive Design for Tables */
     @media (max-width: 992px) {
         .modern-table thead th,
@@ -551,7 +570,7 @@
         .modern-table td:nth-of-type(1):before { content: "S.N:"; }
         .modern-table td:nth-of-type(2):before { content: "Tipe:"; }
         .modern-table td:nth-of-type(3):before { content: "Pesan:"; }
-        .modern-table td:nth-of-type(4):before { content: "Terhubung Dengan:"; }
+        .modern-table td:nth-of-type(4):before { content: "Status:"; } {{-- Label untuk Status --}}
         .modern-table td:nth-of-type(5):before { content: "Dibuat Pada:"; }
         .modern-table td:nth-of-type(6):before { content: "Aksi:"; }
         
@@ -577,6 +596,8 @@
 @endsection
 
 @section('scripts')
+{{-- Memastikan Bootstrap JS dimuat --}}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <script>
     // Alert close functionality
     document.querySelectorAll('.alert-close').forEach(button => {

@@ -7,17 +7,18 @@ use App\Http\Controllers\Admin\FacilitiesController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\TournamentMatchController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\RoomStatusController;
+use App\Http\Controllers\Admin\RoomStatusController; // Pastikan ini diimpor jika digunakan
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Dashboard\AdminDashboardController;
+// use App\Http\Controllers\Dashboard\AdminDashboardController; // <--- HAPUS BARIS INI
+use App\Http\Controllers\Admin\AdminDashboardController; // <--- PASTIKAN BARIS INI ADA DAN DIGUNAKAN
 use App\Http\Controllers\Dashboard\UserDashboardController;
 use App\Http\Controllers\User\AboutUsController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\BracketController;
 use App\Http\Controllers\User\CalendarController;
-use App\Http\Controllers\User\ContactUsController; // Pastikan ini diimpor
+use App\Http\Controllers\User\ContactUsController;
 use App\Http\Controllers\User\EventController;
 use App\Http\Controllers\User\FacilitySubmissionController;
 use App\Http\Controllers\User\TeamController;
@@ -25,8 +26,8 @@ use App\Http\Controllers\User\TournamentController;
 use App\Http\Controllers\User\UserProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\VerificationController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\StatusController;
+use App\Http\Controllers\DashboardController; // Pastikan ini diimpor jika digunakan
+use App\Http\Controllers\StatusController; // Pastikan ini diimpor jika digunakan
 
 
 /*
@@ -71,7 +72,6 @@ Route::post('/email/verification-notification', [VerificationController::class, 
     ->name('verification.resend');
 
 
-
 //login Register Routes
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/register', [RegisterController::class, 'register'])->name('register');
@@ -99,13 +99,12 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 //admin and Futsal Manager Route
 Route::middleware(['auth', 'user_type:admin,manager'])->group(function () {
     Route::get('/admin_dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-});
 
-//Notification
-Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->group(function () {
+    // Notification Routes (Dipindahkan ke dalam grup admin)
     Route::get('/admin/notifications', [AdminDashboardController::class, 'notifications'])->name('admin.notifications.index');
-    Route::post('/admin/notifications/mark-as-read/{notification}', [AdminDashboardController::class, 'markAsRead'])->name('admin.notifications.markAsRead');
-    Route::get('/admin/notifications/view-submission/{notification}', [AdminDashboardController::class, 'viewSubmission'])->name('admin.notifications.viewSubmission');
+    Route::patch('/admin/notifications/{notification}/mark-as-read', [AdminDashboardController::class, 'markAsRead'])->name('admin.notifications.markAsRead');
+    // Route ini akan diganti dengan yang lebih fleksibel di AdminDashboardController
+    // Route::get('/admin/notifications/view-submission/{notification}', [AdminDashboardController::class, 'viewSubmission'])->name('admin.notifications.viewSubmission');
 });
 
 //Admin User Management Page Route
@@ -115,16 +114,16 @@ Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->group(functio
     Route::post('admin/users', [UserController::class, 'store'])->name('admin.users.store');
     Route::get('admin/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
     Route::put('admin/users/update/{user}', [UserController::class, 'update'])->name('admin.users.update');
-    Route::get('admin/users/{user}', [UserController::class, 'show'])->name('admin.users.show');
+    Route::get('admin/users/{user}', [UserController::class, 'show'])->name('admin.users.show'); // Sudah ada
     Route::post('admin/users/{user}/ban', [UserController::class, 'ban'])->name('admin.users.ban');
     Route::post('admin/users/{user}/unban', [UserController::class, 'unban'])->name('admin.users.unban');
 });
 
 //admin profile Route
 Route::middleware(['auth', 'user_type:admin,manager', 'log.last.active'])->prefix('admin')->group(function () {
-    Route::get('/admin/profile', [ProfileController::class, 'index'])->name('admin.profile');
-    Route::post('/admin/profile/update-details', [ProfileController::class, 'updateDetails'])->name('admin.profile.update.details');
-    Route::post('/admin/profile/update-password', [ProfileController::class, 'updatePassword'])->name('admin.profile.update.password');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('admin.profile'); // Dihapus /admin/ dari prefix
+    Route::post('/profile/update-details', [ProfileController::class, 'updateDetails'])->name('admin.profile.update.details');
+    Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('admin.profile.update.password');
 });
 
 // Facilities Routes
@@ -132,7 +131,7 @@ Route::middleware(['auth', 'user_type:admin,manager', 'log.last.active'])->prefi
     Route::get('facilities', [FacilitiesController::class, 'index'])->name('admin.facilities.index');
     Route::get('facilities/create', [FacilitiesController::class, 'create'])->name('admin.facilities.create');
     Route::post('facilities', [FacilitiesController::class, 'store'])->name('admin.facilities.store');
-    Route::get('facilities/{facility}', [FacilitiesController::class, 'show'])->name('admin.facilities.show');
+    Route::get('facilities/{facility}', [FacilitiesController::class, 'show'])->name('admin.facilities.show'); // Sudah ada
     Route::get('facilities/{facility}/edit', [FacilitiesController::class, 'edit'])->name('admin.facilities.edit');
     Route::put('facilities/{facility}', [FacilitiesController::class, 'update'])->name('admin.facilities.update');
     Route::delete('facilities/{facility}', [FacilitiesController::class, 'destroy'])->name('admin.facilities.destroy');
@@ -156,7 +155,7 @@ Route::middleware(['auth', 'log.last.active'])->group(function () {
 
 //Calendar Route
 Route::middleware(['auth', 'log.last.active'])->group(function () {
-Route::get('/calendar', [CalendarController::class, 'index'])->name('user.calendar');
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('user.calendar');
 });
 
 //Calendar for admin Route
@@ -164,12 +163,13 @@ Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->group(functio
     Route::get('/admin_calendar', [AdminCalendarController::class, 'index'])->name('admin.calendar');
 });
 
-// Facility Submission
+// Facility Submission (Perhatikan: Anda mengatakan ini tidak digunakan di user, tapi routenya masih ada)
+// Saya akan biarkan routenya, tapi tidak akan membuat notifikasi jika formnya memang tidak ada.
 Route::middleware(['auth', 'log.last.active'])->group(function () {
-Route::get('facility_submissions/create', [FacilitySubmissionController::class, 'create'])->name('user.facility_submissions.create');
-Route::post('facility_submissions/store', [FacilitySubmissionController::class, 'store'])->name('user.facility_submissions.store');
-Route::get('/admin/facility_submissions/{id}', [FacilitySubmissionController::class, 'viewSubmission'])->name('user.facility_submissions.view');
-Route::patch('facility_submissions/{id}/update-status', [FacilitySubmissionController::class, 'updateStatus'])->name('user.facility_submissions.updateStatus');
+    Route::get('facility_submissions/create', [FacilitySubmissionController::class, 'create'])->name('user.facility_submissions.create');
+    Route::post('facility_submissions/store', [FacilitySubmissionController::class, 'store'])->name('user.facility_submissions.store');
+    Route::get('/admin/facility_submissions/{id}', [FacilitySubmissionController::class, 'viewSubmission'])->name('user.facility_submissions.view');
+    Route::patch('facility_submissions/{id}/update-status', [FacilitySubmissionController::class, 'updateStatus'])->name('user.facility_submissions.updateStatus');
 });
 
 //Booking Route
@@ -201,23 +201,24 @@ Route::middleware(['auth', 'log.last.active'])->group(function () {
     Route::post('/user/unbookmark/{facilityId}', [BookingController::class, 'unbookmark']);
 });
 
-//Admin Booking History Route
+//Admin Booking History Route (Sudah ada, tidak perlu duplikasi)
 Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin')->group(function () {
     Route::get('bookings', [BookingsController::class, 'index'])->name('admin.bookings.index');
-    Route::get('bookings/{booking}', [BookingsController::class, 'show'])->name('admin.bookings.show');
+    Route::get('bookings/{booking}', [BookingsController::class, 'show'])->name('admin.bookings.show'); // Sudah ada
     Route::post('bookings/{id}/approve', [BookingsController::class, 'approve'])->name('admin.bookings.approve');
-    Route::post('bookings/{id}/reject', [BookingsController::class, 'reject'])->name('admin.bookings.reject'); // Added this line
-
+    Route::post('bookings/{id}/reject', [BookingsController::class, 'reject'])->name('admin.bookings.reject');
 });
 
 // Contact us Route
 Route::get('/contactUs', [ContactUsController::class, 'showForm'])->name('contact.show');
 Route::post('/contactUs', [ContactUsController::class, 'submitForm'])->name('contact.submit');
 
-// Admin Contact us Route
+// Admin Contact us Route (Sudah ada, tidak perlu duplikasi)
 Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin')->group(function () {
     Route::get('/admin_contactUs', [ContactUsController::class, 'index'])->name('admin.contact.index');
-    Route::delete('/admin_contactUs/{id}', [ContactUsController::class, 'destroy'])->name('admin.contact.destroy'); // Added this line
+    Route::delete('/admin_contactUs/{id}', [ContactUsController::class, 'destroy'])->name('admin.contact.destroy');
+    // Tambahkan route show untuk contact form submission
+    Route::get('contact/{contactFormSubmission}', [ContactUsController::class, 'show'])->name('admin.contact.show'); // Tambahkan ini
 });
 
 // About Us Route
@@ -244,22 +245,22 @@ Route::middleware(['auth', 'log.last.active'])->group(function () {
 
 // Admin Tournaments
 Route::middleware(['auth', 'user_type:admin,manager', 'log.last.active'])->prefix('admin')->group(function () {
-Route::get('admin/tournaments', [AdminTournamentController::class, 'index'])->name('admin.tournaments.index');
-    Route::get('admin/tournaments/create', [AdminTournamentController::class, 'create'])->name('admin.tournaments.create');
-    Route::post('admin/tournaments/store', [AdminTournamentController::class, 'store'])->name('admin.tournaments.store');
-    Route::get('admin/tournaments/{tournament}/edit', [AdminTournamentController::class, 'edit'])->name('admin.tournaments.edit');
-    Route::put('admin/tournaments/{tournament}/update', [AdminTournamentController::class, 'update'])->name('admin.tournaments.update');
-    Route::delete('admin/tournaments/{tournament}/destroy', [AdminTournamentController::class, 'destroy'])->name('admin.tournaments.destroy');
+    Route::get('tournaments', [AdminTournamentController::class, 'index'])->name('admin.tournaments.index'); // Dihapus /admin/ dari prefix
+    Route::get('tournaments/create', [AdminTournamentController::class, 'create'])->name('admin.tournaments.create');
+    Route::post('tournaments/store', [AdminTournamentController::class, 'store'])->name('admin.tournaments.store');
+    Route::get('tournaments/{tournament}/edit', [AdminTournamentController::class, 'edit'])->name('admin.tournaments.edit');
+    Route::put('tournaments/{tournament}/update', [AdminTournamentController::class, 'update'])->name('admin.tournaments.update');
+    Route::delete('tournaments/{tournament}/destroy', [AdminTournamentController::class, 'destroy'])->name('admin.tournaments.destroy');
 });
 
 // Tournament Match Routes
 Route::middleware(['auth', 'user_type:admin,manager', 'log.last.active'])->prefix('admin')->group(function () {
-Route::get('admin/tournaments/{tournamentId}/matches', [TournamentMatchController::class, 'index'])->name('admin.tournaments.matches');
-Route::get('matches/{matchId}/winner', [TournamentMatchController::class, 'getWinner']);
-Route::get('admin/tournaments/matches/create/{tournamentId}', [TournamentMatchController::class, 'create'])->name('admin.tournamentMatches.create');
-Route::put('admin/tournaments/{tournamentId}/matches/{matchId}', [TournamentMatchController::class, 'update'])->name('admin.tournaments.matches.update');
-Route::delete('tournaments/{tournamentId}/matches/{matchId}', [TournamentMatchController::class, 'destroy'])->name('admin.tournaments.matches.destroy');
-Route::post('admin/tournaments/matches', [TournamentMatchController::class, 'store'])->name('admin.tournamentMatches.store');
+    Route::get('tournaments/{tournamentId}/matches', [TournamentMatchController::class, 'index'])->name('admin.tournaments.matches');
+    Route::get('matches/{matchId}/winner', [TournamentMatchController::class, 'getWinner']);
+    Route::get('tournaments/matches/create/{tournamentId}', [TournamentMatchController::class, 'create'])->name('admin.tournamentMatches.create');
+    Route::put('tournaments/{tournamentId}/matches/{matchId}', [TournamentMatchController::class, 'update'])->name('admin.tournaments.matches.update');
+    Route::delete('tournaments/{tournamentId}/matches/{matchId}', [TournamentMatchController::class, 'destroy'])->name('admin.tournaments.matches.destroy');
+    Route::post('tournaments/matches', [TournamentMatchController::class, 'store'])->name('admin.tournamentMatches.store');
 });
 
 // User Tournament
