@@ -132,13 +132,14 @@
                                     <div class="sub-card-body">
                                         @php
                                             // MODIFIED: Filter dan sort menggunakan kunci 'start' dan 'status' dari $bookedDates
+                                            // Removed ->take(5) to show all recent bookings
                                             $recentBookings = collect($bookedDates)->filter(function($booking) {
                                                 // Pastikan 'start' ada sebelum parsing
                                                 return isset($booking['start']) && \Carbon\Carbon::parse($booking['start'])->greaterThanOrEqualTo(\Carbon\Carbon::now()->subMonth());
                                             })->sortByDesc(function($booking) {
                                                 // Urutkan berdasarkan tanggal dan waktu mulai
                                                 return $booking['start'];
-                                            })->take(5);
+                                            });
                                         @endphp
 
                                         @if($recentBookings->isEmpty())
@@ -292,9 +293,9 @@
     }
 
     .header-title {
-        color: white;
         font-size: clamp(1.2rem, 4vw, 1.8rem);
         font-weight: 700;
+        color: #1e3c72;
         margin: 0;
         position: relative;
         z-index: 2;
