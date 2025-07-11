@@ -293,9 +293,9 @@
     }
 
     .header-title {
+        color: white;
         font-size: clamp(1.2rem, 4vw, 1.8rem);
         font-weight: 700;
-        color: #1e3c72;
         margin: 0;
         position: relative;
         z-index: 2;
