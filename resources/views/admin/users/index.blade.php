@@ -49,7 +49,7 @@
                         @if (session('message'))
                             <div class="custom-alert danger-alert">
                                 <div class="alert-icon">
-                                    <i class="bx bx-error-circle"></i>
+                                    <i class="bx bx-info-circle"></i>
                                 </div>
                                 <div class="alert-content">
                                     <strong>Pesan!</strong>
@@ -69,6 +69,11 @@
                                         <button type="submit" class="search-button">
                                             <i class="bx bx-search"></i>
                                         </button>
+                                        @if(request('search'))
+                                            <a href="{{ route('admin.users.index') }}" class="clear-search">
+                                                <i class="bx bx-x-circle"></i>
+                                            </a>
+                                        @endif
                                     </div>
                                 </form>
                                 
@@ -101,50 +106,50 @@
                                 <tbody>
                                     @forelse($users as $user)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $user->id }}</td>
-                                            <td>
+                                            <td data-label="S.N">{{ $users->firstItem() + $loop->index }}</td> {{-- MODIFIED LINE --}}
+                                            <td data-label="ID Pengguna">{{ $user->id }}</td>
+                                            <td data-label="Gambar">
                                                 @if($user->profile_picture && Storage::exists('public/profile_pictures/' . $user->profile_picture))
                                                     <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="User Image" class="table-profile-img">
                                                 @else
                                                     <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Default User Image" class="table-profile-img">
                                                 @endif
                                             </td>
-                                            <td class="text-truncate" style="max-width: 150px;">{{ $user->name }}</td>
-                                            <td class="text-truncate" style="max-width: 150px;">{{ $user->email }}</td>
-                                            <td>
+                                            <td data-label="Nama" class="text-truncate" style="max-width: 150px;">{{ $user->name }}</td>
+                                            <td data-label="Email" class="text-truncate" style="max-width: 150px;">{{ $user->email }}</td>
+                                            <td data-label="Tipe Pengguna">
                                                 @if($user->user_type === 'user')
                                                     <span class="badge badge-primary-custom">{{ ucfirst($user->user_type) }}</span>
                                                 @elseif($user->user_type === 'admin')
                                                     <span class="badge badge-danger-custom">{{ ucfirst($user->user_type) }}</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td data-label="Status">
                                                 @if($user->isBanned())
                                                     <span class="badge badge-danger-custom">Diblokir</span>
                                                 @else
                                                     <span class="badge badge-success-custom">Aktif</span>
                                                 @endif
                                             </td>
-                                            <td class="text-center">
+                                            <td data-label="Verifikasi" class="text-center">
                                                 @if($user->verified)
                                                     <i class='bx bx-check-circle text-success' style="font-size: 1.2rem;"></i>
                                                 @else
                                                     <i class='bx bx-x-circle text-danger' style="font-size: 1.2rem;"></i>
                                                 @endif
                                             </td>
-                                            <td class="text-truncate" style="max-width: 120px;">
+                                            <td data-label="Terakhir Aktif" class="text-truncate" style="max-width: 120px;">
                                                 @if($user->last_active)
                                                     {{ \Carbon\Carbon::parse($user->last_active)->diffForHumans(null, true) }} lalu
                                                 @else
                                                     N/A
                                                 @endif
                                             </td>
-                                            <td class="text-truncate" style="max-width: 120px;">{{ \Carbon\Carbon::parse($user->created_at)->format('d F Y') }}</td>
-                                            <td>
+                                            <td data-label="Terdaftar Pada" class="text-truncate" style="max-width: 120px;">{{ \Carbon\Carbon::parse($user->created_at)->format('d F Y') }}</td>
+                                            <td data-label="Tipe Pendaftaran">
                                                 {{ $user->register_type ?? 'Administrator' }}
                                             </td>
-                                            <td class="actions-cell">
+                                            <td data-label="Aksi" class="actions-cell">
                                                 <div class="action-buttons-group">
                                                     <a href="{{ route('admin.users.show', $user) }}" class="btn-action view" title="Lihat">
                                                         <i class='bx bx-show'></i>
@@ -192,6 +197,7 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 @section('styles')
@@ -399,62 +405,67 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 25px;
-        gap: 20px;
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        gap: 15px; /* Space between search and button */
     }
 
-    /* Search Form */
     .search-form {
-        flex: 0 0 auto;
+        flex-grow: 1; /* Allow search bar to take available space */
+        max-width: 400px; /* Limit max width of search bar */
     }
 
     .search-input-wrapper {
         position: relative;
         display: flex;
         align-items: center;
-        min-width: 280px;
     }
 
     .search-input {
         width: 100%;
-        padding: 12px 45px 12px 16px;
+        padding: 12px 40px 12px 20px; /* Adjust padding for icon */
         border: 2px solid #e2e8f0;
         border-radius: 12px;
-        font-size: 0.95rem;
-        background: #fff;
+        font-size: 1rem;
+        background: white;
         transition: all 0.3s ease;
-        color: #2d3748;
+        outline: none;
     }
 
     .search-input:focus {
-        outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .search-input::placeholder {
-        color: #a0aec0;
+        border-color: #4facfe;
+        box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
     }
 
     .search-button {
         position: absolute;
-        right: 8px;
+        right: 10px;
         background: none;
         border: none;
-        padding: 8px;
-        cursor: pointer;
         color: #a0aec0;
+        font-size: 1.2rem;
+        cursor: pointer;
         transition: color 0.3s ease;
-        border-radius: 6px;
     }
 
     .search-button:hover {
         color: #667eea;
-        background: rgba(102, 126, 234, 0.1);
     }
 
-    .search-button i {
-        font-size: 1.1rem;
+    .clear-search {
+        position: absolute;
+        right: 40px; /* Adjust position to not overlap with search button */
+        background: none;
+        border: none;
+        color: #a0aec0;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
     }
+
+    .clear-search:hover {
+        color: #ff416c;
+    }
+
 
     .modern-table {
         width: 100%;
@@ -587,7 +598,7 @@
 
     /* Submit Button */
     .btn-submit {
-        background: #667eea 0%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
         border-radius: 16px;
         padding: 14px 28px;
@@ -602,7 +613,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        text-decoration: none;
+        text-decoration: none !important;
         flex-shrink: 0;
     }
 
@@ -665,7 +676,7 @@
         color: #1e3c72;
     }
     .pagination .page-item.active .page-link {
-        background:#667eea 0%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
     }

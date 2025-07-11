@@ -15,7 +15,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        $users = User::paginate(5);
+        $users = User::paginate(10);
         $unreadNotificationCount = Notification::where('is_read', false)->count();
         return view('admin.users.index', compact('users', 'unreadNotificationCount'));
     }
