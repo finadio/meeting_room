@@ -8,6 +8,7 @@ use App\Mail\VerificationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Notification; // Pastikan ini ada
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
@@ -53,6 +54,16 @@ class RegisterController extends Controller
                 'contact_number' => $contactNumber, // Simpan nomor HP yang sudah diproses
                 // 'register_type' => 'Register Form',
                 // 'verification_code' => $verificationCode,
+            ]);
+
+            // Buat notifikasi untuk admin tentang pendaftaran pengguna baru
+            Notification::create([
+                'user_id' => $user->id, // User yang baru terdaftar
+                'notifiable_type' => User::class,
+                'notifiable_id' => $user->id,
+                'message' => 'Pengguna baru telah mendaftar: ' . $user->name . ' (' . $user->email . ').',
+                'type' => 'new_user_registration',
+                'is_read' => false,
             ]);
 
             // Send verification email to the user

@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
 use App\Mail\ContactFormMail;
 use App\Models\ContactFormSubmission;
+use App\Models\Notification; // Pastikan ini ada
 use Illuminate\Support\Facades\Mail;
+
 
 class ContactUsController extends Controller
 {
@@ -44,6 +46,16 @@ class ContactUsController extends Controller
             $submission->message = $request->input('message');
             $submission->save();
 
+            // Buat notifikasi untuk admin tentang pengiriman formulir kontak baru
+            Notification::create([
+                'user_id' => $submission->user_id, // Gunakan user_id dari submission jika ada
+                'notifiable_type' => ContactFormSubmission::class,
+                'notifiable_id' => $submission->id,
+                'message' => 'Pengiriman formulir kontak baru dari ' . $submission->name . '.',
+                'type' => 'contact_form_submission',
+                'is_read' => false,
+            ]);
+
             // Send email
             Mail::to('Nischal060@gmail.com')->send(new ContactFormMail(
                 $request->input('name'),
@@ -63,5 +75,14 @@ class ContactUsController extends Controller
         }
     }
 
-}
+    public function show(ContactFormSubmission $contactFormSubmission)
+        {
+            // Opsional: Tandai notifikasi terkait sebagai sudah dibaca saat detail dilihat
+            Notification::where('notifiable_type', ContactFormSubmission::class)
+                        ->where('notifiable_id', $contactFormSubmission->id)
+                        ->update(['is_read' => true]);
 
+            return view('admin.contact.show', compact('contactFormSubmission'));
+        }
+
+}

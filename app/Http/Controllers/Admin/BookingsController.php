@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Facility;
+use App\Models\Notification; // Pastikan ini ada
+use App\Models\User; // Pastikan ini ada jika digunakan di notifikasi user
+use App\Models\ContactFormSubmission; // Pastikan ini ada jika digunakan di notifikasi contact form
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\SendMessage; // Pastikan ini diimpor, bukan WhatsAppAPIService
+use App\Mail\BookingConfirmation; // Pastikan ini diimpor jika digunakan
 
 class BookingsController extends Controller
 {
@@ -34,14 +38,14 @@ class BookingsController extends Controller
                 $query->where(function ($q) use ($searchQuery) {
                     // Pencarian di kolom-kolom teks
                     $q->where('user_name', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('email', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('contact_number', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('status', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('meeting_title', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('group_name', 'like', '%' . $searchQuery . '%')
-                      ->orWhereHas('facility', function ($qF) use ($searchQuery) {
-                          $qF->where('name', 'like', '%' . $searchQuery . '%');
-                      });
+                        ->orWhere('email', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('contact_number', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('status', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('meeting_title', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('group_name', 'like', '%' . $searchQuery . '%')
+                        ->orWhereHas('facility', function ($qF) use ($searchQuery) {
+                            $qF->where('name', 'like', '%' . $searchQuery . '%');
+                        });
 
                     // Coba mencari berdasarkan nama bulan (misal: "January", "February", dll.)
                     try {
@@ -165,6 +169,17 @@ class BookingsController extends Controller
         $booking->status = 'Disetujui';
         $booking->save();
 
+        // Buat notifikasi untuk admin tentang pembaruan status pemesanan
+        $messageForNotification = 'Status pemesanan untuk ' . $booking->meeting_title . ' (' . $booking->facility->name . ') telah diperbarui menjadi ' . $booking->status . '.';
+        Notification::create([
+            'user_id' => auth()->id(), // User yang memperbarui status (admin)
+            'notifiable_type' => Booking::class,
+            'notifiable_id' => $booking->id,
+            'message' => $messageForNotification,
+            'type' => 'booking_status_update',
+            'is_read' => false,
+        ]);
+
         // Variabel ini digunakan sebagai 'to_name' di SendMessage.php.
         $messageForToName = "Booking dari " . auth()->user()->name . " untuk ruang " . $booking->facility->name;
         
@@ -203,6 +218,17 @@ class BookingsController extends Controller
 
         $booking->status = 'Ditolak'; // Mengubah status menjadi 'Ditolak'
         $booking->save();
+
+        // Buat notifikasi untuk admin tentang pembaruan status pemesanan (ditolak)
+        $messageForNotification = 'Status pemesanan untuk ' . $booking->meeting_title . ' (' . $booking->facility->name . ') telah diperbarui menjadi ' . $booking->status . '.';
+        Notification::create([
+            'user_id' => auth()->id(), // User yang memperbarui status (admin)
+            'notifiable_type' => Booking::class,
+            'notifiable_id' => $booking->id,
+            'message' => $messageForNotification,
+            'type' => 'booking_status_update',
+            'is_read' => false,
+        ]);
 
         // Ambil template ID penolakan dari .env (Anda harus menambahkannya)
         $rejectionTemplateId = config('app.notif_reject_template_id'); // <-- Anda perlu menambahkan ini di .env dan config/app.php
@@ -284,7 +310,7 @@ class BookingsController extends Controller
             return redirect()->back()->with('error', 'Tidak bisa membuat booking karena waktu yang dipilih sudah dibooking.');
         }
 
-        Booking::create([
+        $booking = Booking::create([ // Tangkap instance booking yang baru dibuat
             'facility_id' => $facilityId,
             'booking_date' => $bookingDate,
             'booking_time' => $request->booking_time,
@@ -296,6 +322,16 @@ class BookingsController extends Controller
             'email' => $user->email,
             'contact_number' => $user->contact_number,
             'status' => 'Disetujui',
+        ]);
+
+        // Buat notifikasi untuk admin tentang pemesanan baru
+        Notification::create([
+            'user_id' => auth()->id(), // User yang membuat booking (admin)
+            'notifiable_type' => Booking::class,
+            'notifiable_id' => $booking->id,
+            'message' => 'Pemesanan baru telah dibuat oleh ' . $booking->user->name . ' untuk ' . $booking->facility->name . '.',
+            'type' => 'new_booking',
+            'is_read' => false,
         ]);
 
         return redirect()->route('admin.bookings.index')->with('success', 'Booking berhasil dibuat oleh Admin.');

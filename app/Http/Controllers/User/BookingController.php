@@ -17,9 +17,10 @@ use Illuminate\Support\Str;
 use App\Models\Facility;
 use App\Models\User;
 use App\Models\Booking;
+use App\Models\Notification; // Tambahkan ini
 use App\Services\WhatsAppAPIService;
 use App\Http\Controllers\SendMessage;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log; // Pastikan ini ada
 
 class BookingController extends Controller
 {
@@ -117,8 +118,8 @@ class BookingController extends Controller
 
     public function confirm(Request $request, $facilityId)
     {
+        Log::info('BookingController@confirm method hit for facility ID: ' . $facilityId); // DEBUG LOG 1
         try {
-        
             // Ambil data fasilitas berdasarkan facility_id 
             $facility = Facility::find($facilityId);
 
@@ -129,15 +130,16 @@ class BookingController extends Controller
             $facility = Facility::findOrFail($facilityId);
            
             $validator = Validator::make($request->all(), [
-                'date' => 'required', 'date', new NotInPast(),
+                'date' => ['required', 'date', new NotInPast()],
                 'time' => 'required|date_format:H:i',
-                'end_time' => 'required|date_format:H:i|after:booking_time',
+                'end_time' => 'required|date_format:H:i|after:time', // Perbaiki 'booking_time' menjadi 'time'
                 'meeting_title' => 'string|max:255',
                 'group_name' => 'string|max:255',
 
             ]);
 
             if ($validator->fails()) {
+                Log::warning('Booking validation failed: ' . json_encode($validator->errors())); // DEBUG LOG 2
                 return redirect()->back()
                     ->withErrors($validator)
                     ->withInput();
@@ -159,9 +161,10 @@ class BookingController extends Controller
                 ->exists();
 
                 if ($existingBooking) {
+                    Log::warning('Conflicting booking found for facility ID: ' . $facilityId); // DEBUG LOG 3
                     return redirect()->back()->with('error', 'Ruang ini sudah dipesan untuk tanggal dan waktu tersebut.');
                 }
-            $totalPrice = 0;
+            $totalPrice = 0; // Pastikan ini dihitung jika diperlukan, atau akan selalu 0
         //     Jika tidak ada booking yang bentrok, buat booking baru
             $user = auth()->user();
             $booking = new Booking();
@@ -178,9 +181,21 @@ class BookingController extends Controller
             $booking->group_name = $request->input('group_name');
             $booking->save();
 
+            Log::info('Booking saved successfully with ID: ' . $booking->id); // DEBUG LOG 4
+
+            // Buat notifikasi untuk admin tentang pemesanan baru dari user
+            $notification = Notification::create([ // Tangkap hasilnya ke variabel $notification
+                'user_id' => null, 
+                'notifiable_type' => Booking::class,
+                'notifiable_id' => $booking->id,
+                'message' => 'Pemesanan baru dari ' . $user->name . ' untuk fasilitas ' . $facility->name . '.',
+                'type' => 'new_booking',
+                'is_read' => false,
+            ]);
+            Log::info('Notification created successfully with ID: ' . $notification->id); // DEBUG LOG 5
+
             // Kirim notifikasi WhatsApp ke Admin
-             
-             $message = "Booking baru dari " . auth()->user()->name . " untuk ruang " . $booking->facility->name . " pada tanggal " . $booking->booking_date . " dari " . $booking->booking_time . " sampai " . $booking->booking_end . ".";
+            $message = "Booking baru dari " . auth()->user()->name . " untuk ruang " . $booking->facility->name . " pada tanggal " . $booking->booking_date . " dari " . $booking->booking_time . " sampai " . $booking->booking_end . ".";
             
             $sendMessage = new SendMessage();
             $response = $sendMessage->sendMessageAttemp($no_wa, $message, [['key' => 1, 'value' => 'app', 'value_text' => 'Booking Meeting room'], 
@@ -197,12 +212,12 @@ class BookingController extends Controller
             $request->session()->put('booking.time', $request->input('time'));
             $request->session()->put('booking.end', $request->input('end_time'));
 
-            // return view('user.booking.confirmation', compact('facility', 'booking'));
             $user = auth()->user();
             $bookings = $user->bookings()->latest()->paginate(5);
 
             return view('user.booking.my-booking', compact('bookings'));
         } catch (\Exception $e) {
+            Log::error('Error in BookingController@confirm: ' . $e->getMessage()); // DEBUG LOG 6
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -469,5 +484,4 @@ class BookingController extends Controller
 
         return view('user.my-bookings', compact('userBookings'));
     }
-
 }
