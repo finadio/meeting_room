@@ -71,9 +71,13 @@ class BookingController extends Controller
         return response()->json(['status' => 'warning', 'message' => 'Fasilitas sudah di-bookmark.'], 200); 
     }
 
-    public function bookmarks()
+    public function bookmarks(Request $request)
     {
-        $bookmarkedFacilities = auth()->user()->bookmarkedFacilities;
+        $query = auth()->user()->bookmarkedFacilities();
+        if ($request->has('search') && $request->search) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+        $bookmarkedFacilities = $query->paginate(5)->withQueryString();
         return view('user.booking.bookmarks', compact('bookmarkedFacilities'));
     }
 

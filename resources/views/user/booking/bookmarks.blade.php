@@ -28,6 +28,11 @@
     <div class="container mt-5">
         <h2 class="text-center mb-4">Your Bookmarks</h2>
 
+        <form method="GET" action="" class="mb-4 d-flex justify-content-center">
+            <input type="text" name="search" class="form-control w-50 mr-2" placeholder="Cari fasilitas..." value="{{ request('search') }}">
+            <button type="submit" class="btn btn-primary">Cari</button>
+        </form>
+
         @if(session('success'))
             <div class="alert alert-success mt-3">
                 {{ session('success') }}
@@ -49,7 +54,7 @@
                     <tbody>
                     @foreach($bookmarkedFacilities as $facility)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ ($bookmarkedFacilities->currentPage() - 1) * $bookmarkedFacilities->perPage() + $loop->iteration }}</td>
                             <td>
                                 <a href="{{ route('user.booking.show', ['facilityId' => $facility->id]) }}">
                                     @if($facility->image_path)
@@ -79,6 +84,9 @@
                     @endforeach
                     </tbody>
                 </table>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                {{ $bookmarkedFacilities->links('vendor.pagination.bootstrap-4') }}
             </div>
         @else
             <div class="alert alert-info text-center mt-3">
