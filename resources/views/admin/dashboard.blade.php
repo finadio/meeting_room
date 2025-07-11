@@ -131,10 +131,13 @@
                                     </div>
                                     <div class="sub-card-body">
                                         @php
+                                            // MODIFIED: Filter dan sort menggunakan kunci 'start' dan 'status' dari $bookedDates
                                             $recentBookings = collect($bookedDates)->filter(function($booking) {
-                                                return isset($booking['bookingDate']) && \Carbon\Carbon::parse($booking['bookingDate'])->greaterThanOrEqualTo(\Carbon\Carbon::now()->subMonth());
+                                                // Pastikan 'start' ada sebelum parsing
+                                                return isset($booking['start']) && \Carbon\Carbon::parse($booking['start'])->greaterThanOrEqualTo(\Carbon\Carbon::now()->subMonth());
                                             })->sortByDesc(function($booking) {
-                                                return ($booking['bookingDate'] ?? '') . ' ' . ($booking['bookingTime'] ?? '');
+                                                // Urutkan berdasarkan tanggal dan waktu mulai
+                                                return $booking['start'];
                                             })->take(5);
                                         @endphp
 
@@ -145,11 +148,17 @@
                                         @else
                                             <div class="recent-bookings-list">
                                                 @foreach($recentBookings as $booking)
+                                                    @php
+                                                        // MODIFIED: Gunakan kunci 'status' dan parse 'start' untuk tanggal/waktu
+                                                        $status = $booking['status'] ?? 'N/A';
+                                                        $bookingDate = \Carbon\Carbon::parse($booking['start']);
+                                                        $bookingTime = \Carbon\Carbon::parse($booking['start']);
+                                                    @endphp
                                                     <div class="booking-note-item">
                                                         <div class="note-icon">
-                                                            @if(($booking['bookingStatus'] ?? '') == 'Disetujui')
+                                                            @if($status == 'Disetujui')
                                                                 <i class='bx bx-check-circle text-success'></i>
-                                                            @elseif(($booking['bookingStatus'] ?? '') == 'Menunggu Konfirmasi')
+                                                            @elseif($status == 'Menunggu Konfirmasi')
                                                                 <i class='bx bx-time text-warning'></i>
                                                             @else
                                                                 <i class='bx bx-x-circle text-danger'></i>
@@ -158,9 +167,9 @@
                                                         <div class="note-content">
                                                             <p class="note-title">{{ $booking['title'] ?? 'N/A' }}</p>
                                                             <p class="note-meta">
-                                                                <i class='bx bx-calendar'></i> {{ isset($booking['bookingDate']) ? \Carbon\Carbon::parse($booking['bookingDate'])->format('d M Y') : 'N/A' }}
-                                                                <i class='bx bx-time'></i> {{ isset($booking['bookingTime']) ? \Carbon\Carbon::parse($booking['bookingTime'])->format('H:i') : 'N/A' }}
-                                                                <span class="badge {{ ($booking['bookingStatus'] ?? '') == 'Disetujui' ? 'badge-success-custom' : (($booking['bookingStatus'] ?? '') == 'Menunggu Konfirmasi' ? 'badge-info-custom' : 'badge-danger-custom') }}">{{ $booking['bookingStatus'] ?? 'N/A' }}</span>
+                                                                <i class='bx bx-calendar'></i> {{ $bookingDate->format('d M Y') }}
+                                                                <i class='bx bx-time'></i> {{ $bookingTime->format('H:i') }}
+                                                                <span class="badge {{ $status == 'Disetujui' ? 'badge-success-custom' : ($status == 'Menunggu Konfirmasi' ? 'badge-info-custom' : 'badge-danger-custom') }}">{{ $status }}</span>
                                                             </p>
                                                         </div>
                                                     </div>
