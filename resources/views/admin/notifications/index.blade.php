@@ -89,10 +89,11 @@
                                             <td data-label="Aksi" class="actions-cell">
                                                 <div class="action-buttons-group">
                                                     @if (!$notification->is_read)
-                                                        <form action="{{ route('admin.notifications.markAsRead', $notification->id) }}" method="POST" style="display:inline-block;">
+                                                        {{-- MODIFIED: Change onclick to open custom modal --}}
+                                                        <form id="markAsReadForm-{{ $notification->id }}" action="{{ route('admin.notifications.markAsRead', $notification->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('PATCH')
-                                                            <button type="submit" class="btn-action success" title="Tandai Sudah Dibaca" onclick="return confirm('Apakah Anda yakin ingin menandai notifikasi ini sudah dibaca?')">
+                                                            <button type="button" class="btn-action success" title="Tandai Sudah Dibaca" onclick="showConfirmMarkAsReadModal({{ $notification->id }})">
                                                                 <i class='bx bx-check'></i>
                                                             </button>
                                                         </form>
@@ -119,6 +120,23 @@
             </div>
         </div>
     </div>
+</div>
+
+{{-- MODAL CUSTOM untuk konfirmasi tandai sudah dibaca --}}
+<div id="confirmMarkAsReadModal" class="custom-modal-backdrop" style="display:none;">
+  <div class="custom-modal">
+    <div class="custom-modal-header">
+      <span class="custom-modal-title">Konfirmasi Aksi</span>
+      <button type="button" class="alert-close" onclick="closeConfirmMarkAsReadModal()"><i class="bx bx-x"></i></button>
+    </div>
+    <div class="custom-modal-body">
+      <p>Apakah Anda yakin ingin menandai notifikasi ini sudah dibaca?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button id="cancelMarkAsReadBtn" class="btn btn-secondary" style="min-width:90px;padding:10px 20px;" onclick="closeConfirmMarkAsReadModal()">Batal</button>
+      <button id="confirmMarkAsReadBtn" class="btn btn-success" style="min-width:110px;padding:10px 20px;">Ya, Tandai</button>
+    </div>
+  </div>
 </div>
 @endsection
 
@@ -327,6 +345,77 @@
         padding: 20px;
     }
 
+    .table-actions-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        gap: 15px; /* Space between search and button */
+    }
+
+    .search-form {
+        flex-grow: 1; /* Allow search bar to take available space */
+        max-width: 400px; /* Limit max width of search bar */
+    }
+
+    .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 40px 12px 20px; /* Adjust padding for icon */
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        background: white;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .search-input:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
+    }
+
+    .search-input::placeholder {
+        color: #a0aec0;
+    }
+
+    .search-button {
+        position: absolute;
+        right: 10px;
+        background: none;
+        border: none;
+        color: #a0aec0;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .search-button:hover {
+        color: #667eea;
+    }
+
+    .clear-search {
+        position: absolute;
+        right: 40px; /* Adjust position to not overlap with search button */
+        background: none;
+        border: none;
+        color: #a0aec0;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .clear-search:hover {
+        color: #ff416c;
+    }
+
+
     .modern-table {
         width: 100%;
         border-collapse: separate; /* Use separate to allow border-radius on cells */
@@ -392,7 +481,16 @@
         border-bottom-right-radius: 12px;
         border-top-right-radius: 12px;
     }
-    
+
+    .table-profile-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 8px; /* Slightly less rounded for facilities */
+        object-fit: cover;
+        border: 2px solid #e2e8f0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
     /* Badges */
     .badge-primary-custom {
         background-color: #667eea;
@@ -470,17 +568,41 @@
 
     /* Specific Button Colors */
     .btn-action.view { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-    .btn-action.checkin { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
-    .btn-action.checkout { background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%); }
-    .btn-action.whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); } /* WhatsApp green */
-    .btn-action.approve { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-    .btn-action.reject { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
-    
+    .btn-action.edit { background: linear-gradient(135deg, #fbc02d 0%, #f57f17 100%); }
+    .btn-action.delete { background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%); }
+
     .btn-action i {
         margin-right: 5px; /* Space between icon and text for buttons with text */
     }
+    /* MODIFIED: Ensure btn-action.success is truly green and its icon white */
+    .btn-action.success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important; /* Force green background */
+        border-radius: 10px !important; /* Force rounded corners */
+        color: white !important; /* Ensure the button text/icon is white */
+        box-shadow: 0 4px 10px rgba(17, 153, 142, 0.3) !important; /* Adjust shadow for green */
+    }
+    .btn-action.success i.bx-check {
+        color: white !important; /* Make the check icon white for high contrast */
+    }
 
-    /* Submit Button (for Add Booking) */
+
+    /* Time Badges for Facilities */
+    .time-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 0.8em;
+        font-weight: 600;
+        color: white;
+    }
+    .time-badge.time-opening {
+        background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); /* Greenish blue */
+    }
+    .time-badge.time-closing {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); /* Reddish orange */
+    }
+
+    /* Submit Button (for Add Facility) */
     .btn-submit {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
@@ -497,13 +619,15 @@
         display: inline-flex; /* To align icon and text */
         align-items: center;
         justify-content: center;
+        text-decoration: none;
+        flex-shrink: 0;
     }
 
     .btn-submit:hover {
         transform: translateY(-3px);
         box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
         color: white; /* Ensure text color remains white on hover */
-        text-decoration: none; /* Remove underline on hover */
+        text-decoration: none;
     }
 
     .btn-submit:active {
@@ -519,7 +643,7 @@
     }
 
     .btn-submit .btn-content i {
-        margin-right: 8px; /* Space between icon and text */
+        margin-right: 8px;
         font-size: 1.1rem;
     }
 
@@ -535,12 +659,7 @@
         transition: width 0.3s ease, height 0.3s ease;
     }
 
-    .btn-submit:active .btn-ripple {
-        width: 200px; /* Adjust size based on button size */
-        height: 200px;
-    }
-
-    /* Pagination Styling */
+    /* Pagination */
     .pagination-wrapper {
         margin-top: 30px;
         display: flex;
@@ -621,6 +740,10 @@
             padding: 10px;
         }
 
+        .search-form {
+            max-width: 100%;
+        }
+
         .modern-table {
             display: block; /* Make table scrollable horizontally */
             width: 100%;
@@ -645,14 +768,14 @@
         .modern-table td {
             border: none;
             position: relative;
-            padding-left: 50%; /* Space for the label */
+            padding-left: 50%;
             text-align: right;
             border-bottom: 1px solid #eee;
             font-size: 0.9rem;
         }
 
         .modern-table td:before {
-            content: attr(data-label); /* Use data-label for content */
+            content: attr(data-label);
             position: absolute;
             left: 0;
             width: 45%;
@@ -665,24 +788,89 @@
 
         /* Specific labels for mobile */
         .modern-table td:nth-of-type(1):before { content: "S.N:"; }
-        .modern-table td:nth-of-type(2):before { content: "Pengguna:"; }
-        .modern-table td:nth-of-type(3):before { content: "Fasilitas:"; }
-        .modern-table td:nth-of-type(4):before { content: "Tanggal Pemesanan:"; }
-        .modern-table td:nth-of-type(5):before { content: "Waktu Mulai:"; }
-        .modern-table td:nth-of-type(6):before { content: "Waktu Selesai:"; }
-        .modern-table td:nth-of-type(7):before { content: "Status:"; }
-        .modern-table td:nth-of-type(8):before { content: "Aksi:"; }
+        .modern-table td:nth-of-type(2):before { content: "ID:"; }
+        .modern-table td:nth-of-type(3):before { content: "Gambar:"; text-align: center;}
+        .modern-table td:nth-of-type(4):before { content: "Nama:"; }
+        .modern-table td:nth-of-type(5):before { content: "Deskripsi:"; }
+        .modern-table td:nth-of-type(6):before { content: "Lokasi:"; }
+        .modern-table td:nth-of-type(7):before { content: "Waktu Buka:"; }
+        .modern-table td:nth-of-type(8):before { content: "Waktu Tutup:"; }
+        .modern-table td:nth-of-type(9):before { content: "Kontak Person:"; }
+        .modern-table td:nth-of-type(10):before { content: "Email:"; }
+        .modern-table td:nth-of-type(11):before { content: "Telepon:"; }
+        .modern-table td:nth-of-type(12):before { content: "Ditambahkan Oleh:"; }
+        .modern-table td:nth-of-type(13):before { content: "Aksi:"; }
         
         .modern-table tbody td:last-child {
-            border-bottom: none; /* Remove border for last cell in row */
+            border-bottom: none;
         }
 
         .action-buttons-group {
-            justify-content: flex-end; /* Align buttons to the right on mobile */
+            justify-content: flex-end;
         }
     }
+
+    @media (max-width: 576px) {
+        .container-fluid {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        .booking-content {
+            padding: 25px 15px;
+        }
+    }
+
+    /* MODAL CUSTOM STYLES - Copied from send_message/show.blade.php for consistency */
+    .custom-modal-backdrop {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(30, 44, 72, 0.35);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+    .custom-modal {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+        min-width: 340px;
+        max-width: 95vw;
+        padding: 0 0 18px 0;
+        animation: modalPopIn 0.25s cubic-bezier(.4,2,.6,1) both;
+    }
+    .custom-modal-header {
+        padding: 18px 24px 0 24px;
+        display: flex; /* Added for close button alignment */
+        justify-content: space-between; /* Added for close button alignment */
+        align-items: center; /* Added for close button alignment */
+    }
+    .custom-modal-title {
+        font-size: 1.18rem;
+        font-weight: 700;
+        color: #1e3c72;
+    }
+    .custom-modal-body {
+        padding: 16px 24px 0 24px;
+        color: #222;
+        font-size: 1.05rem;
+    }
+    .custom-modal-footer {
+        padding: 18px 24px 0 24px;
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+    }
+    @keyframes modalPopIn {
+        from { transform: scale(0.85); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+    /* End of MODAL CUSTOM STYLES */
 </style>
 @endsection
+
 
 @section('scripts')
 {{-- Memastikan Bootstrap JS dimuat --}}
@@ -693,6 +881,65 @@
         button.addEventListener('click', function() {
             this.closest('.custom-alert').style.display = 'none';
         });
+    });
+
+    // MODAL JS for markAsRead confirmation
+    let currentNotificationId = null; // Variable to store the ID of the notification being processed
+
+    function showConfirmMarkAsReadModal(notificationId) {
+        console.log('showConfirmMarkAsReadModal called for ID:', notificationId); // Debugging
+        currentNotificationId = notificationId;
+        const modal = document.getElementById('confirmMarkAsReadModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            // Optional: Focus on the confirm button for accessibility
+            setTimeout(() => {
+                const confirmBtn = document.getElementById('confirmMarkAsReadBtn');
+                if (confirmBtn) {
+                    confirmBtn.focus();
+                }
+            }, 100);
+            console.log('Modal display set to flex.'); // Debugging
+        } else {
+            console.error('Modal element #confirmMarkAsReadModal not found.'); // Debugging
+        }
+    }
+
+    function closeConfirmMarkAsReadModal() {
+        console.log('closeConfirmMarkAsReadModal called.'); // Debugging
+        const modal = document.getElementById('confirmMarkAsReadModal');
+        if (modal) {
+            modal.style.display = 'none';
+            currentNotificationId = null; // Clear the stored ID
+            console.log('Modal display set to none.'); // Debugging
+        } else {
+            console.error('Modal element #confirmMarkAsReadModal not found for closing.'); // Debugging
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded fired.'); // Debugging
+        const confirmBtn = document.getElementById('confirmMarkAsReadBtn');
+        if (confirmBtn) {
+            confirmBtn.onclick = function() {
+                console.log('Confirm button clicked.'); // Debugging
+                if (currentNotificationId !== null) {
+                    const form = document.getElementById(`markAsReadForm-${currentNotificationId}`);
+                    if (form) {
+                        console.log('Submitting form:', form.id); // Debugging
+                        form.submit(); // Submit the form
+                        closeConfirmMarkAsReadModal(); // Close modal after submission
+                    } else {
+                        console.error('Form not found for ID:', `markAsReadForm-${currentNotificationId}`); // Debugging
+                        // Optionally show an error toast
+                    }
+                } else {
+                    console.warn('currentNotificationId is null when confirm button clicked.'); // Debugging
+                }
+            };
+        } else {
+            console.error('Confirm button element #confirmMarkAsReadBtn not found.'); // Debugging
+        }
     });
 </script>
 @endsection

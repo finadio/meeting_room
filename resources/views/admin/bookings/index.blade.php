@@ -123,7 +123,7 @@
                                             $timeLeft = $currentTime->diffInMinutes($bookingEndTime, false); // false untuk mendapatkan nilai negatif jika sudah lewat
                                         @endphp
                                         <tr>
-                                            <td data-label="S.N">{{ $loop->iteration }}</td>
+                                            <td data-label="S.N">{{ $bookings->firstItem() + $loop->index }}</td> {{-- MODIFIED LINE --}}
                                             <td data-label="Pengguna" class="text-truncate" style="max-width: 120px;">{{ $booking->user->name }}</td>
                                             <td data-label="Fasilitas" class="text-truncate" style="max-width: 120px;">{{ $booking->facility->name }}</td>
                                             <td data-label="Tanggal">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d F Y') }}</td>
@@ -634,6 +634,8 @@
         display: inline-flex; /* To align icon and text */
         align-items: center;
         justify-content: center;
+        text-decoration: none !important; /* ADDED !important here */
+        flex-shrink: 0;
     }
 
     .btn-submit:hover {

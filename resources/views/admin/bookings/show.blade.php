@@ -665,6 +665,38 @@
         transform: translateY(-1px);
     }
 
+    .btn-back {
+        /* Overriding with !important to ensure styles are applied */
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 18px 40px !important;
+        color: white !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        cursor: pointer !important;
+        position: relative !important;
+        overflow: hidden !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3) !important;
+        min-width: 180px !important; /* Adjusted minimum width */
+        text-decoration: none !important; /* For anchor tag */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 12px 35px rgba(108, 117, 125, 0.4) !important;
+        color: white !important;
+        text-decoration: none !important;
+    }
+
+    .btn-back:active {
+        transform: translateY(-1px) !important;
+    }
+
     .btn-content {
         display: flex;
         align-items: center;
