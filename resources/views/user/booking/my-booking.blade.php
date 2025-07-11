@@ -62,7 +62,7 @@
                             <tbody>
                             @foreach ($bookings as $booking)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                <td>{{ ($bookings->currentPage() - 1) * $bookings->perPage() + $loop->iteration }}</td>
                                     <td>
                                         <div>
                                             <strong>{{ $booking->facility->name }}</strong>
