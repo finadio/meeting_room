@@ -647,6 +647,9 @@
         <li class="{{ request()->routeIs('admin.contact.*') ? 'active' : '' }}">
             <a href="{{ route('admin.contact.index') }}" data-title="Contact Us"><i class='bx bx-envelope'></i> <span>Contact Us</span></a>
         </li>
+        <li class="{{ request()->routeIs('admin.send_message.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.send_message.index') }}" data-title="Kirim Agenda Harian"><i class='bx bxs-message-dots'></i> <span>Kirim Agenda Harian</span></a>
+        </li>
         <li>
             <a href="{{ route('logout') }}" data-title="Logout"><i class='bx bxs-log-out-circle'></i> <span>Logout</span></a>
         </li>

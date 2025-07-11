@@ -273,3 +273,15 @@ Route::middleware(['auth', 'log.last.active'])->group(function () {
 Route::middleware(['auth', 'log.last.active'])->group(function () {
     Route::get('user/events', [EventController::class, 'show_event'])->name('user.events.show');
 });
+
+// Route untuk fitur Kirim Agenda Harian Admin
+Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin')->name('admin.send_message.')->group(function () {
+    Route::get('send-message', [\App\Http\Controllers\Admin\AdminSendMessageController::class, 'index'])->name('index');
+    Route::post('send-message', [\App\Http\Controllers\Admin\AdminSendMessageController::class, 'store'])->name('store');
+    Route::get('send-message/{id}', [\App\Http\Controllers\Admin\AdminSendMessageController::class, 'show'])->name('show');
+    Route::post('send-message/{id}/send', [\App\Http\Controllers\Admin\AdminSendMessageController::class, 'send'])->name('send');
+    // Tambahan agar tombol edit dan hapus tidak error
+    Route::get('send-message/{id}/edit', [\App\Http\Controllers\Admin\AdminSendMessageController::class, 'edit'])->name('edit');
+    Route::put('send-message/{id}', [\App\Http\Controllers\Admin\AdminSendMessageController::class, 'update'])->name('update');
+    Route::delete('send-message/{id}', [\App\Http\Controllers\Admin\AdminSendMessageController::class, 'destroy'])->name('destroy');
+});

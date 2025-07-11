@@ -18,15 +18,15 @@ class SendMessage extends Controller
 
         $curl = curl_init();
 
-        // Gunakan templateId yang diteruskan jika ada, jika tidak, gunakan default dari .env
-        $finalTemplateId = $templateId ?? getenv('NOTIF_APPROVAL_TEMPLATE_ID');
+        // Gunakan templateId yang diteruskan jika ada, jika tidak, gunakan default dari config()
+        $finalTemplateId = $templateId ?? config('app.notif_approval_template_id');
         \Log::info("Message Template ID (used): " . $finalTemplateId);  // Log nilai template ID yang digunakan
         
         $postData = json_encode([
             'to_number' => $no_wa,
             'to_name' => $name,
             'message_template_id' => $finalTemplateId,  // Gunakan $finalTemplateId di sini
-            'channel_integration_id' => getenv('CHANNEL_ID'),
+            'channel_integration_id' => config('app.channel_id'),
             'language' => [
                 'code' => 'id'
             ],

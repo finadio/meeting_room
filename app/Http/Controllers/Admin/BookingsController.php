@@ -169,7 +169,7 @@ class BookingsController extends Controller
         $messageForToName = "Booking dari " . auth()->user()->name . " untuk ruang " . $booking->facility->name;
         
         // Ambil template ID persetujuan dari .env
-        $approvalTemplateId = getenv('NOTIF_APPROVAL_TEMPLATE_ID');
+        $approvalTemplateId = config('app.notif_approval_template_id');
 
         $templateParameters = [
             ['key' => '1', 'value' => 'app', 'value_text' => 'Booking Meeting room'],
@@ -205,7 +205,7 @@ class BookingsController extends Controller
         $booking->save();
 
         // Ambil template ID penolakan dari .env (Anda harus menambahkannya)
-        $rejectionTemplateId = getenv('NOTIF_REJECT_TEMPLATE_ID'); // <-- Anda perlu menambahkan ini di .env
+        $rejectionTemplateId = config('app.notif_reject_template_id'); // <-- Anda perlu menambahkan ini di .env dan config/app.php
 
         // Parameter untuk template WhatsApp untuk pesan penolakan
         $templateParameters = [
@@ -339,7 +339,7 @@ class BookingsController extends Controller
             Log::info('Current Time: ' . $currentTime);
             Log::info('Booking End Time: ' . $bookingEndTime);
 
-            $templateId = getenv('NOTIF_APPROVAL_TEMPLATE_ID'); // Atau ID template lain jika ini untuk tujuan berbeda
+            $templateId = config('app.notif_approval_template_id'); // Atau ID template lain jika ini untuk tujuan berbeda
 
             if ($currentTime->greaterThan($bookingEndTime)) {
                 Log::info('Waktu telah melewati booking_end');
