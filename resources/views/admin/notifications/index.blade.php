@@ -168,7 +168,7 @@
         left: 0;
         right: 0;
         height: 2px;
-        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
         background-size: 400% 400%;
         animation: gradient-flow 3s ease infinite;
     }
@@ -470,20 +470,112 @@
 
     /* Specific Button Colors */
     .btn-action.view { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-    .btn-action.success { background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%); } /* For Mark as Read */
-
+    .btn-action.checkin { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+    .btn-action.checkout { background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%); }
+    .btn-action.whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); } /* WhatsApp green */
+    .btn-action.approve { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+    .btn-action.reject { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
+    
     .btn-action i {
         margin-right: 5px; /* Space between icon and text for buttons with text */
     }
 
-    /* Styling for read/unread rows */
-    .read-notification {
-        opacity: 0.7; /* Make read notifications slightly faded */
-    }
-    .unread-notification {
-        font-weight: bold; /* Make unread notifications stand out */
+    /* Submit Button (for Add Booking) */
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 14px 28px; /* Slightly smaller padding for top button */
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        display: inline-flex; /* To align icon and text */
+        align-items: center;
+        justify-content: center;
     }
 
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        color: white; /* Ensure text color remains white on hover */
+        text-decoration: none; /* Remove underline on hover */
+    }
+
+    .btn-submit:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-submit .btn-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .btn-submit .btn-content i {
+        margin-right: 8px; /* Space between icon and text */
+        font-size: 1.1rem;
+    }
+
+    .btn-submit .btn-ripple {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s ease, height 0.3s ease;
+    }
+
+    .btn-submit:active .btn-ripple {
+        width: 200px; /* Adjust size based on button size */
+        height: 200px;
+    }
+
+    /* Pagination Styling */
+    .pagination-wrapper {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .pagination {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .pagination .page-item .page-link {
+        border: none;
+        padding: 10px 15px;
+        margin: 0 2px;
+        border-radius: 8px;
+        color: #667eea;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background-color: #f0f4ff;
+    }
+    .pagination .page-item .page-link:hover {
+        background-color: #e0e7ff;
+        color: #1e3c72;
+    }
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #b0b8c6;
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
 
     /* Responsive Design for Tables */
     @media (max-width: 992px) {
@@ -491,6 +583,11 @@
         .modern-table tbody td {
             padding: 12px 15px;
             font-size: 0.85rem;
+        }
+
+        .btn-submit {
+            padding: 12px 20px;
+            font-size: 0.9rem;
         }
     }
 
@@ -568,11 +665,13 @@
 
         /* Specific labels for mobile */
         .modern-table td:nth-of-type(1):before { content: "S.N:"; }
-        .modern-table td:nth-of-type(2):before { content: "Tipe:"; }
-        .modern-table td:nth-of-type(3):before { content: "Pesan:"; }
-        .modern-table td:nth-of-type(4):before { content: "Status:"; } {{-- Label untuk Status --}}
-        .modern-table td:nth-of-type(5):before { content: "Dibuat Pada:"; }
-        .modern-table td:nth-of-type(6):before { content: "Aksi:"; }
+        .modern-table td:nth-of-type(2):before { content: "Pengguna:"; }
+        .modern-table td:nth-of-type(3):before { content: "Fasilitas:"; }
+        .modern-table td:nth-of-type(4):before { content: "Tanggal Pemesanan:"; }
+        .modern-table td:nth-of-type(5):before { content: "Waktu Mulai:"; }
+        .modern-table td:nth-of-type(6):before { content: "Waktu Selesai:"; }
+        .modern-table td:nth-of-type(7):before { content: "Status:"; }
+        .modern-table td:nth-of-type(8):before { content: "Aksi:"; }
         
         .modern-table tbody td:last-child {
             border-bottom: none; /* Remove border for last cell in row */
@@ -580,16 +679,6 @@
 
         .action-buttons-group {
             justify-content: flex-end; /* Align buttons to the right on mobile */
-        }
-    }
-
-    @media (max-width: 576px) {
-        .container-fluid {
-            padding-left: 15px;
-            padding-right: 15px;
-        }
-        .booking-content {
-            padding: 25px 15px;
         }
     }
 </style>
