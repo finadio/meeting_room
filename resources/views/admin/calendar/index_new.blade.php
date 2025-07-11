@@ -226,10 +226,10 @@
         padding: 2rem;
     }
 
+    /* Batasi lebar kontainer kalender agar kolom hari otomatis lebih kecil */
     .calendar-container {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 1.5rem;
+        max-width: 700px;
+        margin: 0 auto;
     }
 
     /* Stats Card */

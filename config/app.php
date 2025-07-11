@@ -194,5 +194,20 @@ return [
 
     'access_token' => env('ACCESS_TOKEN'),
     'notif_approval_template_id' => env('NOTIF_APPROVAL_TEMPLATE_ID'),
+    'notif_reject_template_id' => env('NOTIF_REJECT_TEMPLATE_ID'),
 
+     // Untuk Meta/WhatsApp Business Platform API (jika digunakan)
+     'whatsapp_api_url' => env('WHATSAPP_API_URL'),
+     'whatsapp_access_token' => env('WHATSAPP_ACCESS_TOKEN'),
+     'whatsapp_phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+ 
+      // Untuk Qontak API
+    'access_token' => env('ACCESS_TOKEN'),
+    'channel_id' => env('CHANNEL_ID'),
+    'notif_approval_template_id' => env('NOTIF_APPROVAL_TEMPLATE_ID'),
+    'reset_password_template_id' => env('RESET_PASSWORD_TEMPLATE_ID'),
+    'aktivasi_template_id' => env('AKTIVASI_TEMPLATE_ID'),
+    'admin_whatsapp_number' => env('ADMIN_WHATSAPP_NUMBER'), // Nomor admin
+    'bu_fitri_whatsapp_number' => env('BU_FITRI_WHATSAPP_NUMBER'), // Tambahkan ini untuk nomor Bu Fitri
+    'agenda_daily_template_id' => env('AGENDA_DAILY_TEMPLATE_ID'),
 ];

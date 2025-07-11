@@ -18,6 +18,8 @@ class Kernel extends ConsoleKernel
         // Tambahkan perintah baru untuk mengirim notifikasi booking_end
         $schedule->command('booking:send-end-notification')->everyFiveMinutes();
         
+        // Jadwalkan pengiriman agenda harian otomatis jam 07:00 pagi
+        $schedule->command('agenda:send-harian')->dailyAt('07:00');
     }
 
     /**
