@@ -157,27 +157,27 @@
                             <div class="form-group-enhanced">
                                 <label class="form-label-enhanced">Agenda Manual</label>
                                 <div id="agenda-manual-container">
-                                    @if($agenda->agenda_manual && count($agenda->agenda_manual))
-                                        @foreach($agenda->agenda_manual as $index => $item)
+                                    @if($agenda->agendaManuals && count($agenda->agendaManuals))
+                                        @foreach($agenda->agendaManuals as $index => $item)
                                             <div class="agenda-manual-item mb-2">
                                                 <div class="row g-2 align-items-end">
                                                     <div class="col-12 col-md-4">
                                                         <label class="form-label-enhanced">Jam Mulai</label>
-                                                        <input type="time" name="agenda_manual[{{ $index }}][jam]" class="form-control-enhanced" value="{{ $item['jam'] ?? '' }}" required>
+                                                        <input type="time" name="agenda_manual[{{ $index }}][jam]" class="form-control-enhanced" value="{{ $item->jam ?? '' }}" required>
                                                     </div>
                                                     <div class="col-12 col-md-4">
                                                         <label class="form-label-enhanced">Jam Selesai</label>
-                                                        <input type="time" name="agenda_manual[{{ $index }}][jam_selesai]" class="form-control-enhanced" value="{{ $item['jam_selesai'] ?? '' }}">
+                                                        <input type="time" name="agenda_manual[{{ $index }}][jam_selesai]" class="form-control-enhanced" value="{{ $item->jam_selesai ?? '' }}">
                                                     </div>
                                                     <div class="col-12 col-md-4">
                                                         <label class="form-label-enhanced">Judul Agenda</label>
-                                                        <input type="text" name="agenda_manual[{{ $index }}][judul]" class="form-control-enhanced" value="{{ $item['judul'] ?? '' }}" placeholder="Judul agenda" required>
+                                                        <input type="text" name="agenda_manual[{{ $index }}][judul]" class="form-control-enhanced" value="{{ $item->judul ?? '' }}" placeholder="Judul agenda" required>
                                                     </div>
                                                 </div>
                                                 <div class="row g-2 align-items-end mt-1">
                                                     <div class="col-10 col-md-11">
                                                         <label class="form-label-enhanced">Lokasi</label>
-                                                        <input type="text" name="agenda_manual[{{ $index }}][lokasi]" class="form-control-enhanced" value="{{ $item['lokasi'] ?? '' }}" placeholder="Lokasi (opsional)">
+                                                        <input type="text" name="agenda_manual[{{ $index }}][lokasi]" class="form-control-enhanced" value="{{ $item->lokasi ?? '' }}" placeholder="Lokasi (opsional)">
                                                     </div>
                                                     <div class="col-2 col-md-1 d-flex align-items-end">
                                                         <button type="button" class="btn-remove-agenda" onclick="removeAgendaItem(this)">
@@ -210,7 +210,7 @@
 
 @section('scripts')
 <script>
-let agendaIndex = {{ $agenda->agenda_manual ? count($agenda->agenda_manual) : 0 }};
+let agendaIndex = {{ $agenda->agendaManuals ? count($agenda->agendaManuals) : 0 }};
 
 function addAgendaItem() {
     const container = document.getElementById('agenda-manual-container');

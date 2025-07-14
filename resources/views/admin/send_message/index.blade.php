@@ -768,6 +768,19 @@ function updateRemoveHariButtons() {
     agendaManualCounter = newAgendaManualCounter;
 }
 
+// Fungsi untuk update semua input hidden date pada agenda manual di hari tertentu
+function updateAgendaManualDatesForHari(parentMingguanIndex) {
+    const mingguanList = document.getElementById('mingguan-list');
+    const hariRow = mingguanList.querySelector(`.row[data-index="${parentMingguanIndex}"]`);
+    if (!hariRow) return;
+    const tanggalInput = hariRow.querySelector(`input[name="ootd[${parentMingguanIndex}][date]"]`);
+    const tanggal = tanggalInput ? tanggalInput.value : '';
+    // Update semua input hidden date pada agenda manual di hari ini
+    hariRow.querySelectorAll(`input[name^="agenda_manual[${parentMingguanIndex}"]][name$="[date]"]`).forEach(function(input) {
+        input.value = tanggal;
+    });
+}
+
 // Script agar tombol close (X) pada popup alert bisa berfungsi
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.alert-close').forEach(function(btn) {
@@ -794,6 +807,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (historyWrapper && !historyWrapper.contains(historySpinner)) {
         historyWrapper.prepend(historySpinner);
     }
+
+    // Tambahkan event listener untuk semua input tanggal OOTD
+    document.getElementById('mingguan-list').addEventListener('input', function(e) {
+        if (e.target.matches('input[type="date"][name^="ootd["]')) {
+            // Ambil parentMingguanIndex dari name
+            const match = e.target.name.match(/ootd\[(\d+)\]\[date\]/);
+            if (match) {
+                const parentMingguanIndex = match[1];
+                updateAgendaManualDatesForHari(parentMingguanIndex);
+            }
+        }
+    });
 });
 </script>
 

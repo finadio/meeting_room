@@ -362,6 +362,7 @@ class AdminSendMessageController extends Controller
             'ootd_cowok' => 'nullable|string|max:255',
             'agenda_manual' => 'nullable|array',
             'agenda_manual.*.jam' => 'nullable|string|max:50',
+            'agenda_manual.*.jam_selesai' => 'nullable|string|max:50',
             'agenda_manual.*.judul' => 'nullable|string|max:500',
             'agenda_manual.*.lokasi' => 'nullable|string|max:255',
         ]);
