@@ -1,4 +1,4 @@
-<p align="center"><img src="https://i.postimg.cc/kM2QrMrm/msa.png" width="400" alt="PT BPR MSA Logo"></p>
+<p align="center"><img src="public/img/msa.png" width="300" alt="Logo PT BPR MSA"></p>
 <p align="center">
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
