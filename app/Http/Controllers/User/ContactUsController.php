@@ -29,33 +29,34 @@ class ContactUsController extends Controller
 
     public function submitForm(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'message' => 'string',
+            'subject' => 'required',
+        ]);
+
+        // Save the form data to the database
+        $submission = new ContactFormSubmission();
+        $submission->user_id = $request->user() ? $request->user()->id : null;
+        $submission->name = $request->input('name');
+        $submission->email = $request->input('email');
+        $submission->subject = $request->input('subject');
+        $submission->message = $request->input('message');
+        $submission->save();
+
+        // Buat notifikasi untuk admin tentang pengiriman formulir kontak baru
+        Notification::create([
+            'user_id' => $submission->user_id, // Gunakan user_id dari submission jika ada
+            'notifiable_type' => ContactFormSubmission::class,
+            'notifiable_id' => $submission->id,
+            'message' => 'Pengiriman formulir kontak baru dari ' . $submission->name . '.',
+            'type' => 'contact_form_submission',
+            'is_read' => false,
+        ]);
+
+        $emailError = null;
         try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'message' => 'string',
-                'subject' => 'required',
-            ]);
-
-            // Save the form data to the database
-            $submission = new ContactFormSubmission();
-            $submission->user_id = $request->user() ? $request->user()->id : null;
-            $submission->name = $request->input('name');
-            $submission->email = $request->input('email');
-            $submission->subject = $request->input('subject');
-            $submission->message = $request->input('message');
-            $submission->save();
-
-            // Buat notifikasi untuk admin tentang pengiriman formulir kontak baru
-            Notification::create([
-                'user_id' => $submission->user_id, // Gunakan user_id dari submission jika ada
-                'notifiable_type' => ContactFormSubmission::class,
-                'notifiable_id' => $submission->id,
-                'message' => 'Pengiriman formulir kontak baru dari ' . $submission->name . '.',
-                'type' => 'contact_form_submission',
-                'is_read' => false,
-            ]);
-
             // Send email
             Mail::to('Nischal060@gmail.com')->send(new ContactFormMail(
                 $request->input('name'),
@@ -63,16 +64,20 @@ class ContactUsController extends Controller
                 $request->input('subject'),
                 $request->input('message')
             ));
-
-            Session::flash('success', 'Thank you for the form submission. An admin will reach out soon.');
-
-            // Redirect back to the form page
-            return redirect()->back();
         } catch (\Exception $e) {
-            Log::error('Email sending failed: ' . $e->getMessage());
-
-            return redirect()->back()->withErrors(['email' => 'Failed to send email. Please try again.']);
+            \Log::error('Email sending failed: ' . $e->getMessage());
+            $emailError = 'Email gagal dikirim, tapi data Anda sudah tersimpan.';
         }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'warning' => $emailError
+            ]);
+        }
+
+        Session::flash('success', $emailError ? $emailError : 'Thank you for the form submission. An admin will reach out soon.');
+        return redirect()->back();
     }
 
     public function show(ContactFormSubmission $contactFormSubmission)

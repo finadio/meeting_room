@@ -78,7 +78,7 @@
                                     <tbody>
                                     @foreach($submissions as $submission)
                                         <tr>
-                                            <td data-label="S.N">{{ $loop->iteration }}</td>
+                                            <td data-label="S.N">{{ $loop->iteration + ($submissions->perPage() * ($submissions->currentPage() - 1)) }}</td>
                                             <td data-label="Nama" class="text-truncate" style="max-width: 150px;">{{ $submission->name }}</td>
                                             <td data-label="Email" class="text-truncate" style="max-width: 150px;">{{ $submission->email }}</td>
                                             <td data-label="Subjek" class="text-truncate" style="max-width: 200px;" title="{{ $submission->subject }}">

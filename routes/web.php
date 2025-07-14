@@ -211,7 +211,7 @@ Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin
 
 // Contact us Route
 Route::get('/contactUs', [ContactUsController::class, 'showForm'])->name('contact.show');
-Route::post('/contactUs', [ContactUsController::class, 'submitForm'])->name('contact.submit');
+Route::post('/contactUs', [ContactUsController::class, 'submitForm'])->name('user.contact.submit');
 
 // Admin Contact us Route (Sudah ada, tidak perlu duplikasi)
 Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin')->group(function () {
