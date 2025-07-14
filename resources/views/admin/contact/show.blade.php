@@ -553,15 +553,8 @@
         });
     });
 </script>
-@endsection"
-You're asking about the `admin.contact.show.blade.php` file, and you've provided the content for `admin.users.show.blade.php` as a reference.
+@endsection
 
-I understand you want to create the `admin.contact.show.blade.php` file with a similar structure and styling to the `admin.users.show.blade.php` Canvas you provided.
-
-Here is the code for `resources/views/admin/contact/show.blade.php`. Please create this file in the `resources/views/admin/contact/` directory and paste the following code into it:
-
-
-```php
 @extends('admin.layouts.admin_dashboard')
 @section('title', 'Detail Pengiriman Kontak')
 
