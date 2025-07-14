@@ -127,7 +127,7 @@ class UserController extends Controller
             return redirect()->route('admin.users.index')->with('error', 'You cannot ban the administrator.');
         }
 
-        Mail::to($user->email)->send(new UserBanNotification($user, 'banned'));
+        // Mail::to($user->email)->send(new UserBanNotification($user, 'banned'));
 
         return redirect()->route('admin.users.index')->with('success', 'User banned successfully.');
     }
@@ -136,7 +136,7 @@ class UserController extends Controller
     {
         $user->unban();
 
-        Mail::to($user->email)->send(new UserBanNotification($user, 'unbanned'));
+        // Mail::to($user->email)->send(new UserBanNotification($user, 'unbanned'));
 
         return redirect()->route('admin.users.index')->with('success', 'User unbanned successfully.');
     }
