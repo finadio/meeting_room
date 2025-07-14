@@ -645,7 +645,13 @@
             <a href="{{ route('admin.notifications.index') }}" data-title="Notification"><i class='bx bxs-bell'></i> <span>Notification</span></a>
         </li>
         <li class="{{ request()->routeIs('admin.contact.*') ? 'active' : '' }}">
-            <a href="{{ route('admin.contact.index') }}" data-title="Contact Us"><i class='bx bx-envelope'></i> <span>Contact Us</span></a>
+            @php $unreadContactCount = \App\Models\ContactFormSubmission::where('is_read', false)->count(); @endphp
+            <a href="{{ route('admin.contact.index') }}" data-title="Contact Us">
+                <i class='bx bx-envelope'></i> <span>Contact Us</span>
+                @if($unreadContactCount > 0)
+                    <span class="badge badge-danger ml-2" style="font-size:0.8em;vertical-align:top;">{{ $unreadContactCount }}</span>
+                @endif
+            </a>
         </li>
         <li class="{{ request()->routeIs('admin.send_message.*') ? 'active' : '' }}">
             <a href="{{ route('admin.send_message.index') }}" data-title="Kirim Agenda Harian"><i class='bx bxs-message-dots'></i> <span>Kirim Agenda Harian</span></a>

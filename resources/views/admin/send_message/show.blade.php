@@ -69,18 +69,31 @@
 
                 {{-- SUBSECTION: Agenda Manual --}}
                 <div class="booking-card mb-5" style="background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-radius:28px;box-shadow:0 8px 32px rgba(44,62,80,0.10);border:1px solid #e3e8ee;">
-                    <div class="px-5 pt-5 pb-0 d-flex align-items-center gap-2">
-                        <i class="bx bx-list-ul" style="color:#4A6DFB;font-size:1.3rem;"></i>
-                        <h5 class="mb-0" style="color:#1e3c72;font-weight:700;letter-spacing:0.5px;">Agenda Manual</h5>
+                    <div class="px-5 pt-5 pb-0 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bx bx-list-ul" style="color:#4A6DFB;font-size:1.3rem;"></i>
+                            <h5 class="mb-0" style="color:#1e3c72;font-weight:700;letter-spacing:0.5px;">Agenda Manual</h5>
+                        </div>
+                        <a href="{{ route('admin.send_message.edit', $agenda->id) }}" class="btn btn-warning btn-sm">
+                            <i class="bx bx-edit"></i> Edit Agenda
+                        </a>
                     </div>
                     <div class="booking-content" style="padding:24px 40px 40px 40px;">
-                        @if($agenda->agenda_manual && count($agenda->agenda_manual))
+                        <div class="alert alert-info mb-4" style="border-radius:12px;border:none;padding:16px 20px;">
+                            <div class="d-flex align-items-center">
+                                <i class="bx bx-info-circle me-2" style="font-size:1.2rem;"></i>
+                                <div>
+                                    <strong>Koneksi Tabel:</strong> Agenda manual terhubung dengan tabel agenda harian dan dapat diedit melalui halaman edit agenda harian.
+                                </div>
+                            </div>
+                        </div>
+                        @if($agendaManuals && count($agendaManuals))
                             <ol class="pl-3" style="font-size:1.08rem;">
-                                @foreach($agenda->agenda_manual as $item)
+                                @foreach($agendaManuals as $item)
                                     <li class="mb-2">
-                                        <strong>{{ $item['jam'] ?? '-' }}</strong> - {{ $item['judul'] ?? '-' }}
-                                        @if(!empty($item['lokasi']))
-                                            <span class="text-muted">(Lokasi: {{ $item['lokasi'] }})</span>
+                                        <strong>{{ $item->jam ?? '-' }}</strong> - {{ $item->judul ?? '-' }}
+                                        @if(!empty($item->lokasi))
+                                            <span class="text-muted">(Lokasi: {{ $item->lokasi }})</span>
                                         @endif
                                     </li>
                                 @endforeach
@@ -88,16 +101,36 @@
                         @else
                             <em class="text-muted">Tidak ada agenda manual.</em>
                         @endif
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="bx bx-info-circle"></i> 
+                                Agenda manual dapat diedit melalui halaman edit agenda harian.
+                            </small>
+                        </div>
                     </div>
                 </div>
 
                 {{-- SUBSECTION: Agenda Booking --}}
                 <div class="booking-card mb-5" style="background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-radius:28px;box-shadow:0 8px 32px rgba(44,62,80,0.10);border:1px solid #e3e8ee;">
-                    <div class="px-5 pt-5 pb-0 d-flex align-items-center gap-2">
-                        <i class="bx bx-calendar" style="color:#4A6DFB;font-size:1.3rem;"></i>
-                        <h5 class="mb-0" style="color:#1e3c72;font-weight:700;letter-spacing:0.5px;">Agenda Booking ({{ $agenda->tanggal->format('d-m-Y') }})</h5>
+                    <div class="px-5 pt-5 pb-0 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bx bx-calendar" style="color:#4A6DFB;font-size:1.3rem;"></i>
+                            <h5 class="mb-0" style="color:#1e3c72;font-weight:700;letter-spacing:0.5px;">Agenda Booking ({{ $agenda->tanggal->format('d-m-Y') }})</h5>
+                        </div>
+                        <a href="{{ route('admin.bookings.index') }}" class="btn btn-primary btn-sm">
+                            <i class="bx bx-calendar-check"></i> Manajemen Booking
+                        </a>
                     </div>
                     <div class="booking-content" style="padding:24px 40px 40px 40px;">
+                        <div class="alert alert-info mb-4" style="border-radius:12px;border:none;padding:16px 20px;">
+                            <div class="d-flex align-items-center">
+                                <i class="bx bx-info-circle me-2" style="font-size:1.2rem;"></i>
+                                <div>
+                                    <strong>Koneksi Tabel:</strong> Data booking diambil dari tabel manajemen booking sesuai tanggal agenda harian ({{ $agenda->tanggal->format('d-m-Y') }}). 
+                                    Hanya booking yang sudah disetujui yang ditampilkan.
+                                </div>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" style="background:rgba(255,255,255,0.97);border-radius:18px;overflow:hidden;font-size:1.08rem;width:100%;">
                                 <thead style="background:#f4f7fd;font-weight:700;letter-spacing:0.5px;">
@@ -106,6 +139,7 @@
                                         <th><i class="bx bx-book-content mr-1"></i>Judul</th>
                                         <th><i class="bx bx-door-open mr-1"></i>Ruangan</th>
                                         <th><i class="bx bx-user mr-1"></i>Pemesan</th>
+                                        <th><i class="bx bx-check-circle mr-1"></i>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -116,12 +150,24 @@
                                             <td>{{ $b->meeting_title ?? '-' }}</td>
                                             <td>{{ $b->facility->name ?? '-' }}</td>
                                             <td>{{ $b->user->name ?? '-' }}</td>
+                                            <td>
+                                                <span class="badge-status" style="background:#e6f9f0;color:#11998e;">
+                                                    <i class="bx bx-check-circle"></i> Disetujui
+                                                </span>
+                                            </td>
                                         </tr>
                                     @empty
-                                        <tr><td colspan="4" class="text-center text-muted">Tidak ada agenda booking.</td></tr>
+                                        <tr><td colspan="5" class="text-center text-muted">Tidak ada agenda booking untuk tanggal {{ $agenda->tanggal->format('d-m-Y') }}.</td></tr>
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="bx bx-info-circle"></i> 
+                                Menampilkan booking yang sudah disetujui untuk tanggal {{ $agenda->tanggal->format('d-m-Y') }}. 
+                                <a href="{{ route('admin.bookings.index') }}" class="text-primary">Lihat semua booking</a>
+                            </small>
                         </div>
                     </div>
                 </div>

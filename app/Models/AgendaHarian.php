@@ -23,4 +23,9 @@ class AgendaHarian extends Model
         'waktu_kirim' => 'datetime',
         'tanggal' => 'date',
     ];
+
+    public function agendaManuals()
+    {
+        return $this->hasMany(AgendaManual::class);
+    }
 }

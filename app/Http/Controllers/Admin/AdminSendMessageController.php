@@ -21,6 +21,7 @@ class AdminSendMessageController extends Controller
         $sort = $request->input('sort', 'desc');
         $periode = $request->input('periode', 'all');
         $query = AgendaHarian::query();
+        
         // Filter pencarian
         if ($request->filled('q')) {
             $q = $request->input('q');
@@ -43,50 +44,56 @@ class AdminSendMessageController extends Controller
                     $sub->orWhereDate('tanggal', $tanggal->format('Y-m-d'));
                 }
                 // Cek jika q adalah nama bulan (Indonesia/Inggris, pendek/panjang)
-                $bulanMap = [
-                    'januari'=>1,'jan'=>1,'februari'=>2,'feb'=>2,'maret'=>3,'mar'=>3,'april'=>4,'apr'=>4,
-                    'mei'=>5,'juni'=>6,'jun'=>6,'juli'=>7,'jul'=>7,'agustus'=>8,'agu'=>8,'september'=>9,'sep'=>9,
-                    'oktober'=>10,'okt'=>10,'november'=>11,'nov'=>11,'desember'=>12,'des'=>12,
-                    'january'=>1,'february'=>2,'march'=>3,'april'=>4,'may'=>5,'june'=>6,'july'=>7,'august'=>8,'september'=>9,'october'=>10,'november'=>11,'december'=>12
+                $bulanIndonesia = [
+                    'januari', 'februari', 'maret', 'april', 'mei', 'juni',
+                    'juli', 'agustus', 'september', 'oktober', 'november', 'desember'
                 ];
+                $bulanInggris = [
+                    'january', 'february', 'march', 'april', 'may', 'june',
+                    'july', 'august', 'september', 'october', 'november', 'december'
+                ];
+                $bulanPendek = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'];
+                $bulanPendekInggris = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+                
                 $qLower = strtolower($q);
-                $bulan = null; $tahun = null;
-                foreach ($bulanMap as $nama=>$num) {
-                    if (preg_match("/\b$nama\b/i", $qLower)) {
-                        $bulan = $num;
-                        break;
-                    }
-                }
-                if ($bulan) {
-                    // Cek jika ada tahun di q
-                    if (preg_match('/\b(19|20)\\d{2}\b/', $qLower, $match)) {
-                        $tahun = $match[0];
-                    }
-                    if ($tahun) {
-                        $sub->orWhereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun);
-                    } else {
-                        $sub->orWhereMonth('tanggal', $bulan);
+                if (in_array($qLower, $bulanIndonesia) || in_array($qLower, $bulanInggris) || 
+                    in_array($qLower, $bulanPendek) || in_array($qLower, $bulanPendekInggris)) {
+                    $bulanIndex = array_search($qLower, $bulanIndonesia);
+                    if ($bulanIndex === false) $bulanIndex = array_search($qLower, $bulanInggris);
+                    if ($bulanIndex === false) $bulanIndex = array_search($qLower, $bulanPendek);
+                    if ($bulanIndex === false) $bulanIndex = array_search($qLower, $bulanPendekInggris);
+                    
+                    if ($bulanIndex !== false) {
+                        $bulanIndex++; // Array dimulai dari 0, bulan dimulai dari 1
+                        $sub->orWhereMonth('tanggal', $bulanIndex);
                     }
                 }
             });
         }
+        
         // Filter periode
         if ($periode === 'minggu') {
             $query->whereBetween('tanggal', [now()->startOfWeek(), now()->endOfWeek()]);
         } elseif ($periode === 'bulan') {
-            $query->whereBetween('tanggal', [now()->startOfMonth(), now()->endOfMonth()]);
+            $query->whereMonth('tanggal', now()->month)->whereYear('tanggal', now()->year);
         }
-        // Urutkan
-        $query->orderBy('tanggal', $sort);
-        // Limit default 14 jika all, jika filter minggu/bulan tampilkan semua
-        // if ($periode === 'all') {
-        //     $query->limit(14);
-        // }
-        $agendas = $query->paginate(10)->appends($request->except('page'));
+        
+        // Sorting
+        if ($sort === 'asc') {
+            $query->orderBy('tanggal', 'asc');
+        } else {
+            $query->orderBy('tanggal', 'desc');
+        }
+        
+        $agendas = $query->paginate(10);
+        
+        // Ambil booking untuk 15 hari ke depan dan 1 hari ke belakang untuk ditampilkan di tabel agenda booking
         $bookings = Booking::whereBetween('booking_date', [now()->subDays(1)->toDateString(), now()->addDays(14)->toDateString()])
+            ->with(['facility', 'user']) // Eager loading untuk performa
             ->orderBy('booking_date')
             ->orderBy('booking_time')
             ->get();
+            
         $history = $agendas;
         return view('admin.send_message.index', compact('agendas', 'history', 'bookings'));
     }
@@ -99,41 +106,59 @@ class AdminSendMessageController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'ootd' => 'required|array',
-            'ootd.*.date' => 'required|date',
-            'ootd.*.cewek' => 'nullable|string|max:255',
-            'ootd.*.cowok' => 'nullable|string|max:255',
-            'agenda' => 'nullable|array',
-            'agenda.*.jam' => 'nullable|string|max:50',
-            'agenda.*.judul' => 'nullable|string|max:500',
-            'agenda.*.lokasi' => 'nullable|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'ootd' => 'required|array',
+                'ootd.*.date' => 'required|date',
+                'ootd.*.cewek' => 'nullable|string|max:255',
+                'ootd.*.cowok' => 'nullable|string|max:255',
+                'agenda_manual' => 'nullable|array',
+                'agenda_manual.*.*.jam' => 'nullable|string|max:50',
+                'agenda_manual.*.*.judul' => 'nullable|string|max:500',
+                'agenda_manual.*.*.lokasi' => 'nullable|string|max:255',
+                'agenda_manual.*.*.date' => 'nullable|date',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validasi gagal saat simpan agenda harian', [
+                'errors' => $e->errors(),
+                'input' => $request->all(),
+            ]);
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
 
         $ootd = $validated['ootd'];
-        $agenda = $request->input('agenda', []);
+        $agendaManual = $request->input('agenda_manual', []);
 
-        // Proses per tanggal
         foreach ($ootd as $i => $row) {
             $tanggal = $row['date'];
             $ootd_cewek = $row['cewek'] ?? null;
             $ootd_cowok = $row['cowok'] ?? null;
 
-            // Ambil agenda manual untuk tanggal ini
-            $agenda_per_tanggal = collect($agenda)->filter(function ($item) use ($tanggal) {
-                return isset($item['date']) && $item['date'] === $tanggal;
-            })->values()->all();
-
             // Simpan atau update agenda_harian
-            AgendaHarian::updateOrCreate(
+            $agendaHarian = AgendaHarian::updateOrCreate(
                 ['tanggal' => $tanggal],
                 [
                     'ootd_cewek' => $ootd_cewek,
                     'ootd_cowok' => $ootd_cowok,
-                    'agenda_manual' => $agenda_per_tanggal,
-                    'status_kirim' => 'belum', // Reset status kirim jika diupdate
+                    'status_kirim' => 'belum',
                 ]
             );
+
+            // Hapus agenda manual lama untuk hari ini
+            $agendaHarian->agendaManuals()->delete();
+            // Simpan agenda manual baru
+            if (isset($agendaManual[$i]) && is_array($agendaManual[$i])) {
+                foreach ($agendaManual[$i] as $item) {
+                    if (($item['date'] ?? null) === $tanggal && !empty($item['jam']) && !empty($item['judul'])) {
+                        $agendaHarian->agendaManuals()->create([
+                            'jam' => $item['jam'],
+                            'jam_selesai' => $item['jam_selesai'] ?? null,
+                            'judul' => $item['judul'],
+                            'lokasi' => $item['lokasi'] ?? null,
+                        ]);
+                    }
+                }
+            }
         }
         return redirect()->route('admin.send_message.index')->with('success', 'Agenda harian berhasil disimpan!');
     }
@@ -148,45 +173,72 @@ class AdminSendMessageController extends Controller
      */
     public function generateMessageBody(AgendaHarian $agenda, $bookings, $singleLine = false)
     {
-        $messageLines = [];
+        $lines = [];
+        $counter = 1;
 
-        // Agenda Booking
-        if ($bookings->isNotEmpty()) {
-            $messageLines[] = "*Agenda Booking:*";
-            foreach ($bookings as $booking) {
-                $messageLines[] = "- " . $booking->booking_time . " - " . $booking->booking_end . " | " .
-                                  ($booking->meeting_title ?? 'Tanpa Judul') . " | " .
-                                  ($booking->facility->name ?? 'Ruangan Tidak Diketahui') . " | " .
-                                  ($booking->user->name ?? 'Pemesan Tidak Diketahui');
-            }
-            $messageLines[] = ""; // Baris kosong untuk pemisah
-        }
-
-        // Agenda Manual
-        if ($agenda->agenda_manual && count($agenda->agenda_manual) > 0) {
-            $messageLines[] = "*Agenda Manual:*";
-            foreach ($agenda->agenda_manual as $item) {
-                $messageLines[] = "- " . ($item['jam'] ?? '-') . " | " .
-                                  ($item['judul'] ?? '-') .
-                                  (!empty($item['lokasi']) ? " | " . $item['lokasi'] : '');
-            }
-            $messageLines[] = ""; // Baris kosong untuk pemisah
-        }
-
-        // OOTD
+        // OOTD as first item
         $ootdCewek = $agenda->ootd_cewek ?? '-';
         $ootdCowok = $agenda->ootd_cowok ?? '-';
-        $messageLines[] = "OOTD Cewek: " . $ootdCewek;
-        $messageLines[] = "OOTD Cowok: " . $ootdCowok;
+        $lines[] = $counter . ". 👕 Ce: " . $ootdCewek . "\n    Co: " . $ootdCowok;
+        $counter++;
+
+        // Agenda Manual (prioritaskan manual di atas booking)
+        if ($agenda->agendaManuals && count($agenda->agendaManuals) > 0) {
+            foreach ($agenda->agendaManuals as $item) {
+                $jam = $item->jam ?? '-';
+                $jamSelesai = $item->jam_selesai ?? null;
+                $judul = $item->judul ?? '-';
+                $lokasi = !empty($item->lokasi) ? $item->lokasi : null;
+                $icon = strpos(strtolower($judul), 'briefing') !== false ? '📚' : '📒';
+                $waktu = $jam;
+                if ($jamSelesai) {
+                    $waktu .= ' sd ' . $jamSelesai;
+                }
+                $desc = $waktu . ' ' . $icon . ' ' . $judul;
+                if ($lokasi) {
+                    $desc .= ' 📍' . $lokasi;
+                }
+                $lines[] = $counter . '. ' . $desc;
+                $counter++;
+            }
+        }
+
+        // Agenda Booking (setelah manual)
+        if ($bookings->isNotEmpty()) {
+            foreach ($bookings as $booking) {
+                // Pastikan booking_date dan agenda->tanggal dibandingkan sebagai string Y-m-d
+                $startDate = $booking->booking_date instanceof \Carbon\Carbon
+                    ? $booking->booking_date->format('Y-m-d')
+                    : date('Y-m-d', strtotime($booking->booking_date));
+                $agendaDate = $agenda->tanggal instanceof \Carbon\Carbon
+                    ? $agenda->tanggal->format('Y-m-d')
+                    : date('Y-m-d', strtotime($agenda->tanggal));
+                $startTime = $booking->booking_time instanceof \Carbon\Carbon
+                    ? $booking->booking_time->format('H:i')
+                    : date('H:i', strtotime($booking->booking_time));
+                $endTime = $booking->booking_end instanceof \Carbon\Carbon
+                    ? $booking->booking_end->format('H:i')
+                    : date('H:i', strtotime($booking->booking_end));
+                // Jika tanggal booking sama dengan agenda harian, hanya tampilkan jam
+                if ($startDate === $agendaDate) {
+                    $waktu = $startTime . ' sd ' . $endTime;
+                } else {
+                    $waktu = $startDate . ' ' . $startTime . ' sd ' . $endTime;
+                }
+                $judul = $booking->meeting_title ?? 'Tanpa Judul';
+                $ruangan = $booking->facility->name ?? 'Ruangan Tidak Diketahui';
+                $pemesan = $booking->user->name ?? 'Pemesan Tidak Diketahui';
+                $desc = $waktu . ' 📒 ' . $judul . ' 📍' . $ruangan . ' (' . $pemesan . ')';
+                $lines[] = $counter . '. ' . $desc;
+                $counter++;
+            }
+        }
 
         if ($singleLine) {
-            // Gabungkan semua baris dengan separator " | ", hilangkan baris kosong
-            $messageLines = array_filter($messageLines, function($line) {
-                return trim($line) !== '';
-            });
-            return implode(' | ', $messageLines);
+            // Gabungkan semua baris dengan separator " | "
+            return implode(' | ', $lines);
         } else {
-            return implode("\n", $messageLines);
+            return implode("\n", $lines);
         }
     }
 
@@ -199,22 +251,19 @@ class AdminSendMessageController extends Controller
     public function show($id)
     {
         $agenda = AgendaHarian::findOrFail($id);
+        $agendaManuals = $agenda->agendaManuals; // relasi baru
         $bookings = Booking::where('booking_date', $agenda->tanggal->toDateString())
-            ->with(['facility', 'user']) // Eager loading untuk performa
+            ->where('status', 'Disetujui')
+            ->with(['facility', 'user'])
             ->orderBy('booking_time')
             ->get();
 
-        // Parameter 1: Hari, Tanggal untuk template Qontak
         $key1 = $agenda->tanggal->isoFormat('dddd, D MMMM Y');
-
-        // Parameter 2: Isi Pesan (agenda detail) untuk template Qontak
-        $key2 = $this->generateMessageBody($agenda, $bookings, true); // Untuk Qontak (single line)
-
-        // Untuk preview di blade, gunakan multiline agar tidak dobel OOTD
-        $previewBody = $this->generateMessageBody($agenda, $bookings, false); // multiline
+        $key2 = $this->generateMessageBody($agenda, $bookings, true);
+        $previewBody = $this->generateMessageBody($agenda, $bookings, false);
         $pesanPreview = "Selamat pagi teman - teman, selamat mengawali hari ini penuh rasa syukur dan sehat selalu, adapun agenda dihari *" . $key1 . "* sbb:\n\n" . $previewBody . "\n\nTerima Kasih 🙏 \nTuhan memberkati 😇 \nBisa-Harus Bisa-Pasti Bisa \n#KolaborasiDalamHarmoni 🤲🙏😇💪💪🔥🔥";
 
-        return view('admin.send_message.show', compact('agenda', 'bookings', 'pesanPreview'));
+        return view('admin.send_message.show', compact('agenda', 'agendaManuals', 'bookings', 'pesanPreview'));
     }
 
     /**
@@ -227,7 +276,10 @@ class AdminSendMessageController extends Controller
     public function send(Request $request, $id)
     {
         $agenda = AgendaHarian::findOrFail($id);
+        
+        // Ambil booking yang sesuai dengan tanggal agenda harian
         $bookings = Booking::where('booking_date', $agenda->tanggal->toDateString())
+            ->where('status', 'Disetujui') // Hanya booking yang sudah disetujui
             ->with(['facility', 'user'])
             ->orderBy('booking_time')
             ->get();
@@ -315,9 +367,26 @@ class AdminSendMessageController extends Controller
         ]);
         $agenda->ootd_cewek = $validated['ootd_cewek'] ?? $agenda->ootd_cewek;
         $agenda->ootd_cowok = $validated['ootd_cowok'] ?? $agenda->ootd_cowok;
-        $agenda->agenda_manual = $validated['agenda_manual'] ?? $agenda->agenda_manual;
+        $agenda->status_kirim = 'belum';
+        $agenda->waktu_kirim = null;
         $agenda->save();
-        return redirect()->route('admin.send_message.index')->with('success', 'Agenda harian berhasil diupdate!');
+        // Hapus agenda manual lama
+        $agenda->agendaManuals()->delete();
+        // Simpan agenda manual baru
+        if (isset($validated['agenda_manual'])) {
+            foreach ($validated['agenda_manual'] as $item) {
+                if (!empty($item['jam']) && !empty($item['judul'])) {
+                    $agenda->agendaManuals()->create([
+                        'jam' => $item['jam'],
+                        'jam_selesai' => $item['jam_selesai'] ?? null,
+                        'judul' => $item['judul'],
+                        'lokasi' => $item['lokasi'] ?? null,
+                    ]);
+                }
+            }
+        }
+        return redirect()->route('admin.send_message.show', $agenda->id)
+            ->with('success', 'Agenda harian berhasil diupdate!');
     }
 
     /**

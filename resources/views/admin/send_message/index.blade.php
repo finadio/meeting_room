@@ -428,6 +428,15 @@
                 <div class="booking-card">
                     <div class="booking-content">
                         <h5 class="mb-4" style="font-weight:700;color:#1e3c72;letter-spacing:0.5px;">Tambah / Edit Agenda Harian</h5>
+                        <div class="alert alert-info mb-4" style="border-radius:12px;border:none;padding:16px 20px;">
+                            <div class="d-flex align-items-center">
+                                <i class="bx bx-info-circle me-2" style="font-size:1.2rem;"></i>
+                                <div>
+                                    <strong>Koneksi Tabel:</strong> Agenda manual terhubung dengan tabel agenda harian dan akan muncul di detail send message. 
+                                    Data ini dapat diedit melalui halaman detail agenda harian.
+                                </div>
+                            </div>
+                        </div>
                         @if(session('success'))
                             <div class="custom-alert success-alert mb-4">
                                 <div class="alert-icon"><i class="bx bx-check-circle"></i></div>
@@ -479,6 +488,64 @@
                                 <button type="submit" class="btn-submit btn-small"><i class="bx bx-save"></i> <span class="d-none d-md-inline">Simpan</span></button>
                             </div>
                         </form>
+                    </div>
+                </div>
+                {{-- TABEL Agenda Booking Hari Ini --}}
+                <div class="booking-card">
+                    <div class="booking-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0" style="font-weight:700;color:#1e3c72;letter-spacing:0.5px;">Agenda Booking ({{ now()->format('d-m-Y') }})</h5>
+                            <a href="{{ route('admin.bookings.index') }}" class="btn-submit btn-small">
+                                <i class="bx bx-calendar-check"></i> Manajemen Booking
+                            </a>
+                        </div>
+                        <div class="alert alert-info mb-4" style="border-radius:12px;border:none;padding:16px 20px;">
+                            <div class="d-flex align-items-center">
+                                <i class="bx bx-info-circle me-2" style="font-size:1.2rem;"></i>
+                                <div>
+                                    <strong>Koneksi Tabel:</strong> Data booking diambil dari tabel manajemen booking yang sudah disetujui. 
+                                    <a href="{{ route('admin.bookings.index') }}" class="text-primary">Kelola booking</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th><i class="bx bx-time-five mr-1"></i>Jam</th>
+                                        <th><i class="bx bx-book-content mr-1"></i>Judul</th>
+                                        <th><i class="bx bx-door-open mr-1"></i>Ruangan</th>
+                                        <th><i class="bx bx-user mr-1"></i>Pemesan</th>
+                                        <th><i class="bx bx-check-circle mr-1"></i>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php $todayBookings = $bookings->where('booking_date', now()->toDateString())->where('status', 'Disetujui'); @endphp
+                                    @forelse($todayBookings as $b)
+                                        <tr>
+                                            <td>{{ $b->booking_time }} - {{ $b->booking_end }}</td>
+                                            <td>{{ $b->meeting_title ?? '-' }}</td>
+                                            <td>{{ $b->facility->name ?? '-' }}</td>
+                                            <td>{{ $b->user->name ?? '-' }}</td>
+                                            <td>
+                                                <span class="badge-status" style="background:#e6f9f0;color:#11998e;">
+                                                    <i class="bx bx-check-circle"></i> Disetujui
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="5" class="text-center text-muted py-4">Tidak ada agenda booking hari ini.</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="bx bx-info-circle"></i> 
+                                Menampilkan booking yang sudah disetujui untuk hari ini. 
+                                <a href="{{ route('admin.bookings.index') }}" class="text-primary">Lihat semua booking</a>
+                            </small>
+                        </div>
                     </div>
                 </div>
                 {{-- TABEL HISTORY Agenda Harian --}}
@@ -581,20 +648,21 @@ function createMingguanRow(idx) {
 }
 
 // Fungsi untuk membuat input agenda manual
-function createAgendaManualField(parentMingguanIndex, agendaIdx) {
+function createAgendaManualField(parentMingguanIndex, agendaIdx, tanggal = null) {
     return `
         <div class="row g-2 mb-2 align-items-end agenda-manual-item">
+            <input type="hidden" name="agenda_manual[${parentMingguanIndex}][${agendaIdx}][date]" value="${tanggal ? tanggal : ''}">
             <div class="col-md-2">
-                <input type="time" name="agenda[${parentMingguanIndex}][${agendaIdx}][jam]" class="form-control-enhanced" placeholder="Jam Mulai">
+                <input type="time" name="agenda_manual[${parentMingguanIndex}][${agendaIdx}][jam]" class="form-control-enhanced" placeholder="Jam Mulai">
             </div>
             <div class="col-md-2">
-                <input type="time" name="agenda[${parentMingguanIndex}][${agendaIdx}][jam_selesai]" class="form-control-enhanced" placeholder="Jam Selesai">
+                <input type="time" name="agenda_manual[${parentMingguanIndex}][${agendaIdx}][jam_selesai]" class="form-control-enhanced" placeholder="Jam Selesai">
             </div>
             <div class="col-md-5">
-                <input type="text" name="agenda[${parentMingguanIndex}][${agendaIdx}][judul]" class="form-control-enhanced" placeholder="Judul Agenda">
+                <input type="text" name="agenda_manual[${parentMingguanIndex}][${agendaIdx}][judul]" class="form-control-enhanced" placeholder="Judul Agenda">
             </div>
             <div class="col-md-2">
-                <input type="text" name="agenda[${parentMingguanIndex}][${agendaIdx}][lokasi]" class="form-control-enhanced" placeholder="Lokasi (opsional)">
+                <input type="text" name="agenda_manual[${parentMingguanIndex}][${agendaIdx}][lokasi]" class="form-control-enhanced" placeholder="Lokasi (opsional)">
             </div>
             <div class="col-md-1 d-flex align-items-center">
                 <button type="button" class="btn btn-sm btn-outline-danger btn-remove-agenda-manual"><i class="bx bx-trash"></i></button>
@@ -627,27 +695,29 @@ document.getElementById('btn-add-manual').addEventListener('click', function() {
         const lastRowAdded = mingguanList.lastElementChild;
         const parentMingguanIndex = lastRowAdded.getAttribute('data-index');
         const agendaList = lastRowAdded.querySelector('.agenda-manual-list');
-        agendaList.insertAdjacentHTML('beforeend', createAgendaManualField(parentMingguanIndex, agendaManualCounter[parentMingguanIndex]));
+        // Ambil tanggal dari input OOTD
+        const tanggalInput = lastRowAdded.querySelector(`input[name="ootd[${parentMingguanIndex}][date]"]`);
+        const tanggal = tanggalInput ? tanggalInput.value : '';
+        agendaList.insertAdjacentHTML('beforeend', createAgendaManualField(parentMingguanIndex, agendaManualCounter[parentMingguanIndex], tanggal));
         agendaManualCounter[parentMingguanIndex]++;
     } else {
         // Tambah agenda manual ke hari terakhir yang ada
         const lastRow = allRows[allRows.length - 1];
         const parentMingguanIndex = lastRow.getAttribute('data-index'); // Dapatkan indeks dari atribut data-index
-        
         let agendaList = lastRow.querySelector('.agenda-manual-list');
         if (!agendaList) {
-            // Ini seharusnya tidak terjadi jika template createMingguanRow sudah ada agenda-manual-list
             agendaList = document.createElement('div');
             agendaList.className = 'agenda-manual-list mt-2';
             lastRow.appendChild(agendaList);
         }
-
+        // Ambil tanggal dari input OOTD
+        const tanggalInput = lastRow.querySelector(`input[name="ootd[${parentMingguanIndex}][date]"]`);
+        const tanggal = tanggalInput ? tanggalInput.value : '';
         // Pastikan agendaManualCounter untuk parentMingguanIndex sudah diinisialisasi
         if (typeof agendaManualCounter[parentMingguanIndex] === 'undefined') {
             agendaManualCounter[parentMingguanIndex] = agendaList.querySelectorAll('.agenda-manual-item').length;
         }
-
-        agendaList.insertAdjacentHTML('beforeend', createAgendaManualField(parentMingguanIndex, agendaManualCounter[parentMingguanIndex]));
+        agendaList.insertAdjacentHTML('beforeend', createAgendaManualField(parentMingguanIndex, agendaManualCounter[parentMingguanIndex], tanggal));
         agendaManualCounter[parentMingguanIndex]++;
     }
 });
@@ -683,10 +753,10 @@ function updateRemoveHariButtons() {
         item.querySelectorAll('[name^="ootd["]').forEach(input => {
             input.name = input.name.replace(/ootd\[\d+\]/, `ootd[${idx}]`);
         });
-        item.querySelectorAll('[name^="agenda["]').forEach(input => {
+        item.querySelectorAll('[name^="agenda_manual["]').forEach(input => {
             const oldName = input.name;
             // regex untuk mengganti indeks hari saja, bukan indeks agenda manual
-            input.name = oldName.replace(/agenda\[\d+\]\[(\d+)\]/, `agenda[${idx}][$1]`);
+            input.name = oldName.replace(/agenda_manual\[\d+\]\[(\d+)\]/, `agenda_manual[${idx}][$1]`);
         });
 
         // Inisialisasi atau perbarui counter agenda manual untuk indeks ini

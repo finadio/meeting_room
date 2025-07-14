@@ -17,6 +17,14 @@
                     </div>
                     
                     <div class="booking-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <a href="{{ route('admin.send_message.index') }}" class="btn btn-primary btn-sm">
+                                    <i class="bx bx-message-square-detail"></i> Kirim Agenda Harian
+                                </a>
+                            </div>
+                        </div>
+                        
                         @if(session('success'))
                             <div class="custom-alert success-alert">
                                 <div class="alert-icon">
@@ -91,6 +99,15 @@
                                     Tidak ada pemesanan saat ini.
                                 </div>
                             @else
+                                <div class="alert alert-info mb-4" style="border-radius:12px;border:none;padding:16px 20px;">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bx bx-info-circle me-2" style="font-size:1.2rem;"></i>
+                                        <div>
+                                            <strong>Info:</strong> Booking yang sudah disetujui akan otomatis muncul di agenda harian. 
+                                            <a href="{{ route('admin.send_message.index') }}" class="text-primary">Lihat agenda harian</a>
+                                        </div>
+                                    </div>
+                                </div>
                                 <table class="modern-table">
                                     <thead>
                                         <tr>
