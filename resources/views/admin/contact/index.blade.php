@@ -72,6 +72,7 @@
                                             <th>Subjek</th>
                                             <th>Pesan</th>
                                             <th>Dikirim Pada</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -88,6 +89,13 @@
                                                 {{ $submission->message }}
                                             </td>
                                             <td data-label="Dikirim Pada">{{ \Carbon\Carbon::parse($submission->created_at)->format('d F Y, H:i') }}</td>
+                                            <td data-label="Status" class="text-center">
+                                                @if($submission->is_replied)
+                                                    <span title="Sudah dibalas" style="color:green;font-size:1.3em;">&#10003;</span>
+                                                @else
+                                                    <span title="Belum dibalas" style="color:#aaa;font-size:1.3em;">&#10007;</span>
+                                                @endif
+                                            </td>
                                             <td data-label="Aksi" class="actions-cell">
                                                 <div class="action-buttons-group">
                                                     <form action="{{ route('admin.contact.destroy', $submission->id) }}" method="POST" style="display:inline-block;">
@@ -97,6 +105,9 @@
                                                             <i class='bx bx-trash'></i>
                                                         </button>
                                                     </form>
+                                                    <button type="button" class="btn-action reply" style="background:linear-gradient(135deg,#38a169 0%,#48bb78 100%);color:#fff;" title="Balas" data-id="{{ $submission->id }}" data-email="{{ $submission->email }}" data-name="{{ $submission->name }}" data-message="{{ $submission->message }}" data-toggle="modal" data-target="#replyModal">
+                                                        <i class='bx bx-reply'></i> Balas
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -113,6 +124,42 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal Balas -->
+<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="replyForm" method="POST" action="">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title" id="replyModalLabel">Balas Pesan Kontak</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="submission_id" id="replySubmissionId">
+          <div class="form-group">
+            <label for="replyToEmail">Kepada (Email User)</label>
+            <input type="email" class="form-control" id="replyToEmail" name="reply_to_email" readonly>
+          </div>
+          <div class="form-group">
+            <label for="replyToName">Nama User</label>
+            <input type="text" class="form-control" id="replyToName" name="reply_to_name" readonly>
+          </div>
+          <div class="form-group">
+            <label for="replyMessage">Pesan Balasan (bisa format HTML)</label>
+            <textarea class="form-control" id="replyMessage" name="reply_message" rows="6" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-success">Kirim Balasan</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 @endsection
 
@@ -592,12 +639,27 @@
 @endsection
 
 @section('scripts')
+@parent
 <script>
     // Alert close functionality
     document.querySelectorAll('.alert-close').forEach(button => {
         button.addEventListener('click', function() {
             this.closest('.custom-alert').style.display = 'none';
         });
+    });
+
+    // Modal dinamis untuk balas
+    $(document).on('click', '.btn-action.reply', function() {
+        const id = $(this).data('id');
+        const email = $(this).data('email');
+        const name = $(this).data('name');
+        const template = `Halo ${name},\n\nTerima kasih telah menghubungi kami.\n\n[Isi balasan Anda di sini]\n\nHormat kami,\nTim Meeting Room`;
+        $('#replySubmissionId').val(id);
+        $('#replyToEmail').val(email);
+        $('#replyToName').val(name);
+        $('#replyMessage').val(template);
+        $('#replyForm').attr('action', '/admin_contactUs/reply/' + id);
+        $('#replyModal').modal('show');
     });
 </script>
 @endsection

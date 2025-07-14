@@ -22,8 +22,15 @@ class ContactUsController extends Controller
     //For Admin
     public function index()
     {
-        $submissions = ContactFormSubmission::latest()->paginate(5);
-
+        $query = ContactFormSubmission::query();
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                  ->orWhere('email', 'like', "%$search%") ;
+            });
+        }
+        $submissions = $query->latest()->paginate(5)->appends(['search' => request('search')]);
         return view('admin.contact.index', compact('submissions'));
     }
 
@@ -89,5 +96,44 @@ class ContactUsController extends Controller
 
             return view('admin.contact.show', compact('contactFormSubmission'));
         }
+
+    public function replySubmission(Request $request, $id)
+    {
+        $request->validate([
+            'reply_message' => 'required|string',
+        ]);
+
+        $submission = ContactFormSubmission::findOrFail($id);
+        $adminName = $request->user() ? $request->user()->name : 'Admin';
+
+        // Kirim email balasan ke user
+        try {
+            \Mail::to($submission->email)->send(new \App\Mail\ContactReplyMail(
+                $submission->name,
+                $submission->email,
+                $request->input('reply_message'),
+                $adminName
+            ));
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengirim balasan kontak: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengirim email balasan ke user.');
+        }
+
+        // Update status balasan
+        $submission->is_replied = true;
+        $submission->replied_at = now();
+        $submission->reply_message = $request->input('reply_message');
+        $submission->replied_by = $request->user() ? $request->user()->id : null;
+        $submission->save();
+
+        return redirect()->back()->with('success', 'Balasan berhasil dikirim ke user.');
+    }
+
+    public function destroy($id)
+    {
+        $submission = \App\Models\ContactFormSubmission::findOrFail($id);
+        $submission->delete();
+        return redirect()->back()->with('success', 'Submission kontak berhasil dihapus.');
+    }
 
 }

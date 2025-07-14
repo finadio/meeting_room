@@ -217,9 +217,9 @@ Route::post('/contactUs', [ContactUsController::class, 'submitForm'])->name('use
 Route::middleware(['auth', 'user_type:admin', 'log.last.active'])->prefix('admin')->group(function () {
     Route::get('/admin_contactUs', [ContactUsController::class, 'index'])->name('admin.contact.index');
     Route::delete('/admin_contactUs/{id}', [ContactUsController::class, 'destroy'])->name('admin.contact.destroy');
-    // Tambahkan route show untuk contact form submission
-    Route::get('contact/{contactFormSubmission}', [ContactUsController::class, 'show'])->name('admin.contact.show'); // Tambahkan ini
+    Route::match(['get', 'post'], 'contact/{contactFormSubmission}', [ContactUsController::class, 'show'])->name('admin.contact.show');
 });
+Route::post('/admin_contactUs/reply/{id}', [ContactUsController::class, 'replySubmission'])->name('admin.contact.reply');
 
 // About Us Route
 Route::middleware(['auth', 'log.last.active'])->group(function () {

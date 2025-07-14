@@ -9,7 +9,7 @@ class ContactFormSubmission extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name', 'email', 'subject', 'message', 'is_read'];
+    protected $fillable = ['user_id', 'name', 'email', 'subject', 'message', 'is_read', 'is_replied', 'replied_at', 'reply_message', 'replied_by'];
 
     public function user()
     {
