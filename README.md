@@ -1,145 +1,74 @@
-<p align="center"><a href="https://aacharyanischal.com.np" target="_blank"><img src="https://i.postimg.cc/kM2QrMrm/msa.png" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><img src="https://i.postimg.cc/kM2QrMrm/msa.png" width="400" alt="PT BPR MSA Logo"></p>
 <p align="center">
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-# Booking Meeting Room
-## About
+# Booking Meeting Room PT BPR MSA
 
-Booking Meeting Room is a Laravel project for developed to streamline the process of booking futsal facilities, managing tournaments, and fostering community engagement among futsal enthusiasts. The system provides dedicated interfaces for users, futsal managers, and administrators, ensuring a smooth and efficient booking experience..
+## Tentang Project
 
-## Features
+Aplikasi **Booking Meeting Room** ini dikembangkan oleh tim mahasiswa sebagai bagian dari tugas kerja praktik di **PT BPR MSA**. Sistem ini bertujuan untuk memudahkan proses reservasi ruang rapat secara online, meningkatkan efisiensi penggunaan fasilitas, serta mendukung digitalisasi proses administrasi di lingkungan PT BPR MSA.
 
-## User Management
+## Tujuan
+- Mempermudah karyawan dan manajemen dalam melakukan pemesanan ruang meeting secara online.
+- Menyediakan sistem monitoring status ruangan secara real-time.
+- Mendukung transparansi dan efisiensi dalam pengelolaan fasilitas kantor.
+- Menjadi bagian dari transformasi digital di PT BPR MSA.
 
-- User registration and authentication.
-- Profile management with the option to upload a profile picture.
+## Fitur Utama
+- **Booking Ruang Meeting Online**: Reservasi ruang meeting dengan jadwal yang fleksibel dan transparan.
+- **Agenda Harian Otomatis**: Pengiriman agenda harian ke WhatsApp untuk pengingat dan koordinasi.
+- **Status Ruangan Real-Time**: Monitoring status pemakaian ruangan (sedang dipakai, selesai, extend, dsb).
+- **Manajemen User & Admin**: Registrasi, login, pengelolaan profil, dan dashboard admin untuk monitoring aktivitas.
+- **Notifikasi**: Notifikasi otomatis ke user/admin terkait status booking dan agenda.
+- **Manajemen Fasilitas**: Admin dapat menambah, mengedit, dan menghapus data fasilitas ruang meeting.
+- **Kontak & Layanan**: Formulir kontak untuk komunikasi internal dan eksternal.
+- **Kalender & Riwayat Booking**: Tampilan kalender dan riwayat pemesanan untuk memudahkan tracking penggunaan ruangan.
+- **Responsive Design**: Tampilan aplikasi yang nyaman diakses dari desktop maupun mobile.
 
-## Booking System
+## Teknologi
+- **Laravel 10** (Backend & Blade Templating)
+- **MySQL/MariaDB** (Database)
+- **Bootstrap 5, Boxicons** (Frontend)
+- **WhatsApp API** (Notifikasi agenda harian)
 
-- Users can browse available futsal facilities.
-- Facility details include pricing, available time slots, and features.
-- Users can book a time slot for a specific facility.
+## Cara Instalasi
 
-## Tournament Management
-
-- Futsal managers can create and manage tournaments.
-- Tournament details include schedule, participating teams, and results.
-
-## Community Engagement
-
-- Discussion forums for users to interact and discuss futsal-related topics.
-- Commenting and liking features on forum posts.
-
-## Admin Panel
-
-- Admin dashboard for monitoring and managing user activity.
-- Facility and tournament management tools for administrators.
-
-## Google Sign-In
-
-- Users can sign in using their Google accounts for a seamless experience.
-
-## Systematic Booking System
-
-- Users can make a single, systematic booking, eliminating conflicts and ensuring a straightforward reservation process.
-
-## Admin and User Panels
-
-- Dedicated interfaces for administrators to manage facilities and users, while users enjoy an intuitive platform for bookings and interactions.
-
-## Tournament and Certification
-
-- Comprehensive support for organizing futsal tournaments and certifying participants, enhancing the competitive aspect of the sport.
-
-## Chat with Admin or Futsal Manager
-
-- Instant communication channels, allowing users to interact directly with administrators or facility managers for inquiries and support.
-
-## Tie-breaking Automation
-
-- Automatic resolution of ties in tournaments, providing fairness and efficiency in determining match outcomes.
-
-## Payment
-
-- A secure payment gateway for hassle-free transactions, providing a seamless process for booking and facility payments.
-
-## Map Integration
-
-- Seamless integration with maps, enabling users to locate futsal facilities easily and plan their visits efficiently.
-
-## Match Calendar
-
-- An organized calendar system for users to track scheduled matches, providing they stay informed about upcoming events.
-
-## Rate and Review
-
-- Users can provide feedback on facilities, fostering a community-driven environment with transparent reviews.
-
-## Events
-
-- Integrated module for organizing, participating in, and tracking futsal events, fostering community involvement.
-
-## Community
-
-- Real-time communication tools and features aimed at enhancing community engagement among futsal enthusiasts.
-
-## Responsive Design
-
-- The application is designed to be responsive, ensuring a consistent experience across devices.
-
-
-
-
-## Installation
-
-1. **Clone the repository:**
-
+1. **Clone repository ini:**
 ```bash
-git clone https://github.com/NischalAcharya060/Kick-Up-Futsal.git
+git clone https://github.com/finadio/meeting_room.git
 ```
-
-2. **Navigate to the project folder:**
-
+2. **Masuk ke folder project:**
 ```bash
-cd Kick-Up-Futsal
+cd meeting_room
 ```
-
 3. **Install dependencies:**
-
 ```bash
 composer install
 ```
-
-4. **Copy the `.env.example` file:**
-
+4. **Copy file .env dan konfigurasi:**
 ```bash
 cp .env.example .env
 ```
-
 5. **Generate application key:**
-
 ```bash
 php artisan key:generate
 ```
-
-6. **Configure your `.env` file with the necessary database and other settings.**
-
-7. **Run migrations and seed the database:**
-
+6. **Atur konfigurasi database dan setting lain di file .env**
+7. **Jalankan migrasi dan seeder:**
 ```bash
 php artisan migrate --seed
 ```
 
-## Running the Project
-
-To start the Laravel development server, run:
-
+## Menjalankan Project
+Untuk menjalankan server Laravel:
 ```bash
 php artisan serve
 ```
-Visit http://localhost:8000 in your browser.
+Akses aplikasi di [http://localhost:8000](http://localhost:8000)
 
-## License
+## Kontribusi & Tim
+Project ini dikembangkan oleh mahasiswa kerja praktik di PT BPR MSA sebagai bagian dari implementasi digitalisasi proses bisnis. Untuk pertanyaan atau kontribusi, silakan hubungi tim pengembang atau admin PT BPR MSA.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Lisensi
+Aplikasi ini menggunakan [MIT license](https://opensource.org/licenses/MIT).
