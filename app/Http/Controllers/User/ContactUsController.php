@@ -20,17 +20,20 @@ class ContactUsController extends Controller
     }
 
     //For Admin
-    public function index()
+    public function index(Request $request)
     {
         $query = ContactFormSubmission::query();
-        if (request('search')) {
-            $search = request('search');
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%$search%")
-                  ->orWhere('email', 'like', "%$search%") ;
-            });
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%$search%") ;
         }
-        $submissions = $query->latest()->paginate(5)->appends(['search' => request('search')]);
+        $submissions = $query->latest()->paginate(5)->appends(['search' => $request->input('search')]);
+        // AJAX: jika request expects JSON, return partial view
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.contact.partials.table', compact('submissions'))->render()
+            ]);
+        }
         return view('admin.contact.index', compact('submissions'));
     }
 
