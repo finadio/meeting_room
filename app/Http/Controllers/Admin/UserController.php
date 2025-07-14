@@ -12,10 +12,21 @@ use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        $users = User::paginate(10);
+        $search = $request->input('search');
+        $usersQuery = User::query();
+        if ($search) {
+            $usersQuery->where(function($query) use ($search) {
+                $query->where('name', 'like', "%$search%")
+                      ->orWhere('email', 'like', "%$search%")
+                      ->orWhere('user_type', 'like', "%$search%")
+                      ->orWhere('contact_number', 'like', "%$search%")
+                      ->orWhere('register_type', 'like', "%$search%")
+                      ;
+            });
+        }
+        $users = $usersQuery->paginate(10)->appends(['search' => $search]);
         $unreadNotificationCount = Notification::where('is_read', false)->count();
         return view('admin.users.index', compact('users', 'unreadNotificationCount'));
     }

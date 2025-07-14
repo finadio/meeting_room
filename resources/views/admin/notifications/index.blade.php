@@ -47,73 +47,19 @@
                         @endif
 
                         <div class="table-container">
-                            @if($notifications->isEmpty())
-                                <div class="alert alert-info text-center m-4 p-4 rounded-lg shadow-sm">
-                                    Tidak ada notifikasi.
-                                </div>
-                            @else
-                                <table class="modern-table">
-                                    <thead>
-                                        <tr>
-                                            <th>S.N</th>
-                                            <th>Tipe</th>
-                                            <th>Pesan</th>
-                                            <th>Status</th> {{-- Kolom status notifikasi (dibaca/belum) --}}
-                                            <th>Tanggal</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($notifications as $notification)
-                                        <tr class="{{ $notification->is_read ? 'read-notification' : 'unread-notification' }}">
-                                            <td data-label="S.N">{{ $loop->iteration }}</td>
-                                            <td data-label="Tipe">
-                                                <div class="d-flex align-items-center">
-                                                    {{-- Menggunakan Font Awesome untuk ikon notifikasi spesifik --}}
-                                                    @if($notification->notification_details['icon'] ?? false)
-                                                        <i class="{{ $notification->notification_details['icon'] }} me-2"></i>
-                                                    @endif
-                                                    <span class="badge badge-info-custom">{{ Str::replace('_', ' ', Str::title($notification->type)) }}</span>
-                                                </div>
-                                            </td>
-                                            <td data-label="Pesan" class="text-truncate" style="max-width: 250px;">
-                                                <strong>{{ $notification->notification_details['title'] ?? 'Judul Tidak Tersedia' }}</strong><br>
-                                                <small>{{ $notification->notification_details['description'] ?? $notification->message }}</small>
-                                            </td>
-                                            <td data-label="Status">
-                                                <span class="badge {{ $notification->is_read ? 'badge-secondary-custom' : 'badge-primary-custom' }}">
-                                                    {{ $notification->is_read ? 'Sudah Dibaca' : 'Belum Dibaca' }}
-                                                </span>
-                                            </td>
-                                            <td data-label="Dibuat Pada">{{ \Carbon\Carbon::parse($notification->created_at)->format('d F Y, H:i') }}</td>
-                                            <td data-label="Aksi" class="actions-cell">
-                                                <div class="action-buttons-group">
-                                                    @if (!$notification->is_read)
-                                                        {{-- MODIFIED: Change onclick to open custom modal --}}
-                                                        <form id="markAsReadForm-{{ $notification->id }}" action="{{ route('admin.notifications.markAsRead', $notification->id) }}" method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button type="button" class="btn-action success" title="Tandai Sudah Dibaca" onclick="showConfirmMarkAsReadModal({{ $notification->id }})">
-                                                                <i class='bx bx-check'></i>
-                                                            </button>
-                                                        </form>
-                                                    @endif
-                                                    @if($notification->notification_details['link'] ?? false)
-                                                        <a href="{{ $notification->notification_details['link'] }}" class="btn-action view" title="Lihat Detail">
-                                                            <i class='bx bx-show'></i>
-                                                        </a>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                                {{-- Paginasi --}}
-                                <div class="d-flex justify-content-center mt-4">
-                                    {{ $notifications->links() }}
-                                </div>
-                            @endif
+                            <div class="table-actions-controls">
+                                <form action="{{ route('admin.notifications.index') }}" method="GET" class="search-form" id="notification-search-form">
+                                    <div class="search-input-wrapper">
+                                        <input type="text" name="search" class="form-control-enhanced search-input" placeholder="Cari notifikasi..." value="{{ request('search') }}">
+                                        <button type="submit" class="search-button">
+                                            <i class="bx bx-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="notification-table-wrapper">
+                                @include('admin.notifications.partials.table', ['notifications' => $notifications])
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -873,8 +819,7 @@
 
 
 @section('scripts')
-{{-- Memastikan Bootstrap JS dimuat --}}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+@parent
 <script>
     // Alert close functionality
     document.querySelectorAll('.alert-close').forEach(button => {
@@ -941,5 +886,58 @@
             console.error('Confirm button element #confirmMarkAsReadBtn not found.'); // Debugging
         }
     });
+
+    // AJAX search & pagination for notifications
+    function ajaxLoadNotificationTable(url) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            beforeSend: function() {
+                // Optional: show loading spinner
+            },
+            success: function(response) {
+                $('#notification-table-wrapper').html(response.html);
+            },
+            error: function(xhr) {
+                alert('Gagal memuat data. Silakan coba lagi.');
+            },
+            complete: function() {
+                // Optional: hide loading spinner
+            }
+        });
+    }
+
+    // Search submit (prevent default)
+    $(document).on('submit', '#notification-search-form', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('action') + '?' + $(this).serialize();
+        ajaxLoadNotificationTable(url);
+    });
+
+    // Pagination click
+    $(document).on('click', '#notification-table-wrapper .pagination a', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        if (url) {
+            ajaxLoadNotificationTable(url);
+        }
+    });
+
+    // Debounce function
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    // AJAX search on input (tanpa enter)
+    $(document).on('input', '.search-input', debounce(function(e) {
+        var form = $(this).closest('form');
+        var url = form.attr('action') + '?' + form.serialize();
+        ajaxLoadNotificationTable(url);
+    }, 400));
 </script>
 @endsection

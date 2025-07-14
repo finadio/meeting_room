@@ -86,21 +86,33 @@ class AdminDashboardController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function notifications()
+    public function notifications(Request $request)
     {
-        // Ambil semua notifikasi, urutkan berdasarkan yang belum dibaca terlebih dahulu, lalu tanggal terbaru
-        // Eager load relasi 'notifiable' dan nested relasinya
-        $notifications = Notification::with(['notifiable' => function (MorphTo $morphTo) {
+        $query = Notification::with(['notifiable' => function (MorphTo $morphTo) {
             $morphTo->morphWith([
-                Booking::class => ['facility', 'user'], // Jika notifiable adalah Booking, eager load facility dan user
-                ContactFormSubmission::class => [], // ContactFormSubmission mungkin tidak punya relasi nested yang perlu di-eager load
-                User::class => [], // User mungkin tidak punya relasi nested yang perlu di-eager load
+                Booking::class => ['facility', 'user'],
+                ContactFormSubmission::class => [],
+                User::class => [],
             ]);
-        }])
-        ->orderBy('is_read', 'asc') // Notifikasi belum dibaca di atas
-        ->orderBy('created_at', 'desc')
-        ->paginate(10); // Sesuaikan jumlah notifikasi per halaman
-
+        }]);
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('message', 'like', "%$search%")
+                  ->orWhereHas('user', function($qu) use ($search) {
+                      $qu->where('name', 'like', "%$search%") ;
+                  });
+            });
+        }
+        $notifications = $query->orderBy('is_read', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->appends(['search' => $request->input('search')]);
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.notifications.partials.table', compact('notifications'))->render()
+            ]);
+        }
         return view('admin.notifications.index', compact('notifications'));
     }
 
