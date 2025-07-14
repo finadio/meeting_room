@@ -56,5 +56,23 @@ namespace App\Models;
         {
             return !is_null($this->reviews);
         }
+
+        public function getRoomStatusAttribute()
+        {
+            $currentTime = now()->setTimezone('Asia/Jakarta');
+            $bookingDate = $this->booking_date instanceof \Carbon\Carbon ? $this->booking_date->format('Y-m-d') : date('Y-m-d', strtotime($this->booking_date));
+            $startTime = \Carbon\Carbon::parse($bookingDate . ' ' . (is_object($this->booking_time) ? $this->booking_time->format('H:i:s') : $this->booking_time));
+            $endTime = \Carbon\Carbon::parse($bookingDate . ' ' . (is_object($this->booking_end) ? $this->booking_end->format('H:i:s') : $this->booking_end));
+
+            if ($this->check_out) {
+                return 'Selesai';
+            } elseif ($currentTime->between($startTime, $endTime) && ($this->is_checked_in ?? false)) {
+                return 'Sedang Berlangsung';
+            } elseif ($currentTime->greaterThan($endTime) && !($this->check_out ?? false)) {
+                return 'Extend Waktu';
+            } else {
+                return 'Belum Mulai';
+            }
+        }
     }
     

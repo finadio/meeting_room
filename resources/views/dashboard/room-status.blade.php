@@ -361,27 +361,19 @@
                                     <tbody>
                                         @foreach($facilityBookings as $booking)
                                             @php
-                                                $currentTime = now()->setTimezone('Asia/Jakarta');
-                                                $startTime = \Carbon\Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_time);
-                                                $endTime = \Carbon\Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->booking_end);
-                                                $status = 'Belum Mulai';
                                                 $rowClass = '';
-
-                                                if ($booking->check_out) {
-                                                    $status = 'Selesai';
+                                                if ($booking->room_status === 'Selesai') {
                                                     $rowClass = 'table-secondary';
-                                                } elseif ($currentTime->between($startTime, $endTime) && ($booking->is_checked_in ?? false)) {
-                                                    $status = 'Sedang Berlangsung';
+                                                } elseif ($booking->room_status === 'Sedang Berlangsung') {
                                                     $rowClass = 'table-success';
-                                                } elseif ($currentTime->greaterThan($endTime) && !($booking->check_out ?? false)) {
-                                                    $status = 'Extend Waktu';
+                                                } elseif ($booking->room_status === 'Extend Waktu') {
                                                     $rowClass = 'table-warning';
                                                 }
                                             @endphp
                                             <tr class="{{ $rowClass }}">
                                                 <td>{{ \Carbon\Carbon::parse($booking->booking_time)->format('H:i') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($booking->booking_end)->format('H:i') }}</td>
-                                                <td><span class="{{ ($status == 'Sedang Berlangsung' || $status == 'Extend Waktu') ? 'fw-bold' : '' }}">{{ $status }}</span></td>
+                                                <td><span class="{{ ($booking->room_status == 'Sedang Berlangsung' || $booking->room_status == 'Extend Waktu') ? 'fw-bold' : '' }}">{{ $booking->room_status }}</span></td>
                                                 <td>{{ $booking->group_name }}</td>
                                                 <td>{{ $booking->meeting_title }}</td>
                                                 <td>{{ $booking->description ?? '-' }}</td> {{-- Tampilkan keterangan jika ada --}}
