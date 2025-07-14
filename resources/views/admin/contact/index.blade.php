@@ -298,80 +298,77 @@
 
     /* Table Specific Styles */
     .table-container {
-        overflow-x: auto;
+        overflow-x: auto; /* Ensures table is scrollable on small screens */
         background: #fff;
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         padding: 20px;
     }
 
-    /* Search Controls */
     .table-actions-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 25px;
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        gap: 15px; /* Space between search and button */
     }
 
     .search-form {
-        display: flex;
-        justify-content: flex-start;
-        max-width: 350px;
+        flex-grow: 1; /* Allow search bar to take available space */
+        max-width: 400px; /* Limit max width of search bar */
     }
 
     .search-input-wrapper {
         position: relative;
         display: flex;
         align-items: center;
-        width: 100%;
     }
 
     .search-input {
         width: 100%;
-        padding: 12px 50px 12px 16px;
-        border: 2px solid #e0e0e0;
+        padding: 12px 40px 12px 20px; /* Adjust padding for icon */
+        border: 2px solid #e2e8f0;
         border-radius: 12px;
-        font-size: 0.9rem;
+        font-size: 1rem;
+        background: white;
         transition: all 0.3s ease;
-        background: #f8f9fa;
+        outline: none;
     }
 
     .search-input:focus {
-        outline: none;
-        border-color: #ddd;
-        background: #fff;
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+        border-color: #4facfe;
+        box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
+    }
+
+    .search-input::placeholder {
+        color: #a0aec0;
     }
 
     .search-button {
         position: absolute;
-        right: 4px;
-        top: 50%;
-        transform: translateY(-50%);
+        right: 10px;
         background: none;
         border: none;
-        padding: 8px 12px;
+        color: #a0aec0;
+        font-size: 1.2rem;
         cursor: pointer;
-        color: #666;
         transition: color 0.3s ease;
-        border-radius: 8px;
     }
 
     .search-button:hover {
-        color: #333;
-        background: rgba(0, 0, 0, 0.05);
-    }
-
-    .search-button i {
-        font-size: 1rem;
+        color: #667eea;
     }
 
     .modern-table {
         width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 10px;
+        border-collapse: separate; /* Use separate to allow border-radius on cells */
+        border-spacing: 0 10px; /* Space between rows */
         margin-bottom: 20px;
     }
 
     .modern-table thead th {
-        background: linear-gradient(135deg, #e0e7ff 0%, #c3dafe 100%);
+        background: linear-gradient(135deg, #e0e7ff 0%, #c3dafe 100%); /* Light blue gradient for header */
         color: #1e3c72;
         padding: 15px 20px;
         font-weight: 700;
@@ -396,10 +393,10 @@
     }
 
     .modern-table tbody tr {
-        background: #fdfefe;
+        background: #fdfefe; /* Slightly off-white for rows */
         border-radius: 12px;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Subtle shadow for each row */
     }
 
     .modern-table tbody tr:hover {
@@ -410,13 +407,13 @@
     .modern-table tbody td {
         padding: 15px 20px;
         vertical-align: middle;
-        border-top: none;
+        border-top: none; /* Remove default table borders */
         font-size: 0.9rem;
         color: #333;
     }
 
     .modern-table tbody tr:first-child td {
-        border-top: none;
+        border-top: none; /* No top border for the first row's cells */
     }
 
     .modern-table tbody td:first-child {
@@ -429,22 +426,62 @@
         border-top-right-radius: 12px;
     }
 
+    /* Badges */
+    .badge-primary-custom {
+        background-color: #667eea;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8em;
+    }
+    .badge-info-custom {
+        background-color: #4facfe; /* A light blue for info status */
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8em;
+    }
+    .badge-danger-custom {
+        background-color: #ff416c;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8em;
+    }
+    .badge-success-custom {
+        background-color: #38ef7d;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8em;
+    }
+    .badge-secondary-custom {
+        background-color: #6c757d;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8em;
+    }
+
     /* Action Buttons */
     .actions-cell {
-        white-space: nowrap;
+        white-space: nowrap; /* Keep buttons on one line */
     }
-    
     .action-buttons-group {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
+        flex-wrap: wrap; /* Allow buttons to wrap if too many */
+        gap: 8px; /* Space between buttons */
+        justify-content: center; /* Center buttons horizontally */
     }
-    
     .btn-action {
-        min-width: 75px;
+        min-width: 75px; /* Minimum width for action buttons */
         height: 38px;
-        padding: 0 10px;
+        padding: 0 10px; /* Adjust padding for text and icon */
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -452,28 +489,87 @@
         font-size: 0.9rem;
         transition: all 0.2s ease;
         text-decoration: none;
-        color: white;
+        color: white; /* Default white for icons and text */
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         border: none;
         cursor: pointer;
     }
-    
     .btn-action:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-        color: white;
+        color: white; /* Ensure color stays white on hover */
         text-decoration: none;
     }
 
-    .btn-action.delete { 
-        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%); 
-    }
+    /* Specific Button Colors */
+    .btn-action.view { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .btn-action.edit { background: linear-gradient(135deg, #fbc02d 0%, #f57f17 100%); }
+    .btn-action.delete { background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%); }
 
     .btn-action i {
-        margin-right: 5px;
+        margin-right: 5px; /* Space between icon and text for buttons with text */
+    }
+    .btn-action.success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important; /* Force green background */
+        border-radius: 10px !important; /* Force rounded corners */
+        color: white !important; /* Ensure the button text/icon is white */
+        box-shadow: 0 4px 10px rgba(17, 153, 142, 0.3) !important; /* Adjust shadow for green */
+    }
+    .btn-action.success i.bx-check {
+        color: white !important; /* Make the check icon white for high contrast */
     }
 
-    /* Responsive Design */
+    /* Pagination */
+    .pagination-wrapper {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .pagination {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .pagination .page-item .page-link {
+        border: none;
+        padding: 10px 15px;
+        margin: 0 2px;
+        border-radius: 8px;
+        color: #667eea;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background-color: #f0f4ff;
+    }
+    .pagination .page-item .page-link:hover {
+        background-color: #e0e7ff;
+        color: #1e3c72;
+    }
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #b0b8c6;
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
+
+    /* Responsive Design for Tables */
+    @media (max-width: 992px) {
+        .modern-table thead th,
+        .modern-table tbody td {
+            padding: 12px 15px;
+            font-size: 0.85rem;
+        }
+
+        .btn-submit {
+            padding: 12px 20px;
+            font-size: 0.9rem;
+        }
+    }
+
     @media (max-width: 768px) {
         .booking-page-wrapper {
             padding: 20px 0;
@@ -509,9 +605,9 @@
         }
 
         .modern-table {
-            display: block;
+            display: block; /* Make table scrollable horizontally */
             width: 100%;
-            white-space: nowrap;
+            white-space: nowrap; /* Prevent text wrapping in cells by default */
         }
 
         .modern-table thead, .modern-table tbody, .modern-table th, .modern-table td, .modern-table tr {
@@ -550,12 +646,13 @@
             font-size: 0.85rem;
         }
 
+        /* Specific labels for mobile */
         .modern-table td:nth-of-type(1):before { content: "S.N:"; }
-        .modern-table td:nth-of-type(2):before { content: "Nama:"; }
-        .modern-table td:nth-of-type(3):before { content: "Email:"; }
-        .modern-table td:nth-of-type(4):before { content: "Subjek:"; }
-        .modern-table td:nth-of-type(5):before { content: "Pesan:"; }
-        .modern-table td:nth-of-type(6):before { content: "Dikirim Pada:"; }
+        .modern-table td:nth-of-type(2):before { content: "ID:"; }
+        .modern-table td:nth-of-type(3):before { content: "Tipe:"; }
+        .modern-table td:nth-of-type(4):before { content: "Pesan:"; }
+        .modern-table td:nth-of-type(5):before { content: "Status:"; }
+        .modern-table td:nth-of-type(6):before { content: "Dibuat Pada:"; }
         .modern-table td:nth-of-type(7):before { content: "Aksi:"; }
         
         .modern-table tbody td:last-child {
