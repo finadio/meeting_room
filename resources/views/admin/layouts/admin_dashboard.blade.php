@@ -642,15 +642,27 @@
             <a href="{{ route('admin.calendar') }}" data-title="Calendar"><i class='bx bxs-calendar'></i> <span>Calendar</span></a>
         </li>
         <li class="{{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
-            <a href="{{ route('admin.notifications.index') }}" data-title="Notification"><i class='bx bxs-bell'></i> <span>Notification</span></a>
+            @php $unreadNotificationCount = \App\Models\Notification::where('is_read', false)->count(); @endphp
+            <a href="{{ route('admin.notifications.index') }}" data-title="Notification" style="position: relative;">
+                <div class="icon-bell-wrapper" style="position: relative; display: inline-block;">
+                    <i class='bx bxs-bell'></i>
+                    @if($unreadNotificationCount > 0)
+                        <span class="badge badge-danger notification-badge">{{ $unreadNotificationCount }}</span>
+                    @endif
+                </div>
+                <span>Notification</span>
+            </a>
         </li>
         <li class="{{ request()->routeIs('admin.contact.*') ? 'active' : '' }}">
             @php $unreadContactCount = \App\Models\ContactFormSubmission::where('is_read', false)->count(); @endphp
-            <a href="{{ route('admin.contact.index') }}" data-title="Contact Us">
-                <i class='bx bx-envelope'></i> <span>Contact Us</span>
-                @if($unreadContactCount > 0)
-                    <span class="badge badge-danger ml-2" style="font-size:0.8em;vertical-align:top;">{{ $unreadContactCount }}</span>
-                @endif
+            <a href="{{ route('admin.contact.index') }}" data-title="Contact Us" style="position: relative;">
+                <div class="icon-bell-wrapper" style="position: relative; display: inline-block;">
+                    <i class='bx bx-envelope'></i>
+                    @if($unreadContactCount > 0)
+                        <span class="badge badge-danger notification-badge">{{ $unreadContactCount }}</span>
+                    @endif
+                </div>
+                <span>Contact Us</span>
             </a>
         </li>
         <li class="{{ request()->routeIs('admin.send_message.*') ? 'active' : '' }}">

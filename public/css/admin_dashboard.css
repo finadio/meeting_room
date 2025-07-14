@@ -354,13 +354,13 @@ body {
 
 .dashboard-content {
     padding: 30px 60px;
-    background-color: var(--bg-page-ref);
+    background-color: var(--bg-page-light-ref);
     min-height: calc(100vh - 60px);
 }
 
 /* Welcome Section */
 .dashboard-header-main {
-    background-color: var(--bg-card-ref);
+    background-color: var(--bg-card-white-ref);
     border: 1px solid var(--border-ref);
     border-radius: 12px;
     padding: 25px;
@@ -385,7 +385,7 @@ body {
 
 .dashboard-summary-text {
     font-size: 0.95rem;
-    color: var(--text-muted-ref);
+    color: var(--text-medium-ref);
 }
 
 /* Section Headings */
@@ -440,7 +440,7 @@ body {
     border-radius: 8px;
     box-shadow: var(--shadow-ref-extra-soft);
     border: 1px solid var(--border-ref);
-    background-color: var(--bg-card-ref);
+    background-color: var(--bg-card-white-ref);
     color: var(--text-dark-ref);
     font-weight: 500;
     margin-bottom: 20px;
@@ -484,7 +484,7 @@ body {
     border-radius: 8px !important;
     overflow: hidden;
     box-shadow: var(--shadow-ref-soft);
-    background: var(--bg-card-ref);
+    background: var(--bg-card-white-ref);
     position: relative;
     z-index: 1;
     min-height: 140px;
@@ -532,7 +532,7 @@ body {
 .stat-label {
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--text-muted-ref);
+    color: var(--text-medium-ref);
     text-transform: uppercase;
     margin-bottom: 5px;
     line-height: 1.2;
@@ -569,8 +569,8 @@ body {
 .dashboard-schedule-card {
     border: 1px solid var(--border-ref);
     border-radius: 8px !important;
-    box-shadow: var(--shadow-soft);
-    background-color: var(--bg-card-ref);
+    box-shadow: var(--shadow-ref-soft);
+    background-color: var(--bg-card-white-ref);
     padding: 25px !important;
     min-height: 300px;
     display: flex;
@@ -600,7 +600,7 @@ body {
 }
 .schedule-item small {
     font-size: 0.8rem;
-    color: var(--text-muted-ref);
+    color: var(--text-medium-ref);
 }
 .badge.schedule-status-approved { background-color: var(--primary-ref-blue); }
 .badge.schedule-status-pending { background-color: var(--accent-orange); }
@@ -627,8 +627,8 @@ body {
 .dashboard-chart-card, .dashboard-calendar-card {
     border: 1px solid var(--border-ref);
     border-radius: 8px !important;
-    box-shadow: var(--shadow-soft);
-    background-color: var(--bg-card-ref);
+    box-shadow: var(--shadow-ref-soft);
+    background-color: var(--bg-card-white-ref);
     padding: 25px !important;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
@@ -1129,4 +1129,36 @@ body.sidebar-collapsed .fc-scrollgrid-sync-table {
     margin-left: 0 !important;
     padding-right: 0 !important;
     padding-left: 0 !important;
+}
+
+/* Pastikan badge notifikasi terlihat saat sidebar tersembunyi */
+#sidebar.hide ul li a .notification-badge {
+    display: inline-block !important; /* Timpa aturan 'display: none' */
+    position: absolute; /* Tetap posisikan relatif terhadap ikon */
+    top: -6px; /* Sesuaikan sesuai kebutuhan */
+    right: 0; /* Sesuaikan sesuai kebutuhan */
+    left: auto; /* Pastikan tidak kacau oleh left: auto */
+}
+
+
+.icon-bell-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 32px; /* Sesuaikan untuk memberi ruang pada badge */
+    height: 32px; /* Sesuaikan untuk memberi ruang pada badge */
+}
+
+.notification-badge {
+    position: absolute;
+    top: -6px;
+    right: 0;
+    left: auto; /* Memastikan menempel di kanan saat tersembunyi */
+    font-size: 0.8em;
+    min-width: 20px;
+    min-height: 20px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    display: inline-block;
+    text-align: center;
+    z-index: 2;
 }
