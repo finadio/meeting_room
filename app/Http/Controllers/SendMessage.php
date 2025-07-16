@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log; // Pastikan Log diimpor
 class SendMessage extends Controller
 {
     // Tambahkan parameter $templateId dengan nilai default null
-    public function sendMessageAttemp($no_wa, $name, $token, $templateId = null)
+    // public function sendMessageAttemp($no_wa, $name, $token, $templateId = null)
+    public function sendMessageAttemp($no_wa, $name, $token, $templateId = null, $templateParams = [])
+
     {
         // Mengambil ACCESS_TOKEN menggunakan config()
         $accessToken = config('app.access_token');
@@ -31,7 +33,7 @@ class SendMessage extends Controller
                 'code' => 'id'
             ],
             'parameters' => [
-                'body' => $token
+                'body' => $templateParams
             ]
         ]);
         

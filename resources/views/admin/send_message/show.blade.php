@@ -20,52 +20,92 @@
                         <div style="width:60px;height:4px;background:#4facfe;border-radius:2px;margin:12px auto 0 auto;position:relative;z-index:2;"></div>
                         <style>@keyframes rotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}</style>
                     </div>
-                    <div class="booking-content" style="padding:40px 40px 40px 40px;">
-                        <div class="row mb-2">
-                            <div class="col-lg-6 col-md-6 mb-3">
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-calendar" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
-                                    <span class="font-weight-bold" style="color:#2A3B52;">Tanggal</span>
+                </div>                            
+                    {{-- SUBSECTION: Preview Pesan Jarkoman --}}
+                    <div class="booking-card mb-5" style="background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-radius:28px;box-shadow:0 8px 32px rgba(44,62,80,0.10);border:1px solid #e3e8ee;">
+                        <div class="px-5 pt-5 pb-0 d-flex align-items-center gap-2">
+                            <i class="bx bx-message-square-detail" style="color:#4A6DFB;font-size:1.3rem;"></i>
+                            <h5 class="mb-0" style="color:#1e3c72;font-weight:700;letter-spacing:0.5px;">Preview Pesan WhatsApp</h5>
+                        </div>
+                        <div class="booking-content" style="padding:24px 40px 40px 40px;">
+                            @if(session('success'))
+                                <div class="alert alert-success mb-3" style="border-radius:12px;border:none;padding:16px 20px;">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bx bx-check-circle me-2" style="font-size:1.2rem;"></i>
+                                        <strong>Berhasil!</strong> <span class="ms-2">{{ session('success') }}</span>
+                                    </div>
                                 </div>
-                                <div class="display-value-text" style="font-size:1.08rem;">{{ $agenda->tanggal->format('d-m-Y') }}</div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 mb-3">
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-female" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
-                                    <span class="font-weight-bold" style="color:#2A3B52;">OOTD Cewek</span>
+                            @endif
+                            @if(session('error'))
+                                <div class="alert alert-danger mb-3" style="border-radius:12px;border:none;padding:16px 20px;">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bx bx-error-circle me-2" style="font-size:1.2rem;"></i>
+                                        <strong>Error!</strong> <span class="ms-2">{{ session('error') }}</span>
+                                    </div>
                                 </div>
-                                <div class="display-value-text" style="font-size:1.08rem;">{{ $agenda->ootd_cewek }}</div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 mb-3">
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-male" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
-                                    <span class="font-weight-bold" style="color:#2A3B52;">OOTD Cowok</span>
-                                </div>
-                                <div class="display-value-text" style="font-size:1.08rem;">{{ $agenda->ootd_cowok }}</div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 mb-3">
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-send" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
-                                    <span class="font-weight-bold" style="color:#2A3B52;">Status Kirim</span>
-                                </div>
-                                <span class="badge" style="font-size:0.95em;padding:7px 16px;border-radius:12px;letter-spacing:0.5px;display:inline-flex;align-items:center;gap:4px;
-                                        @if($agenda->status_kirim=='terkirim')background:#e6f9f0;color:#11998e;
-                                        @elseif($agenda->status_kirim=='gagal')background:#ffeaea;color:#ff416c;
-                                        @else background:#f4f7fd;color:#4A6DFB;@endif">
-                                        @if($agenda->status_kirim=='terkirim')<i class="bx bx-check-circle"></i>@elseif($agenda->status_kirim=='gagal')<i class="bx bx-x-circle"></i>@else<i class="bx bx-time"></i>@endif
-                                        {{ ucfirst($agenda->status_kirim) }}
-                                </span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-time-five" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
-                                    <span class="font-weight-bold" style="color:#2A3B52;">Waktu Kirim</span>
-                                </div>
-                                <div class="display-value-text" style="font-size:1.08rem;">{{ $agenda->waktu_kirim ? $agenda->waktu_kirim->format('H:i d-m-Y') : '-' }}</div>
+                            @endif
+                            {{-- Menggunakan $pesanPreview yang sudah digabungkan dari controller --}}
+                            <textarea class="form-control mb-3" rows="12" readonly id="pesanJarkoman" style="background:#f8f9fa;border-radius:12px;border:1px solid #e9ecef;font-size:1.08rem;min-height:300px;">{{ $pesanPreview }}</textarea>
+                            <div class="d-flex flex-wrap align-items-center" style="gap: 20px;">
+                                <button class="btn btn-primary custom-btn-spacing" onclick="copyPesan()"><i class="bx bx-copy"></i> Copy Pesan</button>
+                                <button type="button" class="btn btn-success custom-btn-spacing" id="sendButton" onclick="sendMessage()"><i class="bx bxl-whatsapp"></i> Kirim ke Bu Fitri (WA)</button>
+                                <a href="{{ route('admin.send_message.index') }}" class="btn btn-secondary custom-btn-spacing"><i class="bx bx-arrow-back"></i> Kembali</a>
                             </div>
                         </div>
                     </div>
-                </div>
+                    {{-- SUBSECTION: OOTD --}}
+                    <div class="booking-card mb-5" style="background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-radius:28px;box-shadow:0 8px 32px rgba(44,62,80,0.10);border:1px solid #e3e8ee;">
+                        <div class="booking-content" style="padding:40px 40px 40px 40px;">
+                            <div class="row mb-2">
+                                <div class="col-lg-6 col-md-6 mb-3">
+                                    <i class="bx bx-message-square-detail" style="color:#4A6DFB;font-size:1.3rem;"></i>
+                                    <h5 class="mb-0" style="color:#1e3c72;font-weight:700;letter-spacing:0.5px;">OOTD Hari ini </h5>
+                                </div>
+                                <div class="col-lg-6 col-md-6 mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-calendar" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
+                                        <span class="font-weight-bold" style="color:#2A3B52;">Tanggal</span>
+                                    </div>
+                                    <div class="display-value-text" style="font-size:1.08rem;">{{ $agenda->tanggal->format('d-m-Y') }}</div>
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-female" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
+                                        <span class="font-weight-bold" style="color:#2A3B52;">OOTD Cewek</span>
+                                    </div>
+                                    <div class="display-value-text" style="font-size:1.08rem;">{{ $agenda->ootd_cewek }}</div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-male" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
+                                        <span class="font-weight-bold" style="color:#2A3B52;">OOTD Cowok</span>
+                                    </div>
+                                    <div class="display-value-text" style="font-size:1.08rem;">{{ $agenda->ootd_cowok }}</div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-send" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
+                                        <span class="font-weight-bold" style="color:#2A3B52;">Status Kirim</span>
+                                    </div>
+                                    <span class="badge" style="font-size:0.95em;padding:7px 16px;border-radius:12px;letter-spacing:0.5px;display:inline-flex;align-items:center;gap:4px;
+                                            @if($agenda->status_kirim=='terkirim')background:#e6f9f0;color:#11998e;
+                                            @elseif($agenda->status_kirim=='gagal')background:#ffeaea;color:#ff416c;
+                                            @else background:#f4f7fd;color:#4A6DFB;@endif">
+                                            @if($agenda->status_kirim=='terkirim')<i class="bx bx-check-circle"></i>@elseif($agenda->status_kirim=='gagal')<i class="bx bx-x-circle"></i>@else<i class="bx bx-time"></i>@endif
+                                            {{ ucfirst($agenda->status_kirim) }}
+                                    </span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="label-icon mr-2" style="background:#e3f2fd;border-radius:8px;padding:8px 10px 8px 8px;display:flex;align-items:center;justify-content:center;"><i class="bx bx-time-five" style="color:#4A6DFB;font-size:1.2rem;"></i></div>
+                                        <span class="font-weight-bold" style="color:#2A3B52;">Waktu Kirim</span>
+                                    </div>
+                                    <div class="display-value-text" style="font-size:1.08rem;">{{ $agenda->waktu_kirim ? $agenda->waktu_kirim->format('H:i d-m-Y') : '-' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 {{-- SUBSECTION: Agenda Manual --}}
                 <div class="booking-card mb-5" style="background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-radius:28px;box-shadow:0 8px 32px rgba(44,62,80,0.10);border:1px solid #e3e8ee;">
@@ -172,39 +212,7 @@
                     </div>
                 </div>
 
-                {{-- SUBSECTION: Preview Pesan Jarkoman --}}
-                <div class="booking-card mb-5" style="background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-radius:28px;box-shadow:0 8px 32px rgba(44,62,80,0.10);border:1px solid #e3e8ee;">
-                    <div class="px-5 pt-5 pb-0 d-flex align-items-center gap-2">
-                        <i class="bx bx-message-square-detail" style="color:#4A6DFB;font-size:1.3rem;"></i>
-                        <h5 class="mb-0" style="color:#1e3c72;font-weight:700;letter-spacing:0.5px;">Preview Pesan Jarkoman</h5>
-                    </div>
-                    <div class="booking-content" style="padding:24px 40px 40px 40px;">
-                        @if(session('success'))
-                            <div class="alert alert-success mb-3" style="border-radius:12px;border:none;padding:16px 20px;">
-                                <div class="d-flex align-items-center">
-                                    <i class="bx bx-check-circle me-2" style="font-size:1.2rem;"></i>
-                                    <strong>Berhasil!</strong> <span class="ms-2">{{ session('success') }}</span>
-                                </div>
-                            </div>
-                        @endif
-                        @if(session('error'))
-                            <div class="alert alert-danger mb-3" style="border-radius:12px;border:none;padding:16px 20px;">
-                                <div class="d-flex align-items-center">
-                                    <i class="bx bx-error-circle me-2" style="font-size:1.2rem;"></i>
-                                    <strong>Error!</strong> <span class="ms-2">{{ session('error') }}</span>
-                                </div>
-                            </div>
-                        @endif
-                        {{-- Menggunakan $pesanPreview yang sudah digabungkan dari controller --}}
-                        <textarea class="form-control mb-3" rows="12" readonly id="pesanJarkoman" style="background:#f8f9fa;border-radius:12px;border:1px solid #e9ecef;font-size:1.08rem;min-height:300px;">{{ $pesanPreview }}</textarea>
-                        <div class="d-flex flex-wrap align-items-center" style="gap: 20px;">
-                            <button class="btn btn-primary custom-btn-spacing" onclick="copyPesan()"><i class="bx bx-copy"></i> Copy Pesan</button>
-                            <button type="button" class="btn btn-success custom-btn-spacing" id="sendButton" onclick="sendMessage()"><i class="bx bxl-whatsapp"></i> Kirim ke Bu Fitri (WA)</button>
-                            <a href="{{ route('admin.send_message.index') }}" class="btn btn-secondary custom-btn-spacing"><i class="bx bx-arrow-back"></i> Kembali</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+             </div>
         </div>
     </div>
 </div>
