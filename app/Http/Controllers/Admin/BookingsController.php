@@ -165,6 +165,7 @@ class BookingsController extends Controller
 
         $user = $booking->user;
         $no_wa = $user->contact_number;
+        $name =  $user ->name;
 
         $booking->status = 'Disetujui';
         $booking->save();
@@ -192,7 +193,14 @@ class BookingsController extends Controller
         ];
 
         // Memanggil sendMessageAttemp dengan menambahkan template ID
-        $response = $this->sendMessage->sendMessageAttemp($no_wa, $messageForToName, $templateParameters, $approvalTemplateId);
+        // $response = $this->sendMessage->sendMessageAttemp($no_wa, $messageForToName, $templateParameters, $approvalTemplateId);
+        $response = $this->sendMessage->sendMessageAttemp(
+            $no_wa,
+            $name,
+            $messageForToName,
+            $approvalTemplateId,
+            $templateParameters
+        );
 
         Log::info('Respon dari API WhatsApp (Disetujui): ' . json_encode($response));
 

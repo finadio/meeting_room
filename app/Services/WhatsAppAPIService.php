@@ -96,7 +96,7 @@ class WhatsAppAPIService
         foreach ($parameters as $key => $value) {
             $formattedParameters['body'][] = [
                 'key' => (string)$key, // Pastikan key adalah string (e.g., '1', '2')
-                'value' => 'latest', // Ini adalah fixed value untuk Qontak body parameters
+                'value' => 'latest'.(string)$key, // Ini adalah fixed value untuk Qontak body parameters
                 'value_text' => $value // Nilai aktual yang akan dimasukkan ke template
             ];
         }

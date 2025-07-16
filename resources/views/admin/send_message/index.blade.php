@@ -408,10 +408,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $todayBookings = $bookings->where('booking_date', now()->toDateString()); @endphp
+                                    <!-- @php $todayBookings = $bookings->where('booking_date', now()->toDateString()); @endphp -->
+                                    @php
+                                        use App\Models\Booking;
+
+                                        $todayBookings = Booking::whereDate('booking_date', now()->toDateString())
+                                            ->with(['facility', 'user'])
+                                            ->get();
+                                    @endphp
                                     @forelse($todayBookings as $b)
                                         <tr>
-                                            <td>{{ $b->booking_time }} - {{ $b->booking_end }}</td>
+                                            <!-- <td>{{ $b->booking_time }} - {{ $b->booking_end }}</td> -->
+                                            <td>
+                                                {{ \Carbon\Carbon::parse($b->booking_time)->format('H:i A') }} -
+                                                {{ \Carbon\Carbon::parse($b->booking_end)->format('H:i A') }}
+                                            </td>
                                             <td>{{ $b->meeting_title ?? '-' }}</td>
                                             <td>{{ $b->facility->name ?? '-' }}</td>
                                             <td>{{ $b->user->name ?? '-' }}</td>
@@ -421,6 +432,54 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                    <!-- Form OOTD -->
+                    <div class="booking-content">
+                        <div class="table-container">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>OOTD Cewek</th>
+                                        <th>OOTD Cowok</th>
+                                        <th>Status Kirim</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    <!-- @php \Carbon\Carbon::setLocale('id'); @endphp -->
+                                    @php
+                                        $today = \Carbon\Carbon::today();
+                                        $todayHistory = $history->filter(function($item) use ($today) {
+                                            return $item->tanggal->isSameDay($today);
+                                        });
+                                    @endphp
+
+                                    @forelse($todayHistory as $item)
+                                        <tr>
+                                            <td>{{ $item->tanggal->locale('id')->translatedFormat('d F Y') }}</td>
+                                            <td>{{ $item->ootd_cewek }}</td>
+                                            <td>{{ $item->ootd_cowok }}</td>
+                                            <td>
+                                                <span class="badge-status" style="@if($item->status_kirim=='terkirim')background:#e6f9f0;color:#11998e;@elseif($item->status_kirim=='gagal')background:#ffeaea;color:#ff416c;@else background:#f4f7fd;color:#4A6DFB;@endif">
+                                                    @if($item->status_kirim=='terkirim')<i class="bx bx-check-circle"></i>@elseif($item->status_kirim=='gagal')<i class="bx bx-x-circle"></i>@else<i class="bx bx-time"></i>@endif
+                                                    {{ ucfirst($item->status_kirim) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('admin.send_message.show', $item->id) }}" class="btn-submit btn-sm px-3 py-1"><i class="bx bx-search"></i> Kirim WA</a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="5" class="text-center text-muted py-4">Belum ada data</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                            <!-- <div class="mt-3" id="history-pagination-wrapper">
+                                {{ $history->links('vendor.pagination.bootstrap-4') }}
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -520,10 +579,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $todayBookings = $bookings->where('booking_date', now()->toDateString())->where('status', 'Disetujui'); @endphp
+                                    <!-- @php $todayBookings = $bookings->where('booking_date', now()->toDateString())->where('status', 'Disetujui'); @endphp -->
+                                    @php
+                                        $todayBookings = Booking::whereDate('booking_date', now()->toDateString())
+                                            ->with(['facility', 'user'])
+                                            ->get();
+                                    @endphp
                                     @forelse($todayBookings as $b)
                                         <tr>
-                                            <td>{{ $b->booking_time }} - {{ $b->booking_end }}</td>
+                                            <!-- <td>{{ $b->booking_time }} - {{ $b->booking_end }}</td> -->
+                                            <td>
+                                                {{ \Carbon\Carbon::parse($b->booking_time)->format('H:i A') }} -
+                                                {{ \Carbon\Carbon::parse($b->booking_end)->format('H:i A') }}
+                                            </td>
                                             <td>{{ $b->meeting_title ?? '-' }}</td>
                                             <td>{{ $b->facility->name ?? '-' }}</td>
                                             <td>{{ $b->user->name ?? '-' }}</td>

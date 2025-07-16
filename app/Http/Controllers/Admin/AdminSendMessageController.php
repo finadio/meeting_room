@@ -179,7 +179,7 @@ class AdminSendMessageController extends Controller
         // OOTD as first item
         $ootdCewek = $agenda->ootd_cewek ?? '-';
         $ootdCowok = $agenda->ootd_cowok ?? '-';
-        $lines[] = $counter . ". 👕 Ce: " . $ootdCewek . "\n    Co: " . $ootdCowok;
+        $lines[] = $counter . ". 👕 Cewek : " . $ootdCewek . " 👕 Cowok : " . $ootdCowok;
         $counter++;
 
         // Agenda Manual (prioritaskan manual di atas booking)
@@ -250,6 +250,7 @@ class AdminSendMessageController extends Controller
      */
     public function show($id)
     {
+        Carbon::setLocale('id');
         $agenda = AgendaHarian::findOrFail($id);
         $agendaManuals = $agenda->agendaManuals; // relasi baru
         $bookings = Booking::where('booking_date', $agenda->tanggal->toDateString())
@@ -261,7 +262,7 @@ class AdminSendMessageController extends Controller
         $key1 = $agenda->tanggal->isoFormat('dddd, D MMMM Y');
         $key2 = $this->generateMessageBody($agenda, $bookings, true);
         $previewBody = $this->generateMessageBody($agenda, $bookings, false);
-        $pesanPreview = "Selamat pagi teman - teman, selamat mengawali hari ini penuh rasa syukur dan sehat selalu, adapun agenda dihari *" . $key1 . "* sbb:\n\n" . $previewBody . "\n\nTerima Kasih 🙏 \nTuhan memberkati 😇 \nBisa-Harus Bisa-Pasti Bisa \n#KolaborasiDalamHarmoni 🤲🙏😇💪💪🔥🔥";
+        $pesanPreview = "Selamat pagi teman - teman, selamat mengawali hari ini penuh rasa syukur dan sehat selalu, adapun agenda dihari " . $key1 . " sbb:\n\n" . $previewBody . "\n\nTerima Kasih 🙏 \nTuhan memberkati 😇 \nBisa-Harus Bisa-Pasti Bisa \n#KolaborasiDalamHarmoni 🤲🙏😇💪💪🔥🔥";
 
         return view('admin.send_message.show', compact('agenda', 'agendaManuals', 'bookings', 'pesanPreview'));
     }
@@ -275,6 +276,7 @@ class AdminSendMessageController extends Controller
      */
     public function send(Request $request, $id)
     {
+        Carbon::setLocale('id');
         $agenda = AgendaHarian::findOrFail($id);
         
         // Ambil booking yang sesuai dengan tanggal agenda harian

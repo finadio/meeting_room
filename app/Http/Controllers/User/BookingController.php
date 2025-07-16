@@ -129,6 +129,7 @@ class BookingController extends Controller
 
             // Ambil nomor WhatsApp dari field contact_phone di tabel facility
             $no_wa = $facility->contact_phone;
+            $name = $facility->contact_person;
 
             $token = env('ACCESS_TOKEN');
             $facility = Facility::findOrFail($facilityId);
@@ -202,9 +203,37 @@ class BookingController extends Controller
             $message = "Booking baru dari " . auth()->user()->name . " untuk ruang " . $booking->facility->name . " pada tanggal " . $booking->booking_date . " dari " . $booking->booking_time . " sampai " . $booking->booking_end . ".";
             
             $sendMessage = new SendMessage();
-            $response = $sendMessage->sendMessageAttemp($no_wa, $message, [['key' => 1, 'value' => 'app', 'value_text' => 'Booking Meeting room'], 
-            ['key' => 2, 'value' => 'nama', 'value_text' => auth()->user()->name . " untuk ruang " . $booking->facility->name . " pada tanggal " . $booking->booking_date . " dari jam " . $booking->booking_time . " WIB sampai " . $booking->booking_end . " WIB ."]]);
-            
+            // $response = $sendMessage->sendMessageAttemp($no_wa, $message, [['key' => 1, 'value' => 'app', 'value_text' => 'Booking Meeting room'], 
+            // ['key' => 2, 'value' => 'nama', 'value_text' => auth()->user()->name . " untuk ruang " . $booking->facility->name . " pada tanggal " . $booking->booking_date . " dari jam " . $booking->booking_time . " WIB sampai " . $booking->booking_end . " WIB ."]]);
+            // $response = $sendMessage->sendMessageAttemp(
+            //     $no_wa,
+            //     $name,
+            //     $token,
+            //     null,
+            //     [
+            //         ['key' => 1, 'value' => 'app', 'value_text' => 'Booking Meeting room'],
+            //         ['key' => 2, 'value' => 'nama', 'value_text' => auth()->user()->name . " untuk ruang " . $booking->facility->name . " pada tanggal " . $booking->booking_date . " dari jam " . $booking->booking_time . " WIB sampai " . $booking->booking_end . " WIB ."]
+            //     ]
+            // );
+            $response = $sendMessage->sendMessageAttemp(
+                $no_wa,
+                $name,
+                $token,
+                null,
+                [
+                    [
+                        'key' => '1',
+                        'value' => 'app',
+                        'value_text' => 'Booking Meeting room'
+                    ],
+                    [
+                        'key' => '2',
+                        'value' => 'nama',
+                        'value_text' => auth()->user()->name . " untuk ruang " . $booking->facility->name . " pada tanggal " . $booking->booking_date . " dari jam " . $booking->booking_time . " WIB sampai " . $booking->booking_end . " WIB ."
+                    ]
+                ]
+            );
+
             Log::info('Respon dari API WhatsApp: ' . json_encode($response));
 
             // Set the booking ID in the session
